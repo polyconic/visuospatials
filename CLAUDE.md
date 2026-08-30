@@ -34,9 +34,9 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 ## The secrets
 
 `void.html` lists the doors and is written for a visitor. **If you add or move a
-door, update that page** — a stale map is worse than none. Two doors are left off
-it on purpose: the 404 and the front page console log. That is Greg's call, not
-an oversight; don't add them back.
+door, update that page** — a stale map is worse than none. Three doors are left off
+it on purpose: the corner lines, the 404 and the front page console log. That is
+Greg's call, not an oversight; don't add them back.
 
 The short version: press and hold anywhere on the front page (a ring closes
 around the pointer over 1.1s), the 7%-opacity dot bottom-right,
