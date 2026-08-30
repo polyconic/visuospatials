@@ -5,12 +5,13 @@
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* Three lines wandering around the sandwich they started as. Each has its own
-       slow drift, so they cross at angles that never repeat. Hover pulls them
-       into the same slanted X the menu mark makes when it opens. */
+       slow drift, so they cross at angles that never repeat. Hover resolves them
+       into three evenly spaced parallel diagonals. */
+    const DIAGONAL = -0.7854;
     const LINES = [
-        { amp: 0.85, w: 0.29, p: 0.0, seat: 1, ow: 0.21, rest: 0.72 },
-        { amp: 0.60, w: 0.18, p: 2.1, seat: 0, ow: 0.16, rest: 0 },
-        { amp: 0.78, w: 0.24, p: 4.2, seat: -1, ow: 0.27, rest: -0.72 }
+        { amp: 0.85, w: 0.29, p: 0.0, seat: 1, ow: 0.21 },
+        { amp: 0.60, w: 0.18, p: 2.1, seat: 0, ow: 0.16 },
+        { amp: 0.78, w: 0.24, p: 4.2, seat: -1, ow: 0.27 }
     ];
 
     marks.forEach(function (el) {
@@ -37,27 +38,24 @@
             hover += (want - hover) * 0.09;
 
             ctx.clearRect(0, 0, size, size);
-            ctx.strokeStyle = hover > 0.02
-                ? 'rgba(255, 45, 0, ' + (0.5 + hover * 0.5) + ')'
-                : 'rgba(242, 242, 239, 0.82)';
+            ctx.strokeStyle = 'rgba(242, 242, 239, ' + (0.82 + hover * 0.18) + ')';
 
-            LINES.forEach(function (l, i) {
+            LINES.forEach(function (l) {
                 const drift = Math.sin(t * l.w + l.p) * l.amp;
-                const a = drift + (l.rest - drift) * hover;
-                const o = (l.seat * size * 0.15 + Math.sin(t * l.ow + l.p) * size * 0.06) * (1 - hover);
+                const a = drift + (DIAGONAL - drift) * hover;
+                const wander = l.seat * size * 0.15 + Math.sin(t * l.ow + l.p) * size * 0.06;
+                const o = wander + (l.seat * size * 0.19 - wander) * hover;
 
                 const cx = c - Math.sin(a) * o;
                 const cy = c + Math.cos(a) * o;
                 const dx = Math.cos(a) * reach;
                 const dy = Math.sin(a) * reach;
 
-                ctx.globalAlpha = i === 1 ? 1 - hover * 0.92 : 1;
                 ctx.beginPath();
                 ctx.moveTo(cx - dx, cy - dy);
                 ctx.lineTo(cx + dx, cy + dy);
                 ctx.stroke();
             });
-            ctx.globalAlpha = 1;
 
             if (!still) requestAnimationFrame(frame);
         }
