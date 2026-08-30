@@ -13,6 +13,7 @@
     const nav = document.createElement('nav');
     nav.className = 'vs-menu';
     nav.setAttribute('aria-hidden', 'true');
+    nav.tabIndex = -1;
     nav.innerHTML = '<h2>Visuospatials &mdash; index</h2><ol>' + ROOMS.map(function (r) {
         const current = r[3] === here ? ' aria-current="page"' : '';
         return '<li><a href="' + r[3] + '"' + current + '><span class="n">' + r[0] +
@@ -29,7 +30,8 @@
         document.body.classList.add('menu-open');
         flag(true);
         nav.setAttribute('aria-hidden', 'false');
-        nav.querySelector('a').focus();
+        // Focus the panel, not its first link: focusing a link reads as "selected".
+        nav.focus();
     }
 
     function close() {

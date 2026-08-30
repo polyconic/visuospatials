@@ -160,6 +160,7 @@ body.menu-open .menumark .c { transform: translateY(-5px) rotate(-45deg); }
   transition: opacity 0.45s ease;
 }
 .vs-menu.on { opacity: 1; pointer-events: auto; }
+.vs-menu:focus, .vs-menu:focus-visible { outline: none; }
 .vs-menu h2 {
   font-family: var(--mono);
   font-size: 11px;
