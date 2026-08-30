@@ -5,7 +5,7 @@
         ['03', 'Type', 'Kinetic specimen', '/lab/type.html'],
         ['04', 'Poster', 'Generative grid', '/lab/poster.html'],
         ['05', 'The Lab', 'All rooms', '/lab/'],
-        ['06', 'Studio', 'The idea', '/studio.html']
+        ['06', 'Studio/About', 'The idea', '/studio.html']
     ];
 
     const here = location.pathname.replace(/index\.html$/, '');
