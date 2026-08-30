@@ -54,19 +54,26 @@
         }
         .flicker-text span { display: inline-block; }
 
-        /* Grows under the wordmark while the pointer is held down. */
-        .charge {
-            position: absolute;
-            top: calc(50% + 4.6vw);
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 2px;
-            background: var(--sig);
-            z-index: 11;
+        body { user-select: none; -webkit-touch-callout: none; }
+
+        /* Follows the pointer and closes on itself while held. */
+        .hold {
+            position: fixed;
+            z-index: 40;
+            width: 102px;
+            height: 102px;
+            margin: -51px 0 0 -51px;
             pointer-events: none;
+            opacity: 0;
+            transform: scale(0.72);
+            transition: opacity 0.18s ease, transform 0.18s ease;
         }
-        .charge.on { width: 34vw; transition: width 1.1s linear; }
+        .hold.on { opacity: 1; transform: scale(1); }
+        .hold circle { fill: none; stroke-width: 3; }
+        .hold .track { stroke: rgba(255, 255, 255, 0.34); }
+        .hold .sweep { stroke: var(--sig); stroke-linecap: round;
+                       transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .hold .core { fill: var(--sig); stroke: none; }
 
         .whisper {
             position: absolute;
@@ -143,9 +150,14 @@
 <body>
     <img src="visuo.webp" alt="Visuospatials">
     <span class="flicker-text">VISUOSPATIALS</span>
-    <div class="charge" id="charge"></div>
 
-    <p class="whisper mono" id="whisper">hold the name down</p>
+    <svg class="hold" id="hold" viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="track" cx="50" cy="50" r="46"></circle>
+        <circle class="sweep" cx="50" cy="50" r="46"></circle>
+        <circle class="core" cx="50" cy="50" r="3"></circle>
+    </svg>
+
+    <p class="whisper mono" id="whisper">hold anywhere</p>
 
     <a class="pin" href="lab/" aria-label="Index" title="Index">&#9679;</a>
 
@@ -200,9 +212,14 @@
         setInterval(explode, 10000);
 
         const index = document.getElementById('index');
-        const charge = document.getElementById('charge');
+        const hold = document.getElementById('hold');
+        const sweep = hold.querySelector('.sweep');
         const whisper = document.getElementById('whisper');
+        const CIRC = 2 * Math.PI * 46;
         let holdTimer = null;
+
+        sweep.style.strokeDasharray = CIRC;
+        sweep.style.strokeDashoffset = CIRC;
 
         function openIndex() {
             index.classList.add('on');
@@ -213,20 +230,32 @@
             index.classList.remove('on');
             index.setAttribute('aria-hidden', 'true');
         }
-        function startHold() {
-            charge.classList.add('on');
-            holdTimer = setTimeout(() => { charge.classList.remove('on'); openIndex(); }, 1100);
+        function startHold(e) {
+            if (index.classList.contains('on')) return;
+            if (e.target instanceof Element && e.target.closest('a')) return;
+            hold.style.left = e.clientX + 'px';
+            hold.style.top = e.clientY + 'px';
+            hold.classList.add('on');
+            sweep.style.transition = 'none';
+            sweep.style.strokeDashoffset = CIRC;
+            void sweep.getBoundingClientRect();
+            sweep.style.transition = 'stroke-dashoffset 1.1s linear';
+            sweep.style.strokeDashoffset = '0';
+            holdTimer = setTimeout(() => { cancelHold(); openIndex(); }, 1100);
         }
         function cancelHold() {
             clearTimeout(holdTimer);
-            charge.classList.remove('on');
+            hold.classList.remove('on');
+            sweep.style.transition = 'stroke-dashoffset 0.25s ease-out';
+            sweep.style.strokeDashoffset = CIRC;
         }
 
-        container.addEventListener('pointerdown', startHold);
-        container.addEventListener('pointerup', cancelHold);
-        container.addEventListener('pointerleave', cancelHold);
-        container.addEventListener('pointercancel', cancelHold);
-        container.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('pointerdown', startHold);
+        document.addEventListener('pointerup', cancelHold);
+        document.addEventListener('pointercancel', cancelHold);
+        document.addEventListener('pointerleave', cancelHold);
+        // Long-press on the photo would otherwise raise the save-image callout.
+        document.addEventListener('contextmenu', e => e.preventDefault());
 
         // Nobody should be trapped by a gesture they cannot perform.
         setTimeout(() => whisper.classList.add('on'), 24000);
@@ -253,7 +282,7 @@
         });
 
         console.log('%cVISUOSPATIALS', 'font: 700 42px/1 Helvetica Neue, Arial; color:#ff2d00');
-        console.log('%cthere are six rooms and one that is not counted.\nhold the name. or type: lab / void / spatial', 'font: 12px/1.6 monospace; color:#787874');
+        console.log('%cthere are six rooms and one that is not counted.\nhold anywhere. or type: lab / void / spatial', 'font: 12px/1.6 monospace; color:#787874');
     </script>
 </body>
 </html>

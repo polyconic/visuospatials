@@ -33,14 +33,19 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 move a door, update that page** — it is the only place they are all written down,
 and a stale map is worse than none.
 
-The short version: hold the wordmark (1.1s), the 7%-opacity dot bottom-right,
+The short version: press and hold anywhere on the front page (a ring closes
+around the pointer over 1.1s), the 7%-opacity dot bottom-right,
 typing `lab` / `void` / `spatial`, the Konami code, the dead hairline under the
 lab's room list, backtick in halftone, space/s/h in moiré, setting type's text to
 VOID, poster seeds, the 404, and the console log on the front page.
 
 Secrets are shortcuts, never the only route. Every room is reachable from the
-`.exit` bar and from `lab/`. The front page reveals a "hold the name down"
-whisper after 24 seconds so nobody is stuck behind a gesture they can't guess.
+`.exit` bar and from `lab/`. The front page reveals a "hold anywhere" whisper
+after 24 seconds so nobody is stuck behind a gesture they can't guess.
+
+The hold gesture is bound to `document`, so it fires over the photo too. That is
+why the front page suppresses `contextmenu` — without it a long press on the
+image raises the save-image callout and eats the gesture on touch.
 
 ## Conventions
 
