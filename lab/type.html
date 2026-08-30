@@ -18,7 +18,7 @@
         }
         body.light { --bg: #f2f2ef; --fg: #0a0a0a; --dim: #6a6a66; --rule: #dcdcd6; background: #f2f2ef; }
 
-        .stage { position: relative; display: grid; place-items: center; overflow: hidden; padding: 4vh 3vw; }
+        .stage { position: relative; display: grid; place-items: center; overflow: hidden; padding: 58px 3vw 4vh; }
         #word { text-align: center; line-height: 0.9; text-transform: uppercase; font-weight: 700;
                 user-select: none; will-change: transform; }
         #word span { display: inline-block; will-change: transform; }
@@ -59,6 +59,7 @@
     </style>
 </head>
 <body>
+<a class="vmark" href="/" aria-label="Visuospatials index">V</a>
 <div class="stage">
     <div id="word">VISUOSPATIALS</div>
     <a class="door" id="door" href="../void.html">you spelled the way out</a>
@@ -198,5 +199,6 @@ setText('VISUOSPATIALS');
 style();
 tick();
 </script>
+<script src="/menu.js"></script>
 </body>
 </html>

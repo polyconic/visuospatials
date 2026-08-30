@@ -14,7 +14,7 @@
         @media (max-width: 860px) { body { grid-template-columns: 1fr; grid-template-rows: auto auto; overflow: auto; }
                                     main { min-height: 72vh; } }
 
-        main { display: grid; place-items: center; padding: 26px 26px 58px; overflow: hidden; }
+        main { display: grid; place-items: center; padding: 52px 26px 58px; overflow: hidden; }
         canvas { max-width: 100%; max-height: 100%; display: block; cursor: pointer;
                  box-shadow: 0 30px 90px rgba(0,0,0,0.7); }
 
@@ -50,6 +50,7 @@
     </style>
 </head>
 <body>
+<a class="vmark" href="/" aria-label="Visuospatials index">V</a>
 <main><canvas id="p"></canvas></main>
 
 <aside>
@@ -348,5 +349,6 @@ addEventListener('load', draw);
 
 reroll();
 </script>
+<script src="/menu.js"></script>
 </body>
 </html>

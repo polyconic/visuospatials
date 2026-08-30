@@ -2,7 +2,8 @@
 
 A design and artwork studio site. Static HTML, no build step, no dependencies,
 no analytics, no fonts fetched from anyone. Every page is a plain `.html` file
-with inline `<style>` and `<script>`; the only shared file is `base.css`.
+with inline `<style>` and `<script>`; the only shared files are `base.css` and
+`menu.js`.
 
 ## Deploy
 
@@ -26,6 +27,7 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `studio.html` | The collaboration idea and the contact. |
 | `void.html` | Unlisted. Lists every secret on the site. `noindex`. |
 | `404.html` | Dot-matrix 404 that repels the pointer. GitHub Pages serves this. |
+| `menu.js` | Builds the index overlay and wires the `V` mark. Loaded by every page. |
 
 ## The secrets
 
@@ -49,9 +51,23 @@ image raises the save-image callout and eats the gesture on touch.
 
 ## Conventions
 
-- `base.css` holds tokens, the reset, the grain overlay and the `.exit` bar.
-  Page-specific CSS stays inline in that page. Don't grow `base.css` into a
-  framework.
+- `base.css` holds tokens, the reset, the grain overlay, the `.exit` bar, the
+  `V` mark and the index overlay. Page-specific CSS stays inline in that page.
+  Don't grow `base.css` into a framework.
+
+- **Every page carries the `V`.** One `<a class="vmark" href="/">V</a>` right
+  after `<body>`, and `<script src="/menu.js"></script>` right before `</body>`.
+  The href is the no-JS fallback; `menu.js` intercepts the click and opens the
+  index in place instead of navigating. The room list lives in `ROOMS` in
+  `menu.js` and nowhere else — add a room there and it appears on all nine pages.
+  Paths in `ROOMS` and in the two shared tags are **root-absolute**, so they work
+  the same from `/` and from `/lab/`; they do not work over `file://`.
+
+- The `V` uses `mix-blend-mode: difference` so it stays readable over the front
+  page's blown-out photo. It flips to normal blend and the signal red on hover.
+  Anything placed in the top-left corner of a page has to clear it — that is why
+  halftone's sidebar, moiré's panel, poster's stage and type's stage carry extra
+  top padding, and why the editorial pages bump `padding-top` under 620px.
 - Palette is `--bg` near-black, `--fg` near-white, one signal red `--sig`.
   Monochrome plus the one red; no second accent.
 - Type is system Helvetica/Arial for display, system mono for labels. No webfonts.

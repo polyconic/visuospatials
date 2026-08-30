@@ -13,7 +13,7 @@
         body { background: #000; cursor: crosshair; }
         canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
 
-        .panel { position: fixed; top: 20px; left: 20px; z-index: 20; width: 218px;
+        .panel { position: fixed; top: 54px; left: 20px; z-index: 20; width: 218px;
                  background: rgba(0,0,0,0.62); backdrop-filter: blur(7px);
                  border: 1px solid var(--rule); padding: 18px 16px; }
         .panel h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; text-transform: uppercase;
@@ -40,6 +40,7 @@
     </style>
 </head>
 <body>
+<a class="vmark" href="/" aria-label="Visuospatials index">V</a>
 <canvas id="c"></canvas>
 
 <div class="panel" id="panel">
@@ -171,5 +172,6 @@ document.addEventListener('keydown', e => {
 size();
 loop();
 </script>
+<script src="/menu.js"></script>
 </body>
 </html>
