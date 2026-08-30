@@ -27,6 +27,7 @@
         lastFocus = document.activeElement;
         nav.classList.add('on');
         document.body.classList.add('menu-open');
+        flag(true);
         nav.setAttribute('aria-hidden', 'false');
         nav.querySelector('a').focus();
     }
@@ -35,6 +36,7 @@
         if (!nav.classList.contains('on')) return;
         nav.classList.remove('on');
         document.body.classList.remove('menu-open');
+        flag(false);
         nav.setAttribute('aria-hidden', 'true');
         if (lastFocus && lastFocus.focus) lastFocus.focus();
     }
@@ -46,8 +48,10 @@
         isOpen: function () { return nav.classList.contains('on'); }
     };
 
-    const mark = document.querySelector('.vmark');
+    const mark = document.querySelector('.menumark');
     if (mark) mark.addEventListener('click', function (e) { e.preventDefault(); window.VSMenu.toggle(); });
+
+    function flag(on) { if (mark) mark.setAttribute('aria-expanded', String(on)); }
 
     nav.addEventListener('click', function (e) { if (e.target === nav) close(); });
 

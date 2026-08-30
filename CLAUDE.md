@@ -57,21 +57,28 @@ image raises the save-image callout and eats the gesture on touch.
   Don't grow `base.css` into a framework.
 
 - **Every page except the front carries two corner marks.** An
-  `<a class="homemark" href="/">` holding an inline arrow SVG, then
-  `<a class="vmark" href="/">V</a>` beside it, both right after `<body>`, and
+  `<a class="homemark" href="/">` holding an inline arrow SVG, then an
+  `<a class="menumark" href="/">` holding a three-line sandwich SVG, both right
+  after `<body>`, and
   `<script src="/menu.js"></script>` right before `</body>`. The landing page
-  loads `menu.js` but shows no mark — it is meant to look like a dead end, and
-  the hold gesture is its way in. `menu.js` no-ops when there is no `.vmark`.
+  loads `menu.js` but shows no marks — it is meant to look like a dead end, and
+  the hold gesture is its way in. `menu.js` no-ops when there is no `.menumark`.
   The href is the no-JS fallback; `menu.js` intercepts the click and opens the
   index in place instead of navigating. The room list lives in `ROOMS` in
   `menu.js` and nowhere else — add a room there and it appears everywhere at once.
   Paths in `ROOMS` and in the two shared tags are **root-absolute**, so they work
   the same from `/` and from `/lab/`; they do not work over `file://`.
 
-- Both marks use `mix-blend-mode: difference` so they stay readable over any
-  ground, and flip to normal blend and the signal red on hover. The arrow is an
-  SVG rather than the `←` character so its weight matches the V instead of
-  depending on whatever font the glyph falls back to.
+- Both marks are inline SVG, not characters, so their stroke weights match each
+  other rather than depending on font fallback. Both use `mix-blend-mode:
+  difference` so they stay readable over any ground, and flip to normal blend
+  and the signal red on hover. The sandwich's three lines cross into an X under
+  `body.menu-open`, so it reads as the toggle it is.
+
+- `base.css`, `menu.js` and `stow.js` are unversioned, so a returning visitor can
+  briefly run a stale copy after a deploy — GitHub Pages caches assets for ten
+  minutes. The marks degrade to plain links to `/` in that window rather than
+  breaking. Worth remembering when a change "doesn't work" right after a push.
   Anything placed in the top-left corner of a page has to clear them — that is why
   halftone's sidebar, moiré's panel, poster's stage and type's stage carry extra
   top padding, and why the editorial pages bump `padding-top` under 620px.

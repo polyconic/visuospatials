@@ -110,29 +110,41 @@ a { color: inherit; }
   transform: scale(1.14);
 }
 
-/* The V: opens the index in place. */
-.vmark {
+/* The sandwich: opens the index in place, and crosses into an X while it is up. */
+.menumark {
   position: fixed;
-  top: 12px;
+  top: 13px;
   left: 53px;
   z-index: 210;
-  padding: 3px 5px;
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 26px;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  text-decoration: none;
-  /* Difference keeps it legible over the photo's blown-out highlights. */
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
   color: #fff;
   mix-blend-mode: difference;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.vmark:hover, .vmark:focus-visible {
+.menumark svg {
+  display: block;
+  width: 21px;
+  height: 21px;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+}
+.menumark svg line {
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+.menumark:hover, .menumark:focus-visible {
   mix-blend-mode: normal;
   color: var(--sig);
   transform: scale(1.14);
 }
+body.menu-open .menumark .a { transform: translateY(5px) rotate(45deg); }
+body.menu-open .menumark .b { opacity: 0; }
+body.menu-open .menumark .c { transform: translateY(-5px) rotate(-45deg); }
 
 .vs-menu {
   position: fixed;
@@ -228,8 +240,8 @@ a { color: inherit; }
 }
 .stow:hover, .stow:focus-visible { color: var(--fg); border-color: var(--fg); }
 
-.vmark, .homemark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-body.stowed .vmark,
+.menumark, .homemark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+body.stowed .menumark,
 body.stowed .homemark,
 body.stowed .exit { opacity: 0; pointer-events: none; }
 body.stowed .stow { opacity: 0.22; }
