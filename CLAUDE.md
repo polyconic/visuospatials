@@ -29,7 +29,7 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `404.html` | Dot-matrix 404 that repels the pointer. GitHub Pages serves this. |
 | `menu.js` | Builds the index overlay and wires the sandwich mark. Loaded by every page. |
 | `stow.js` | Drives the Hide/Edit toggle. Loaded by the four tool rooms only. |
-| `hole.js` | Draws the black hole. `data-scatter` drops it in a random safe band. |
+| `hole.js` | Draws the black hole. `data-corner` pins it bottom left. |
 
 ## The secrets
 
