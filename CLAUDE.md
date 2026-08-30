@@ -56,16 +56,19 @@ image raises the save-image callout and eats the gesture on touch.
   `V` mark and the index overlay. Page-specific CSS stays inline in that page.
   Don't grow `base.css` into a framework.
 
-- **Every page carries the `V`.** One `<a class="vmark" href="/">V</a>` right
-  after `<body>`, and `<script src="/menu.js"></script>` right before `</body>`.
+- **Every page except the front carries the `V`.** One
+  `<a class="vmark" href="/">V</a>` right after `<body>`, and
+  `<script src="/menu.js"></script>` right before `</body>`. The landing page
+  loads `menu.js` but shows no mark — it is meant to look like a dead end, and
+  the hold gesture is its way in. `menu.js` no-ops when there is no `.vmark`.
   The href is the no-JS fallback; `menu.js` intercepts the click and opens the
   index in place instead of navigating. The room list lives in `ROOMS` in
-  `menu.js` and nowhere else — add a room there and it appears on all nine pages.
+  `menu.js` and nowhere else — add a room there and it appears everywhere at once.
   Paths in `ROOMS` and in the two shared tags are **root-absolute**, so they work
   the same from `/` and from `/lab/`; they do not work over `file://`.
 
-- The `V` uses `mix-blend-mode: difference` so it stays readable over the front
-  page's blown-out photo. It flips to normal blend and the signal red on hover.
+- The `V` uses `mix-blend-mode: difference` so it stays readable over any ground.
+  It flips to normal blend and the signal red on hover.
   Anything placed in the top-left corner of a page has to clear it — that is why
   halftone's sidebar, moiré's panel, poster's stage and type's stage carry extra
   top padding, and why the editorial pages bump `padding-top` under 620px.
