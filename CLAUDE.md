@@ -32,6 +32,26 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `cross.js` | Draws the three drifting lines. `data-corner` pins them bottom left. |
 | `theme.js` | Wires the light/dark toggle. Loaded by every page. |
 
+## The front page
+
+- **No corner marks.** The home and sandwich marks are on every page *except* this
+  one. That is deliberate: the front should read as a dead end. Don't add them.
+- **The wordmark is static.** The explode animation still exists but nothing runs
+  it on a timer — only typing `spatial` fires it. Greg asked for still; do not
+  restore the interval.
+- Its colour is the literal `#5c5c58`, deliberately a step darker than `--dim`
+  and tuned against the current hero. Worth re-checking if the hero changes.
+- The hero has been swapped several times. The routine each time: commit the
+  original at full resolution **first**, then resize in a second commit, then
+  delete the superseded file. Everything stays recoverable from history.
+
+## Poster vocabulary
+
+`WORDS` and `TAILS` at the top of `lab/poster.html` are placeholder copy written
+by Claude, not Greg's. Every poster draws its title, subtitle and tagline from
+those two arrays via the seed. Replacing them with his own vocabulary is an open
+task, not a bug.
+
 ## The secrets
 
 `void.html` lists the doors and is written for a visitor. **If you add or move a
