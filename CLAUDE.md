@@ -70,9 +70,8 @@ image raises the save-image callout and eats the gesture on touch.
 - Keydown handlers guard `e.target instanceof Element` before `matches()` —
   `document` has no `matches` and the handler throws without it.
 
-## Placeholders to replace
+## Contact
 
-- `studio.html` links `mailto:hello@visuospatials.com`. That address is a
-  placeholder and has never been verified to exist. Point it at a real inbox
-  before telling anyone about the page.
-- The studio copy (sections 01–03) is written to be replaced by Greg's own words.
+- `studio.html` links `mailto:gregor.art@pm.me` — Greg's public contact for this
+  site. It is deliberately not the address on his GitHub account; keep the two
+  separate.
