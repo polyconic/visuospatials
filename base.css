@@ -81,6 +81,7 @@ a { color: inherit; }
 .exit a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
 .exit a:hover { color: var(--fg); }
 .exit .here { color: var(--sig); }
+.exit .copy { color: var(--dim); }
 .exit .spacer { flex: 1; }
 @media (max-width: 560px) { .exit .spacer { display: none; } }
 
@@ -326,3 +327,5 @@ body.menu-open .stow { opacity: 0; pointer-events: none; }
 body.stowed .corner { opacity: 0; pointer-events: none; }
 .corner { transition: opacity 0.3s ease; }
 body.menu-open .corner { opacity: 0; pointer-events: none; }
+
+.copy { color: var(--dim); }

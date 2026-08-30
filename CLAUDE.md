@@ -135,6 +135,13 @@ Canvases paint their own ground and cannot inherit a class, so each handles it:
   work, not chrome; halftone's Invert and poster's stocks stay independent of the
   site theme. Type's own Invert button was removed — the site toggle does it now.
 
+## Footer
+
+Every page except the landing page carries `&copy; 2026 Audiospatials`. On pages
+with the `.exit` bar it is the last item in that bar; void and 404 have no bar,
+so it sits in flow at the end of the content. Note the name: **Audiospatials**,
+not Visuospatials — that is what Greg asked for.
+
 ## Images
 
 - **Max 2560px on the long edge, webp quality 85**, same rule as the portfolio:
