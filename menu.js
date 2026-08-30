@@ -26,6 +26,7 @@
         if (nav.classList.contains('on')) return;
         lastFocus = document.activeElement;
         nav.classList.add('on');
+        document.body.classList.add('menu-open');
         nav.setAttribute('aria-hidden', 'false');
         nav.querySelector('a').focus();
     }
@@ -33,6 +34,7 @@
     function close() {
         if (!nav.classList.contains('on')) return;
         nav.classList.remove('on');
+        document.body.classList.remove('menu-open');
         nav.setAttribute('aria-hidden', 'true');
         if (lastFocus && lastFocus.focus) lastFocus.focus();
     }

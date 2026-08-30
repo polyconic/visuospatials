@@ -85,7 +85,9 @@ image raises the save-image callout and eats the gesture on touch.
   room must add its own `body.stowed` rules — hide the panel, collapse the grid
   to one track, and give the work `min-height: 100vh` with minimal padding.
   `base.css` handles the shared part: the `V` and the `.exit` bar fade out and
-  the button itself drops to 22% until hovered. `H` toggles, `Esc` un-stows.
+  the button itself drops to 22% until hovered. It hides entirely under
+  `body.menu-open` (set by `menu.js`) so the index stays clean, and `H` is
+  ignored while the index is up. `H` toggles, `Esc` un-stows.
   `.exit` reserves 96px of right padding so the button never lands on it.
 
 ## Canvas rooms

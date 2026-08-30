@@ -203,3 +203,4 @@ body.stowed .vmark,
 body.stowed .exit { opacity: 0; pointer-events: none; }
 body.stowed .stow { opacity: 0.22; }
 body.stowed .stow:hover, body.stowed .stow:focus-visible { opacity: 1; }
+body.menu-open .stow { opacity: 0; pointer-events: none; }
