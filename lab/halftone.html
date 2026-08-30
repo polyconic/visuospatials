@@ -56,6 +56,8 @@
             background: rgba(0,0,0,0.72); }
 
         .hint { position: absolute; right: 26px; top: 22px; text-align: right; line-height: 1.9; }
+        .hint kbd { font-family: var(--mono); font-size: 11px; color: var(--fg);
+                    border: 1px solid var(--rule); padding: 1px 6px; margin-right: 3px; }
 
         body.stowed { grid-template-columns: 1fr; }
         body.stowed aside, body.stowed .hint { display: none; }
@@ -113,7 +115,7 @@
 
 <main id="stage">
     <canvas id="out"></canvas>
-    <p class="hint mono">proof sheet</p>
+    <p class="hint mono"><kbd>`</kbd> proof sheet</p>
 </main>
 
 <div class="sheet" id="sheet">
