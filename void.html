@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>&mdash; Visuospatials</title>
+    <link rel="icon" type="image/png" href="faviconv.png">
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <link rel="stylesheet" href="base.css">
+    <style>
+        html, body { height: 100%; }
+        body { background: #000; overflow-x: hidden; }
+        canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+
+        .wrap { position: relative; z-index: 2; min-height: 100%;
+                padding: clamp(40px, 12vh, 130px) clamp(20px, 7vw, 110px) 140px;
+                max-width: 940px; margin: 0 auto; }
+
+        h1 { font-size: clamp(52px, 17vw, 250px); line-height: 0.78; letter-spacing: -0.06em;
+             font-weight: 700; text-transform: uppercase; mix-blend-mode: difference; }
+        .stamp { margin: 22px 0 clamp(40px, 8vh, 80px); line-height: 2; }
+        .stamp b { color: var(--sig); font-weight: 400; }
+
+        p.said { font-size: clamp(18px, 2.3vw, 27px); line-height: 1.5; max-width: 26ch;
+                 margin-bottom: clamp(40px, 8vh, 84px); }
+
+        h2 { font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+             color: var(--dim); margin-bottom: 18px; }
+
+        dl { border-top: 1px solid var(--rule); }
+        div.door { display: grid; grid-template-columns: minmax(120px, 0.7fr) 1fr;
+                   gap: 10px clamp(14px, 3vw, 40px); padding: 15px 0;
+                   border-bottom: 1px solid var(--rule); align-items: baseline; }
+        @media (max-width: 620px) { div.door { grid-template-columns: 1fr; gap: 4px; } }
+        dt { font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; font-size: 15px; }
+        dd { color: #b9b9b4; line-height: 1.7; }
+        dd kbd { font-family: var(--mono); font-size: 12px; color: var(--sig);
+                 border: 1px solid var(--rule); padding: 1px 6px; }
+        dd a { color: var(--fg); }
+
+        .sign { margin-top: clamp(44px, 9vh, 90px); line-height: 2; }
+    </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="wrap">
+    <h1>Void</h1>
+    <p class="stamp mono">Room <b>00</b> &middot; not counted &middot; not indexed</p>
+
+    <p class="said">You went looking. So here is the whole set, and no more hiding.</p>
+
+    <h2>Every door in this building</h2>
+    <dl>
+        <div class="door"><dt>The name</dt><dd>Press and hold the wordmark on the front page for about a second. The index opens.</dd></div>
+        <div class="door"><dt>The dot</dt><dd>Bottom right corner of the front page, at seven percent opacity. It goes to the lab.</dd></div>
+        <div class="door"><dt>Typing</dt><dd>Anywhere on the front page, type <kbd>lab</kbd>, <kbd>void</kbd> or <kbd>spatial</kbd>.</dd></div>
+        <div class="door"><dt>Up up down down</dt><dd>The old code, on the front page. Inverts the building. Enter it again to put it back.</dd></div>
+        <div class="door"><dt>The seam</dt><dd>The dead hairline under the room list in <a href="lab/">the lab</a>. Touch it and it lights.</dd></div>
+        <div class="door"><dt>Proof sheet</dt><dd>In <a href="lab/halftone.html">halftone</a>, press <kbd>`</kbd> to render every process at once.</dd></div>
+        <div class="door"><dt>Freeze</dt><dd>In <a href="lab/moire.html">moir&eacute;</a>, <kbd>space</kbd> stops time, <kbd>s</kbd> saves it, <kbd>h</kbd> clears the panel away.</dd></div>
+        <div class="door"><dt>The word</dt><dd>In <a href="lab/type.html">type</a>, set the text to VOID and the way back appears.</dd></div>
+        <div class="door"><dt>Seeds</dt><dd>Every <a href="lab/poster.html">poster</a> has a six character address. Write one down and it comes back exactly.</dd></div>
+        <div class="door"><dt>Wrong turn</dt><dd>Ask this site for a page that does not exist. Something is waiting there.</dd></div>
+        <div class="door"><dt>The console</dt><dd>Open developer tools on the front page. It has been talking the whole time.</dd></div>
+    </dl>
+
+    <p class="sign mono">Visuospatials &middot; <a href="/">back to the front</a> &middot; <a href="lab/">the lab</a> &middot; <a href="studio.html">studio</a></p>
+</div>
+
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+let W, H, dpr, pts = [];
+
+function size() {
+    dpr = Math.min(2, devicePixelRatio || 1);
+    W = innerWidth; H = innerHeight;
+    c.width = W * dpr; c.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+    pts = Array.from({ length: 620 }, () => ({ x: Math.random() * W, y: Math.random() * H }));
+}
+addEventListener('resize', size);
+
+/* Flow field: cheap curl-ish noise from summed sines, no library. */
+function angle(x, y, t) {
+    return Math.sin(x * 0.0021 + t) * 1.7
+         + Math.cos(y * 0.0027 - t * 0.7) * 1.7
+         + Math.sin((x + y) * 0.0009 + t * 0.4) * 1.2;
+}
+
+let t = 0;
+function loop() {
+    t += 0.0016;
+    ctx.fillStyle = 'rgba(0,0,0,0.045)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,255,255,0.26)';
+    for (const p of pts) {
+        const a = angle(p.x, p.y, t);
+        p.x += Math.cos(a) * 0.85;
+        p.y += Math.sin(a) * 0.85;
+        if (p.x < 0 || p.x > W || p.y < 0 || p.y > H) { p.x = Math.random() * W; p.y = Math.random() * H; }
+        ctx.fillRect(p.x, p.y, 1, 1);
+    }
+    requestAnimationFrame(loop);
+}
+
+size();
+loop();
+</script>
+</body>
+</html>

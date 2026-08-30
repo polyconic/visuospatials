@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moir&eacute; &mdash; Visuospatials</title>
+    <link rel="icon" type="image/png" href="../faviconv.png">
+    <meta name="description" content="Interference patterns from two overlaid grids. Move the pointer to steer the second layer.">
+    <meta name="theme-color" content="#000000">
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+        body { background: #000; cursor: crosshair; }
+        canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+
+        .panel { position: fixed; top: 20px; left: 20px; z-index: 20; width: 218px;
+                 background: rgba(0,0,0,0.62); backdrop-filter: blur(7px);
+                 border: 1px solid var(--rule); padding: 18px 16px; }
+        .panel h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; text-transform: uppercase;
+                    margin-bottom: 14px; }
+        .panel.hid > *:not(h1) { display: none; }
+        .panel.hid { width: auto; }
+
+        .kinds { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule);
+                 border: 1px solid var(--rule); margin-bottom: 16px; }
+        .kinds button { appearance: none; border: 0; background: #000; color: var(--dim); cursor: pointer;
+                        font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+                        text-transform: uppercase; padding: 10px 3px; }
+        .kinds button:hover { color: var(--fg); }
+        .kinds button[aria-pressed="true"] { background: var(--sig); color: #000; }
+
+        .ctl { margin-bottom: 13px; }
+        .ctl label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px;
+                     letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 6px; }
+        .ctl label b { color: var(--fg); font-weight: 400; }
+        input[type=range] { width: 100%; accent-color: var(--sig); }
+
+        .keys { border-top: 1px solid var(--rule); padding-top: 12px; line-height: 2; }
+        kbd { font-family: var(--mono); color: var(--fg); font-size: 10px; }
+    </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="panel" id="panel">
+    <h1>Moir&eacute;</h1>
+    <div class="kinds" id="kinds">
+        <button data-kind="lines" aria-pressed="true">Lines</button>
+        <button data-kind="rings" aria-pressed="false">Rings</button>
+        <button data-kind="grid" aria-pressed="false">Grid</button>
+        <button data-kind="rays" aria-pressed="false">Rays</button>
+    </div>
+    <div class="ctl"><label for="density">Pitch <b id="densityv">15</b></label><input id="density" type="range" min="4" max="48" value="15"></div>
+    <div class="ctl"><label for="weight">Weight <b id="weightv">0.26</b></label><input id="weight" type="range" min="6" max="80" value="26"></div>
+    <div class="ctl"><label for="twist">Twist <b id="twistv">1.1&deg;</b></label><input id="twist" type="range" min="0" max="300" value="11"></div>
+    <div class="ctl"><label for="drift">Drift <b id="driftv">0.14</b></label><input id="drift" type="range" min="0" max="200" value="14"></div>
+    <p class="keys mono"><kbd>Space</kbd> freeze &middot; <kbd>S</kbd> save png<br><kbd>H</kbd> hide panel</p>
+</div>
+
+<nav class="exit">
+    <a href="../">Visuospatials</a><a href="./">Lab</a>
+    <span class="here">02 Moir&eacute;</span>
+    <span class="spacer"></span>
+    <a href="halftone.html">&larr; 01</a><a href="type.html">03 &rarr;</a>
+</nav>
+
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+let W, H, dpr;
+let kind = 'lines';
+let P = { density: 15, weight: 0.26, twist: 0.0192, drift: 0.14 };
+let pointer = null;
+let frozen = false;
+let t = 0;
+
+function size() {
+    dpr = Math.min(2, devicePixelRatio || 1);
+    W = innerWidth; H = innerHeight;
+    c.width = W * dpr; c.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+addEventListener('resize', () => { size(); if (frozen) frame(); });
+
+function layer(cx, cy, rot, k) {
+    const d = P.density;
+    const reach = Math.hypot(W, H);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
+    ctx.lineWidth = Math.max(0.4, d * P.weight);
+    ctx.beginPath();
+    if (k === 'rings') {
+        for (let r = d; r < reach; r += d) { ctx.moveTo(r, 0); ctx.arc(0, 0, r, 0, 6.2832); }
+    } else if (k === 'rays') {
+        const n = Math.max(12, Math.round(720 / d));
+        for (let i = 0; i < n; i++) {
+            const a = i / n * 6.2832;
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(a) * reach, Math.sin(a) * reach);
+        }
+    } else {
+        for (let y = -reach; y < reach; y += d) { ctx.moveTo(-reach, y); ctx.lineTo(reach, y); }
+        if (k === 'grid') for (let x = -reach; x < reach; x += d) { ctx.moveTo(x, -reach); ctx.lineTo(x, reach); }
+    }
+    ctx.stroke();
+    ctx.restore();
+}
+
+function frame() {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = '#fff';
+
+    layer(W / 2, H / 2, 0, kind);
+
+    const px = pointer ? pointer.x : W / 2 + Math.cos(t * 0.21) * W * 0.14;
+    const py = pointer ? pointer.y : H / 2 + Math.sin(t * 0.17) * H * 0.14;
+
+    ctx.globalCompositeOperation = 'difference';
+    layer(px, py, P.twist + t * P.drift * 0.04, kind);
+    ctx.globalCompositeOperation = 'source-over';
+}
+
+function loop() {
+    if (!frozen) { t += 0.016; frame(); }
+    requestAnimationFrame(loop);
+}
+
+addEventListener('pointermove', e => { pointer = { x: e.clientX, y: e.clientY }; if (frozen) frame(); });
+addEventListener('pointerleave', () => { pointer = null; });
+
+const bind = (id, key, fmt, xform) => {
+    const el = document.getElementById(id), lab = document.getElementById(id + 'v');
+    const apply = () => {
+        P[key] = xform ? xform(+el.value) : +el.value;
+        lab.textContent = fmt(+el.value);
+        if (frozen) frame();
+    };
+    el.addEventListener('input', apply);
+    apply();
+};
+bind('density', 'density', v => v);
+bind('weight', 'weight', v => (v / 100).toFixed(2), v => v / 100);
+bind('twist', 'twist', v => (v / 10).toFixed(1) + '°', v => v / 10 * Math.PI / 180);
+bind('drift', 'drift', v => (v / 100).toFixed(2), v => v / 100);
+
+document.getElementById('kinds').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    kind = b.dataset.kind;
+    [...e.currentTarget.children].forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    if (frozen) frame();
+});
+
+document.addEventListener('keydown', e => {
+    if (e.target instanceof Element && e.target.matches('input, button')) return;
+    const k = e.key.toLowerCase();
+    if (e.key === ' ') { e.preventDefault(); frozen = !frozen; }
+    if (k === 'h') document.getElementById('panel').classList.toggle('hid');
+    if (k === 's') {
+        frame();
+        const a = document.createElement('a');
+        a.href = c.toDataURL('image/png');
+        a.download = `visuospatials-moire-${Date.now()}.png`;
+        a.click();
+    }
+});
+
+size();
+loop();
+</script>
+</body>
+</html>

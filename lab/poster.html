@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poster &mdash; Visuospatials</title>
+    <link rel="icon" type="image/png" href="../faviconv.png">
+    <meta name="description" content="A seeded generative poster machine. Every composition has an address you can return to.">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+        body { display: grid; grid-template-columns: 1fr 246px; }
+        @media (max-width: 860px) { body { grid-template-columns: 1fr; grid-template-rows: auto auto; overflow: auto; }
+                                    main { min-height: 72vh; } }
+
+        main { display: grid; place-items: center; padding: 26px 26px 58px; overflow: hidden; }
+        canvas { max-width: 100%; max-height: 100%; display: block; cursor: pointer;
+                 box-shadow: 0 30px 90px rgba(0,0,0,0.7); }
+
+        aside { border-left: 1px solid var(--rule); padding: 26px 22px 74px; overflow-y: auto; }
+        @media (max-width: 860px) { aside { border-left: 0; border-top: 1px solid var(--rule); padding-bottom: 120px; } }
+        h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; text-transform: uppercase; line-height: 1; }
+        .sub { margin: 10px 0 24px; line-height: 1.8; }
+
+        .seed { display: block; width: 100%; background: transparent; color: var(--sig);
+                border: 1px solid var(--rule); font-family: var(--mono); font-size: 15px;
+                letter-spacing: 0.22em; text-transform: uppercase; padding: 13px 12px; text-align: center; }
+        .seed:focus { outline: 0; border-color: var(--sig); }
+
+        fieldset { border: 0; margin: 22px 0; }
+        legend { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+                 color: var(--dim); padding-bottom: 10px; }
+        .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule);
+                border: 1px solid var(--rule); }
+        .opts button { appearance: none; border: 0; background: var(--bg); color: var(--dim); cursor: pointer;
+                font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+                padding: 11px 4px; }
+        .opts button:hover { color: var(--fg); }
+        .opts button[aria-pressed="true"] { background: var(--sig); color: #000; }
+
+        .row { display: flex; gap: 9px; }
+        .btn { flex: 1; appearance: none; border: 1px solid var(--rule); background: transparent; color: var(--fg);
+               font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+               padding: 12px 8px; cursor: pointer; }
+        .btn:hover { background: var(--fg); color: #000; border-color: var(--fg); }
+        .btn.sig:hover { background: var(--sig); border-color: var(--sig); }
+        .keys { border-top: 1px solid var(--rule); margin-top: 22px; padding-top: 14px; line-height: 2.1; }
+        kbd { font-family: var(--mono); color: var(--fg); }
+    </style>
+</head>
+<body>
+<main><canvas id="p"></canvas></main>
+
+<aside>
+    <h1>Poster</h1>
+    <p class="sub mono">Every composition has an address. Type one in to go back to it.</p>
+
+    <fieldset>
+        <legend>Seed</legend>
+        <input class="seed" id="seed" value="" spellcheck="false" autocomplete="off" maxlength="10">
+    </fieldset>
+
+    <fieldset>
+        <legend>Format</legend>
+        <div class="opts" id="formats">
+            <button data-r="1.4142" aria-pressed="true">A-series</button>
+            <button data-r="1.5" aria-pressed="false">2:3</button>
+            <button data-r="1.2941" aria-pressed="false">Tabloid</button>
+            <button data-r="1" aria-pressed="false">Square</button>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Stock</legend>
+        <div class="opts" id="stocks">
+            <button data-s="auto" aria-pressed="true">Auto</button>
+            <button data-s="black" aria-pressed="false">Black</button>
+            <button data-s="white" aria-pressed="false">White</button>
+            <button data-s="red" aria-pressed="false">Red</button>
+        </div>
+    </fieldset>
+
+    <div class="row">
+        <button class="btn" id="reroll">Reroll</button>
+        <button class="btn sig" id="save">Save PNG</button>
+    </div>
+
+    <p class="keys mono"><kbd>Space</kbd> reroll<br><kbd>S</kbd> save at 2400px<br><kbd>Click</kbd> the sheet to reroll</p>
+</aside>
+
+<nav class="exit">
+    <a href="../">Visuospatials</a><a href="./">Lab</a>
+    <span class="here">04 Poster</span>
+    <span class="spacer"></span>
+    <a href="type.html">&larr; 03</a><a href="../studio.html">Studio &rarr;</a>
+</nav>
+
+<script>
+const cv = document.getElementById('p');
+const seedInput = document.getElementById('seed');
+let ratio = 1.4142;
+let stock = 'auto';
+let seed = '';
+
+const WORDS = ['VISUOSPATIALS','SPATIAL','FIELD','GRAIN','SIGNAL','INDEX','NOISE','DEPTH','ORDER','MASS','SURFACE','FIGURE','GROUND','VOID','LATENT','PARALLAX'];
+const TAILS = ['A STUDY IN GROUND AND FIGURE','PRINTED MATTER, NO FIXED EDITION','FOR SCREENS THAT WERE PAPER FIRST','NOTES TOWARD A LOOSER GRID','EVERY SURFACE IS A DECISION','WORK MADE WITH OTHER PEOPLE'];
+const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+function newSeed() {
+    let s = '';
+    for (let i = 0; i < 6; i++) s += CHARS[Math.floor(Math.random() * CHARS.length)];
+    return s;
+}
+
+function rngFrom(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return function () {
+        h += 0x6D2B79F5;
+        let x = Math.imul(h ^ (h >>> 15), 1 | h);
+        x ^= x + Math.imul(x ^ (x >>> 7), 61 | x);
+        return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function compose(ctx, W, H, key) {
+    const R = rngFrom(key);
+    const pick = a => a[Math.floor(R() * a.length)];
+    const between = (a, b) => a + R() * (b - a);
+
+    const chosen = stock === 'auto' ? pick(['black', 'white', 'red']) : stock;
+    const paper = { black: '#0a0a0a', white: '#f2f2ef', red: '#ff2d00' }[chosen];
+    const ink = chosen === 'black' ? '#f2f2ef' : '#0a0a0a';
+    const spot = chosen === 'red' ? '#f2f2ef' : '#ff2d00';
+
+    ctx.fillStyle = paper;
+    ctx.fillRect(0, 0, W, H);
+
+    const m = W * 0.075;
+    const cols = 6;
+    const cw = (W - m * 2) / cols;
+    const unit = H / 34;
+
+    const fit = (str, target, track) => {
+        ctx.font = `700 100px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+        let base = 0;
+        for (const ch of str) base += ctx.measureText(ch).width + track * 100;
+        return target / (base - track * 100) * 100;
+    };
+
+    const tracked = (str, x, y, target, track, color, align) => {
+        const size = fit(str, target, track);
+        ctx.font = `700 ${size}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+        ctx.fillStyle = color;
+        ctx.textBaseline = 'alphabetic';
+        let cx = align === 'right' ? x - target : x;
+        for (const ch of str) {
+            ctx.fillText(ch, cx, y);
+            cx += ctx.measureText(ch).width + track * size;
+        }
+        return size;
+    };
+
+    const meta = (str, x, y, size, color, track) => {
+        ctx.font = `${size}px ui-monospace, Menlo, Consolas, monospace`;
+        ctx.fillStyle = color;
+        ctx.textBaseline = 'alphabetic';
+        let cx = x;
+        for (const ch of str) { ctx.fillText(ch, cx, y); cx += ctx.measureText(ch).width + track; }
+    };
+
+    /* Field: one large textural block, snapped to the column grid. */
+    const fieldCol = Math.floor(between(0, 3));
+    const fieldSpan = Math.round(between(2, 6 - fieldCol));
+    const fx = m + fieldCol * cw, fw = fieldSpan * cw;
+    const fy = unit * Math.round(between(2, 14)), fh = unit * Math.round(between(5, 13));
+    const field = pick(['dots', 'hatch', 'rings', 'solid', 'bars']);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(fx, fy, fw, fh);
+    ctx.clip();
+    if (field === 'solid') {
+        ctx.fillStyle = R() > 0.55 ? spot : ink;
+        ctx.fillRect(fx, fy, fw, fh);
+    } else if (field === 'dots') {
+        const step = W * between(0.014, 0.03);
+        ctx.fillStyle = ink;
+        for (let y = fy; y < fy + fh; y += step)
+            for (let x = fx; x < fx + fw; x += step) {
+                const g = (x - fx) / fw;
+                ctx.beginPath();
+                ctx.arc(x, y, step * 0.46 * g, 0, 6.2832);
+                ctx.fill();
+            }
+    } else if (field === 'hatch') {
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = W * 0.0022;
+        const step = W * between(0.008, 0.018);
+        const a = pick([0.7854, -0.7854]);
+        for (let i = -fh * 2; i < fw + fh * 2; i += step) {
+            ctx.beginPath();
+            ctx.moveTo(fx + i, fy);
+            ctx.lineTo(fx + i + Math.tan(a) * fh, fy + fh);
+            ctx.stroke();
+        }
+    } else if (field === 'rings') {
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = W * 0.0026;
+        const step = W * between(0.012, 0.026);
+        for (let r = step; r < Math.hypot(fw, fh); r += step) {
+            ctx.beginPath();
+            ctx.arc(fx + fw / 2, fy + fh / 2, r, 0, 6.2832);
+            ctx.stroke();
+        }
+    } else {
+        ctx.fillStyle = ink;
+        const n = Math.round(between(4, 11));
+        for (let i = 0; i < n; i++) {
+            const bh = fh / n;
+            if (R() > 0.4) ctx.fillRect(fx, fy + i * bh, fw * between(0.3, 1), bh * 0.62);
+        }
+    }
+    ctx.restore();
+
+    /* Rules */
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = Math.max(1, W * 0.0016);
+    const ruleCount = Math.round(between(1, 4));
+    for (let i = 0; i < ruleCount; i++) {
+        const ry = unit * Math.round(between(3, 31));
+        ctx.beginPath();
+        ctx.moveTo(m, ry);
+        ctx.lineTo(W - m, ry);
+        ctx.stroke();
+    }
+
+    /* Title, set to the measure of the grid. */
+    const title = pick(WORDS);
+    const span = Math.min(cols, Math.max(3, Math.round(between(4, 7))));
+    const target = span * cw;
+    const track = between(-0.045, 0.02);
+    const size = fit(title, target, track);
+
+    const sub = R() > 0.45 ? pick(WORDS.filter(w => w !== title)) : null;
+    const subTarget = target * between(0.5, 0.95);
+    const drop = size * between(0.82, 1.02);
+    const subSize = sub ? fit(sub, subTarget, track) : 0;
+
+    // Metadata owns the last four units; the setting has to land above it.
+    const floor = unit * 29.6 - (sub ? drop : 0);
+    const ty = Math.min(unit * Math.round(between(19, 27)), floor);
+
+    tracked(title, m, ty, target, track, R() > 0.75 ? spot : ink);
+    if (sub) tracked(sub, m, ty + drop, subTarget, track, ink);
+
+    /* Numeral, hung off the right margin. */
+    const num = String(Math.floor(between(1, 100))).padStart(2, '0');
+    ctx.save();
+    ctx.font = `700 ${unit * between(3.4, 6)}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+    ctx.fillStyle = spot;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'top';
+    ctx.fillText(num, W - m, unit * between(1.6, 3));
+    ctx.restore();
+
+    /* Metadata */
+    const s = unit * 0.44;
+    meta('VISUOSPATIALS', m, H - unit * 2.6, s, ink, s * 0.34);
+    meta(pick(TAILS), m, H - unit * 1.7, s, ink, s * 0.2);
+    meta(`SEED ${key} / ${chosen.toUpperCase()} STOCK`, m, H - unit * 0.9, s, chosen === 'red' ? ink : spot, s * 0.2);
+
+    ctx.save();
+    ctx.translate(W - m * 0.55, H - unit * 2.6);
+    ctx.rotate(-Math.PI / 2);
+    meta('VISUOSPATIALS.COM', 0, 0, s, ink, s * 0.5);
+    ctx.restore();
+}
+
+function draw() {
+    const box = cv.parentElement;
+    const cs = getComputedStyle(box);
+    const availW = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const availH = box.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    if (availW < 40 || availH < 40) return;
+    let h = availH, w = h / ratio;
+    if (w > availW) { w = availW; h = w * ratio; }
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    cv.style.width = w + 'px';
+    cv.style.height = h + 'px';
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    compose(cv.getContext('2d'), cv.width, cv.height, seed);
+}
+
+function reroll() {
+    seed = newSeed();
+    seedInput.value = seed;
+    draw();
+}
+
+seedInput.addEventListener('input', e => {
+    seed = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    e.target.value = seed;
+    draw();
+});
+
+document.getElementById('formats').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    ratio = +b.dataset.r;
+    [...e.currentTarget.children].forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    draw();
+});
+document.getElementById('stocks').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    stock = b.dataset.s;
+    [...e.currentTarget.children].forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    draw();
+});
+
+document.getElementById('reroll').addEventListener('click', reroll);
+cv.addEventListener('click', reroll);
+
+function save() {
+    const big = document.createElement('canvas');
+    big.width = Math.round(2400 / ratio);
+    big.height = 2400;
+    compose(big.getContext('2d'), big.width, big.height, seed);
+    const a = document.createElement('a');
+    a.href = big.toDataURL('image/png');
+    a.download = `visuospatials-poster-${seed}.png`;
+    a.click();
+}
+document.getElementById('save').addEventListener('click', save);
+
+document.addEventListener('keydown', e => {
+    if (e.target instanceof Element && e.target.matches('input, button')) return;
+    if (e.key === ' ') { e.preventDefault(); reroll(); }
+    if (e.key.toLowerCase() === 's') save();
+});
+
+let rs;
+new ResizeObserver(() => { clearTimeout(rs); rs = setTimeout(draw, 120); }).observe(cv.parentElement);
+addEventListener('load', draw);
+
+reroll();
+</script>
+</body>
+</html>
