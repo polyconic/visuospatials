@@ -26,19 +26,19 @@
         .kinds { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule);
                  border: 1px solid var(--rule); margin-bottom: 16px; }
         .kinds button { appearance: none; border: 0; background: var(--bg); color: var(--dim); cursor: pointer;
-                        font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+                        font-family: var(--sans); font-size: 10px; letter-spacing: 0.12em;
                         text-transform: uppercase; padding: 10px 3px; }
         .kinds button:hover { color: var(--fg); }
         .kinds button[aria-pressed="true"] { background: var(--sig); color: #000; }
 
         .ctl { margin-bottom: 13px; }
-        .ctl label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px;
+        .ctl label { display: flex; justify-content: space-between; font-family: var(--sans); font-size: 10px;
                      letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 6px; }
         .ctl label b { color: var(--fg); font-weight: 400; }
         input[type=range] { width: 100%; accent-color: var(--sig); }
 
         .keys { border-top: 1px solid var(--rule); padding-top: 12px; line-height: 2; }
-        kbd { font-family: var(--mono); color: var(--fg); font-size: 10px; }
+        kbd { font-family: var(--sans); color: var(--fg); font-size: 10px; }
     </style>
     <!-- Must stay in <head>: moving it later reintroduces the theme flash. -->
     <script>
@@ -76,7 +76,7 @@
     <div class="ctl"><label for="weight">Weight <b id="weightv">0.26</b></label><input id="weight" type="range" min="6" max="80" value="26"></div>
     <div class="ctl"><label for="twist">Twist <b id="twistv">1.1&deg;</b></label><input id="twist" type="range" min="0" max="300" value="11"></div>
     <div class="ctl"><label for="drift">Drift <b id="driftv">0.14</b></label><input id="drift" type="range" min="0" max="200" value="14"></div>
-    <p class="keys mono"><kbd>Space</kbd> freeze &middot; <kbd>S</kbd> save png<br><kbd>H</kbd> hide panel</p>
+    <p class="keys label"><kbd>Space</kbd> freeze &middot; <kbd>S</kbd> save png<br><kbd>H</kbd> hide panel</p>
 </div>
 
 <nav class="exit">

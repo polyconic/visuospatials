@@ -17,7 +17,7 @@
         h1 { font-size: clamp(40px, 12vw, 168px); line-height: 0.82; letter-spacing: -0.045em;
              font-weight: 700; text-transform: uppercase; }
         h1 em { font-style: normal; color: var(--sig); }
-        header p { margin-left: auto; max-width: 30ch; padding-top: 8px; line-height: 1.7; }
+        header p { margin-left: auto; max-width: 36ch; padding-top: 8px; line-height: 1.7; }
 
         .rooms { list-style: none; }
         .rooms li { border-top: 1px solid var(--rule); }
@@ -30,13 +30,13 @@
         .room::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0;
                         transition: opacity 0.45s ease; }
         .room:hover::before, .room:focus-visible::before { opacity: 0.4; }
-        .room .n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--dim);
+        .room .n { font-family: var(--sans); font-size: 11px; letter-spacing: 0.16em; color: var(--dim);
                    transition: color 0.25s; }
         .room .t { font-size: clamp(26px, 6vw, 76px); font-weight: 700; line-height: 0.95;
                    letter-spacing: -0.03em; text-transform: uppercase;
                    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
-        .room .d { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
-                   text-transform: uppercase; color: var(--dim); text-align: right; max-width: 18ch;
+        .room .d { font-family: var(--sans); font-size: 10px; letter-spacing: 0.14em;
+                   text-transform: uppercase; color: var(--dim); text-align: right; max-width: 24ch;
                    line-height: 1.8; }
         .room:hover .t, .room:focus-visible .t { transform: translateX(clamp(8px, 2vw, 30px)); }
         .room:hover .n, .room:focus-visible .n { color: var(--sig); }
@@ -57,7 +57,7 @@
 
         .colophon { margin-top: clamp(30px, 7vh, 70px); display: flex; gap: 30px 60px; flex-wrap: wrap;
                     line-height: 1.9; }
-        .colophon p { max-width: 44ch; }
+        .colophon p { max-width: 54ch; }
 
     </style>
     <!-- Must stay in <head>: moving it later reintroduces the theme flash. -->
@@ -84,7 +84,7 @@
 <a class="menumark" href="/" aria-label="Index" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><line class="a" x1="3" y1="7" x2="21" y2="7"/><line class="b" x1="3" y1="12" x2="21" y2="12"/><line class="c" x1="3" y1="17" x2="21" y2="17"/></svg></a>
     <header>
         <h1>The<br>Lab<em>.</em></h1>
-        <p class="mono">Five rooms. Image and type.</p>
+        <p class="label">Five rooms. Image and type.</p>
     </header>
 
     <ol class="rooms">
@@ -95,7 +95,7 @@
         <li><a class="room" href="../studio.html"><span class="n">05</span><span class="t">Studio</span><span class="d">The idea<br>And how to join it</span></a></li>
     </ol>
 
-    <div class="colophon mono">
+    <div class="colophon label">
         <p>Every room exports. Canvas rooms give you a PNG at full resolution.</p>
     </div>
 

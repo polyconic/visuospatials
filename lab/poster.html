@@ -28,31 +28,31 @@
         .sub { margin: 10px 0 24px; line-height: 1.8; }
 
         .seed { display: block; width: 100%; background: transparent; color: var(--sig);
-                border: 1px solid var(--rule); font-family: var(--mono); font-size: 15px;
+                border: 1px solid var(--rule); font-family: var(--sans); font-size: 15px;
                 letter-spacing: 0.22em; text-transform: uppercase; padding: 13px 12px; text-align: center; }
         .seed:focus { outline: 0; border-color: var(--sig); }
 
         fieldset { border: 0; margin: 22px 0; }
-        legend { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+        legend { font-family: var(--sans); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
                  color: var(--dim); padding-bottom: 10px; }
         .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule);
                 border: 1px solid var(--rule); }
         .opts.three { grid-template-columns: repeat(3, 1fr); }
         .dims { margin-top: 10px; line-height: 1.9; }
         .opts button { appearance: none; border: 0; background: var(--bg); color: var(--dim); cursor: pointer;
-                font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+                font-family: var(--sans); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
                 padding: 11px 4px; }
         .opts button:hover { color: var(--fg); }
         .opts button[aria-pressed="true"] { background: var(--sig); color: #000; }
 
         .row { display: flex; gap: 9px; }
         .btn { flex: 1; appearance: none; border: 1px solid var(--rule); background: transparent; color: var(--fg);
-               font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+               font-family: var(--sans); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
                padding: 12px 8px; cursor: pointer; }
         .btn:hover { background: var(--fg); color: #000; border-color: var(--fg); }
         .btn.sig:hover { background: var(--sig); border-color: var(--sig); }
         .keys { border-top: 1px solid var(--rule); margin-top: 22px; padding-top: 14px; line-height: 2.1; }
-        kbd { font-family: var(--mono); color: var(--fg); }
+        kbd { font-family: var(--sans); color: var(--fg); }
     </style>
     <!-- Must stay in <head>: moving it later reintroduces the theme flash. -->
     <script>
@@ -80,7 +80,7 @@
 
 <aside>
     <h1>Poster</h1>
-    <p class="sub mono">Every composition has an address. Type one in to go back to it.</p>
+    <p class="sub label">Every composition has an address. Type one in to go back to it.</p>
 
     <fieldset>
         <legend>Seed</legend>
@@ -114,7 +114,7 @@
             <button data-p="150" aria-pressed="false">150</button>
             <button data-p="300" aria-pressed="true">300</button>
         </div>
-        <p class="dims mono" id="dims"></p>
+        <p class="dims label" id="dims"></p>
     </fieldset>
 
     <div class="row">
@@ -122,7 +122,7 @@
         <button class="btn sig" id="save">Save PNG</button>
     </div>
 
-    <p class="keys mono"><kbd>Space</kbd> reroll<br><kbd>S</kbd> save at the set size<br><kbd>Click</kbd> the sheet to reroll</p>
+    <p class="keys label"><kbd>Space</kbd> reroll<br><kbd>S</kbd> save at the set size<br><kbd>Click</kbd> the sheet to reroll</p>
 </aside>
 
 <nav class="exit">
@@ -201,7 +201,7 @@ function compose(ctx, W, H, key) {
     };
 
     const meta = (str, x, y, size, color, track) => {
-        ctx.font = `${size}px ui-monospace, Menlo, Consolas, monospace`;
+        ctx.font = `${size}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
         ctx.fillStyle = color;
         ctx.textBaseline = 'alphabetic';
         let cx = x;

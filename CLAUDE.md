@@ -87,7 +87,13 @@ image raises the save-image callout and eats the gesture on touch.
   top padding, and why the editorial pages bump `padding-top` under 620px.
 - Palette is `--bg` near-black, `--fg` near-white, one signal red `--sig`.
   Monochrome plus the one red; no second accent.
-- Type is system Helvetica/Arial for display, system mono for labels. No webfonts.
+- **Everything is Helvetica.** One family site-wide, no webfonts; `--sans` is the
+  only face token. Small labels are Helvetica at 10-11px with wide tracking and
+  uppercase — the `.label` class. The one exception is halftone's ASCII renderer,
+  which must stay monospace or its fixed character grid collapses; that font
+  string is hardcoded in the room with a comment saying why. Widths set in `ch`
+  were tuned for Helvetica's narrower advance, so re-check them if the face
+  ever changes.
 - Control panels share a shape across rooms: `legend` + `.ctl` rows + range
   inputs + the `.btn` row. Copy an existing room rather than inventing a fourth
   panel style.

@@ -23,25 +23,25 @@
         .sub { margin: 10px 0 26px; line-height: 1.8; }
 
         fieldset { border: 0; margin-bottom: 22px; }
-        legend { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+        legend { font-family: var(--sans); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
                  color: var(--dim); padding-bottom: 10px; }
 
         .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
         .modes button { appearance: none; border: 0; background: var(--bg); color: var(--dim); cursor: pointer;
-                        font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+                        font-family: var(--sans); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
                         padding: 11px 4px; transition: background 0.2s, color 0.2s; }
         .modes button:hover { color: var(--fg); }
         .modes button[aria-pressed="true"] { background: var(--sig); color: #000; }
 
         .ctl { margin-bottom: 15px; }
-        .ctl label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px;
+        .ctl label { display: flex; justify-content: space-between; font-family: var(--sans); font-size: 10px;
                      letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 7px; }
         .ctl label b { color: var(--fg); font-weight: 400; }
         input[type=range] { width: 100%; accent-color: var(--sig); background: transparent; }
 
         .row { display: flex; gap: 9px; flex-wrap: wrap; }
         .btn { flex: 1; appearance: none; border: 1px solid var(--rule); background: transparent; color: var(--fg);
-               font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+               font-family: var(--sans); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
                padding: 12px 10px; cursor: pointer; text-align: center; transition: background 0.2s, color 0.2s, border-color 0.2s; }
         .btn:hover { background: var(--fg); color: #000; border-color: var(--fg); }
         .btn.sig:hover { background: var(--sig); border-color: var(--sig); }
@@ -52,11 +52,11 @@
 
         main.drag::after { content: "release"; position: absolute; inset: 14px; z-index: 5;
             border: 1px dashed var(--sig); color: var(--sig); display: grid; place-items: center;
-            font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+            font-family: var(--sans); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
             background: rgba(0,0,0,0.72); }
 
         .hint { position: absolute; right: 26px; top: 56px; text-align: right; line-height: 1.9; }
-        .hint kbd { font-family: var(--mono); font-size: 11px; color: var(--fg);
+        .hint kbd { font-family: var(--sans); font-size: 11px; color: var(--fg);
                     border: 1px solid var(--rule); padding: 1px 6px; margin-right: 3px; }
 
         body.stowed { grid-template-columns: 1fr; }
@@ -96,7 +96,7 @@
 <a class="menumark" href="/" aria-label="Index" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><line class="a" x1="3" y1="7" x2="21" y2="7"/><line class="b" x1="3" y1="12" x2="21" y2="12"/><line class="c" x1="3" y1="17" x2="21" y2="17"/></svg></a>
 <aside>
     <h1>Halftone</h1>
-    <p class="sub mono">Drop an image anywhere. It never leaves this tab.</p>
+    <p class="sub label">Drop an image anywhere. It never leaves this tab.</p>
 
     <fieldset>
         <legend>Process</legend>
@@ -134,11 +134,11 @@
 
 <main id="stage">
     <canvas id="out"></canvas>
-    <p class="hint mono"><kbd>`</kbd> proof sheet</p>
+    <p class="hint label"><kbd>`</kbd> proof sheet</p>
 </main>
 
 <div class="sheet" id="sheet">
-    <p class="mono">Proof sheet &mdash; every process at the current settings &middot; ` or Esc to close</p>
+    <p class="label">Proof sheet &mdash; every process at the current settings &middot; ` or Esc to close</p>
     <div class="grid" id="sheetgrid"></div>
 </div>
 
@@ -242,6 +242,7 @@ function render(canvas, longEdge, useMode) {
     }
 
     if (m === 'ascii') {
+        // Stays monospace: the ramp is a fixed grid and a proportional face breaks it.
         ctx.font = `${cell * 1.28}px ui-monospace, Menlo, monospace`;
         ctx.textBaseline = 'top';
         for (let y = 0; y < G.rows; y++) for (let x = 0; x < G.cols; x++) {
