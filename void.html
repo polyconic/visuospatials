@@ -10,15 +10,14 @@
     <link rel="stylesheet" href="base.css">
     <style>
         html, body { height: 100%; }
-        body { background: #000; overflow-x: hidden; }
-        canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+        body { overflow-x: hidden; }
 
-        .wrap { position: relative; z-index: 2; min-height: 100%;
+        .wrap { min-height: 100%;
                 padding: clamp(58px, 12vh, 130px) clamp(20px, 7vw, 110px) 140px;
                 max-width: 940px; margin: 0 auto; }
 
         h1 { font-size: clamp(52px, 17vw, 250px); line-height: 0.78; letter-spacing: -0.06em;
-             font-weight: 700; text-transform: uppercase; mix-blend-mode: difference; }
+             font-weight: 700; text-transform: uppercase; }
         .stamp { margin: 22px 0 clamp(40px, 8vh, 80px); line-height: 2; }
         .stamp b { color: var(--sig); font-weight: 400; }
 
@@ -31,19 +30,35 @@
                    border-bottom: 1px solid var(--rule); align-items: baseline; }
         @media (max-width: 620px) { div.door { grid-template-columns: 1fr; gap: 4px; } }
         dt { font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; font-size: 15px; }
-        dd { color: #b9b9b4; line-height: 1.7; }
+        dd { color: var(--dim); line-height: 1.7; }
         dd kbd { font-family: var(--mono); font-size: 12px; color: var(--sig);
                  border: 1px solid var(--rule); padding: 1px 6px; }
         dd a { color: var(--fg); }
 
         .sign { margin-top: clamp(44px, 9vh, 90px); line-height: 2; }
     </style>
+    <!-- Must stay in <head>: moving it later reintroduces the theme flash. -->
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("vs-theme") === "light")
+            document.documentElement.classList.add("light");
+        } catch (e) {}
+      })();
+    </script>
 </head>
 <body>
+<div class="corner">
+<button class="themetoggle" type="button" aria-label="Switch to light" aria-pressed="false">
+<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+</button>
+<a class="mailmark" href="mailto:gregor.art@pm.me?subject=Visuospatials" aria-label="Email">
+<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="1.5"/><path d="M3 6.5l9 6.5 9-6.5"/></svg>
+</a>
+</div>
 <a class="homemark" href="/" aria-label="Front page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4M11 5l-7 7 7 7"/></svg></a>
 <a class="menumark" href="/" aria-label="Index" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><line class="a" x1="3" y1="7" x2="21" y2="7"/><line class="b" x1="3" y1="12" x2="21" y2="12"/><line class="c" x1="3" y1="17" x2="21" y2="17"/></svg></a>
-<canvas id="c"></canvas>
-
 <div class="wrap">
     <h1>Void</h1>
     <p class="stamp mono">Room <b>00</b></p>
@@ -54,7 +69,6 @@
         <div class="door"><dt>The ring</dt><dd>Press and hold anywhere on the front page. A ring closes around the pointer, and at one second the index opens.</dd></div>
         <div class="door"><dt>The dot</dt><dd>Bottom right corner of the front page, at seven percent opacity. It goes to the lab.</dd></div>
         <div class="door"><dt>Typing</dt><dd>Anywhere on the front page, type <kbd>lab</kbd>, <kbd>void</kbd> or <kbd>spatial</kbd>.</dd></div>
-        <div class="door"><dt>The Konami code</dt><dd>On the front page, press <kbd>&uarr;</kbd> <kbd>&uarr;</kbd> <kbd>&darr;</kbd> <kbd>&darr;</kbd> <kbd>&larr;</kbd> <kbd>&rarr;</kbd> <kbd>&larr;</kbd> <kbd>&rarr;</kbd> <kbd>B</kbd> <kbd>A</kbd>. The page turns into its own negative. Enter it again to put it back.</dd></div>
         <div class="door"><dt>Proof sheet</dt><dd>In <a href="lab/halftone.html">halftone</a>, press <kbd>`</kbd> to render every process at once.</dd></div>
         <div class="door"><dt>Freeze</dt><dd>In <a href="lab/moire.html">moir&eacute;</a>, <kbd>space</kbd> stops time, <kbd>s</kbd> saves it, <kbd>h</kbd> clears the panel away.</dd></div>
         <div class="door"><dt>The word</dt><dd>In <a href="lab/type.html">type</a>, set the text to VOID and the way back appears.</dd></div>
@@ -64,48 +78,7 @@
     <p class="sign mono">Visuospatials &middot; <a href="/">back to the front</a> &middot; <a href="lab/">the lab</a> &middot; <a href="studio.html">studio</a></p>
 </div>
 
-<script>
-const c = document.getElementById('c');
-const ctx = c.getContext('2d');
-let W, H, dpr, pts = [];
-
-function size() {
-    dpr = Math.min(2, devicePixelRatio || 1);
-    W = innerWidth; H = innerHeight;
-    c.width = W * dpr; c.height = H * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, W, H);
-    pts = Array.from({ length: 620 }, () => ({ x: Math.random() * W, y: Math.random() * H }));
-}
-addEventListener('resize', size);
-
-/* Flow field: cheap curl-ish noise from summed sines, no library. */
-function angle(x, y, t) {
-    return Math.sin(x * 0.0021 + t) * 1.7
-         + Math.cos(y * 0.0027 - t * 0.7) * 1.7
-         + Math.sin((x + y) * 0.0009 + t * 0.4) * 1.2;
-}
-
-let t = 0;
-function loop() {
-    t += 0.0016;
-    ctx.fillStyle = 'rgba(0,0,0,0.045)';
-    ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = 'rgba(255,255,255,0.26)';
-    for (const p of pts) {
-        const a = angle(p.x, p.y, t);
-        p.x += Math.cos(a) * 0.85;
-        p.y += Math.sin(a) * 0.85;
-        if (p.x < 0 || p.x > W || p.y < 0 || p.y > H) { p.x = Math.random() * W; p.y = Math.random() * H; }
-        ctx.fillRect(p.x, p.y, 1, 1);
-    }
-    requestAnimationFrame(loop);
-}
-
-size();
-loop();
-</script>
 <script src="/menu.js"></script>
+<script src="/theme.js"></script>
 </body>
 </html>

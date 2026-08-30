@@ -5,9 +5,22 @@
   --faint: #2e2e2b;
   --rule: #1c1c1a;
   --sig: #ff2d00;
+  --panel: rgba(10, 10, 10, 0.62);
+  --veil: rgba(10, 10, 10, 0.985);
   --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   color-scheme: dark;
+}
+
+:root.light {
+  --bg: #f2f2ef;
+  --fg: #0a0a0a;
+  --dim: #6a6a66;
+  --faint: #b9b9b3;
+  --rule: #deded7;
+  --panel: rgba(242, 242, 239, 0.72);
+  --veil: rgba(242, 242, 239, 0.985);
+  color-scheme: light;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -150,7 +163,7 @@ body.menu-open .menumark .c { transform: translateY(-5px) rotate(-45deg); }
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: #000;
+  background: var(--bg);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -229,7 +242,7 @@ body.menu-open .menumark .c { transform: translateY(-5px) rotate(-45deg); }
   z-index: 220;
   appearance: none;
   border: 1px solid var(--rule);
-  background: rgba(0, 0, 0, 0.62);
+  background: var(--panel);
   color: var(--dim);
   font-family: var(--mono);
   font-size: 10px;
@@ -253,3 +266,53 @@ body.menu-open .stow { opacity: 0; pointer-events: none; }
 .cross { display: block; }
 .cross canvas { display: block; width: 100%; height: 100%; }
 .cross[data-corner] { position: fixed; left: 18px; bottom: 18px; z-index: 20; }
+
+/* Top right pair: theme toggle, then mail. */
+.corner {
+  position: fixed;
+  top: 13px;
+  right: 15px;
+  z-index: 210;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.corner a, .corner button {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  mix-blend-mode: difference;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.corner svg {
+  display: block;
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.corner a:hover, .corner a:focus-visible,
+.corner button:hover, .corner button:focus-visible {
+  mix-blend-mode: normal;
+  color: var(--sig);
+  transform: scale(1.14);
+}
+
+/* Dark shows the sun you can switch to; light shows the moon. */
+.themetoggle .moon { display: none; }
+:root.light .themetoggle .sun { display: none; }
+:root.light .themetoggle .moon { display: block; }
+
+body.stowed .corner { opacity: 0; pointer-events: none; }
+.corner { transition: opacity 0.3s ease; }
+body.menu-open .corner { opacity: 0; pointer-events: none; }

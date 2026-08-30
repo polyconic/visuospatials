@@ -30,13 +30,14 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `menu.js` | Builds the index overlay and wires the sandwich mark. Loaded by every page. |
 | `stow.js` | Drives the Hide/Edit toggle. Loaded by the four tool rooms only. |
 | `cross.js` | Draws the three drifting lines. `data-corner` pins them bottom left. |
+| `theme.js` | Wires the light/dark toggle. Loaded by every page. |
 
 ## The secrets
 
 `void.html` lists the doors and is written for a visitor. **If you add or move a
-door, update that page** — a stale map is worse than none. Three doors are left off
-it on purpose: the corner lines, the 404 and the front page console log. That is
-Greg's call, not an oversight; don't add them back.
+door, update that page** — a stale map is worse than none. Four doors are left off it on
+purpose: the corner lines, the Konami code, the 404 and the front page console
+log. That is Greg's call, not an oversight; don't add them back.
 
 The short version: press and hold anywhere on the front page (a ring closes
 around the pointer over 1.1s), the 7%-opacity dot bottom-right,
@@ -101,6 +102,32 @@ image raises the save-image callout and eats the gesture on touch.
   `body.menu-open` (set by `menu.js`) so the index stays clean, and `H` is
   ignored while the index is up. `H` toggles, `Esc` un-stows.
   `.exit` reserves 96px of right padding so the button never lands on it.
+
+## Theme
+
+Two themes, one `localStorage` key, `vs-theme`, values `light` / `dark`.
+**Dark is the default** — the art direction is dark, and `prefers-color-scheme`
+is deliberately *not* consulted. Only an explicit toggle switches it.
+
+Every page resolves the class in an inline `<head>` script **before first paint**.
+Do not move that into a deferred script or the page flashes the wrong theme.
+
+The pair of controls lives in `<div class="corner">` at top right: the toggle
+then mail. Both are difference-blended like the left-hand marks, and both fade
+out under `body.stowed` and `body.menu-open`. Anything a page puts in its top
+right corner has to clear them — that is why halftone's proof-sheet hint sits at
+`top: 56px` and poster's sidebar carries 58px of top padding.
+
+Canvases paint their own ground and cannot inherit a class, so each handles it:
+
+- `404.html` reads the class every frame and swaps its two dot colours.
+- `lab/moire.html` **must** keep drawing white-on-black. Its interference comes
+  from a `difference` composite, and drawing dark lines on a light ground makes
+  that operation a no-op — the pattern vanishes. Light mode flips the finished
+  frame with a CSS `filter: invert(1)`, and the PNG export inverts to match.
+- Halftone, poster and type leave their artwork alone. That output is the user's
+  work, not chrome; halftone's Invert and poster's stocks stay independent of the
+  site theme. Type's own Invert button was removed — the site toggle does it now.
 
 ## Images
 
