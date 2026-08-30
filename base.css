@@ -251,7 +251,5 @@ body.menu-open .stow { opacity: 0; pointer-events: none; }
 
 /* The unlisted room. Labelled nowhere; three lines that never settle. */
 .cross { display: block; }
-/* Difference keeps the lines legible whatever the hero is doing behind them. */
-.cross canvas { display: block; width: 100%; height: 100%; mix-blend-mode: difference; }
-.cross:hover canvas, .cross:focus-visible canvas { mix-blend-mode: normal; }
+.cross canvas { display: block; width: 100%; height: 100%; }
 .cross[data-corner] { position: fixed; left: 18px; bottom: 18px; z-index: 20; }

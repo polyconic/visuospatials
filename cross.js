@@ -39,7 +39,7 @@
             ctx.clearRect(0, 0, size, size);
             ctx.strokeStyle = hover > 0.02
                 ? 'rgba(255, 45, 0, ' + (0.5 + hover * 0.5) + ')'
-                : 'rgba(255, 255, 255, 0.92)';
+                : 'rgba(242, 242, 239, 0.82)';
 
             LINES.forEach(function (l, i) {
                 const drift = Math.sin(t * l.w + l.p) * l.amp;

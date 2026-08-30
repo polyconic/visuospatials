@@ -140,6 +140,7 @@
             container.appendChild(span);
         });
 
+        // Only reachable by typing "spatial"; nothing runs this on a timer.
         function explode() {
             const spans = container.querySelectorAll('span');
 
@@ -163,8 +164,6 @@
                 });
             }, 6000);
         }
-
-        setInterval(explode, 10000);
 
         const hold = document.getElementById('hold');
         const sweep = hold.querySelector('.sweep');
