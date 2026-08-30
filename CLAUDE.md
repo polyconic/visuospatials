@@ -28,6 +28,7 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `void.html` | Unlisted. Lists every secret on the site. `noindex`. |
 | `404.html` | Dot-matrix 404 that repels the pointer. GitHub Pages serves this. |
 | `menu.js` | Builds the index overlay and wires the `V` mark. Loaded by every page. |
+| `stow.js` | Drives the Hide/Edit toggle. Loaded by the four tool rooms only. |
 
 ## The secrets
 
@@ -75,6 +76,15 @@ image raises the save-image callout and eats the gesture on touch.
   inputs + the `.btn` row. Copy an existing room rather than inventing a fourth
   panel style.
 
+- **Every tool room stows.** One `<button class="stow">Hide</button>` plus
+  `<script src="/stow.js"></script>`. `stow.js` only toggles `body.stowed` and
+  the button label; each room decides for itself what that class hides, so a new
+  room must add its own `body.stowed` rules — hide the panel, collapse the grid
+  to one track, and give the work `min-height: 100vh` with minimal padding.
+  `base.css` handles the shared part: the `V` and the `.exit` bar fade out and
+  the button itself drops to 22% until hovered. `H` toggles, `Esc` un-stows.
+  `.exit` reserves 96px of right padding so the button never lands on it.
+
 ## Canvas rooms
 
 - Rooms that size a canvas to their container **must** tolerate a zero-size first
@@ -83,6 +93,11 @@ image raises the save-image callout and eats the gesture on touch.
   Removing those guards reproduces a blank or postage-stamp canvas on load.
 - Export renders a *fresh* canvas at print size rather than upscaling the on-screen
   one, so cell sizes are scaled by `longEdge` inside `render`/`compose`.
+- Poster export is driven by a physical sheet size (`data-w`/`data-h` in inches on
+  each format button) times the chosen ppi, so 72/150/300 are real resolutions
+  rather than arbitrary pixel counts. A canvas PNG carries no resolution at all,
+  so `stampResolution` splices a `pHYs` chunk in after IHDR — without it every
+  export opens as 72ppi in print software no matter how many pixels it has.
 - Keydown handlers guard `e.target instanceof Element` before `matches()` —
   `document` has no `matches` and the handler throws without it.
 

@@ -57,6 +57,10 @@
 
         .hint { position: absolute; right: 26px; top: 22px; text-align: right; line-height: 1.9; }
 
+        body.stowed { grid-template-columns: 1fr; }
+        body.stowed aside, body.stowed .hint { display: none; }
+        body.stowed main { min-height: 100vh; padding: 14px; }
+
         .sheet { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.985); padding: 4vh 4vw;
                  display: none; grid-template-rows: auto 1fr; gap: 20px; }
         .sheet.on { display: grid; }
@@ -363,6 +367,8 @@ addEventListener('load', draw);
 img.onload = draw;
 img.src = '../visuo.webp';
 </script>
+<button class="stow" aria-pressed="false">Hide</button>
+<script src="/stow.js"></script>
 <script src="/menu.js"></script>
 </body>
 </html>

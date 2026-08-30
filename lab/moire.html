@@ -18,8 +18,7 @@
                  border: 1px solid var(--rule); padding: 18px 16px; }
         .panel h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; text-transform: uppercase;
                     margin-bottom: 14px; }
-        .panel.hid > *:not(h1) { display: none; }
-        .panel.hid { width: auto; }
+        body.stowed .panel { display: none; }
 
         .kinds { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule);
                  border: 1px solid var(--rule); margin-bottom: 16px; }
@@ -159,7 +158,6 @@ document.addEventListener('keydown', e => {
     if (e.target instanceof Element && e.target.matches('input, button')) return;
     const k = e.key.toLowerCase();
     if (e.key === ' ') { e.preventDefault(); frozen = !frozen; }
-    if (k === 'h') document.getElementById('panel').classList.toggle('hid');
     if (k === 's') {
         frame();
         const a = document.createElement('a');
@@ -172,6 +170,8 @@ document.addEventListener('keydown', e => {
 size();
 loop();
 </script>
+<button class="stow" aria-pressed="false">Hide</button>
+<script src="/stow.js"></script>
 <script src="/menu.js"></script>
 </body>
 </html>

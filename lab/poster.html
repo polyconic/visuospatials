@@ -14,6 +14,10 @@
         @media (max-width: 860px) { body { grid-template-columns: 1fr; grid-template-rows: auto auto; overflow: auto; }
                                     main { min-height: 72vh; } }
 
+        body.stowed { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+        body.stowed aside { display: none; }
+        body.stowed main { min-height: 100vh; padding: 16px; }
+
         main { display: grid; place-items: center; padding: 52px 26px 58px; overflow: hidden; }
         canvas { max-width: 100%; max-height: 100%; display: block; cursor: pointer;
                  box-shadow: 0 30px 90px rgba(0,0,0,0.7); }
@@ -33,6 +37,8 @@
                  color: var(--dim); padding-bottom: 10px; }
         .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule);
                 border: 1px solid var(--rule); }
+        .opts.three { grid-template-columns: repeat(3, 1fr); }
+        .dims { margin-top: 10px; line-height: 1.9; }
         .opts button { appearance: none; border: 0; background: var(--bg); color: var(--dim); cursor: pointer;
                 font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
                 padding: 11px 4px; }
@@ -65,10 +71,10 @@
     <fieldset>
         <legend>Format</legend>
         <div class="opts" id="formats">
-            <button data-r="1.4142" aria-pressed="true">A-series</button>
-            <button data-r="1.5" aria-pressed="false">2:3</button>
-            <button data-r="1.2941" aria-pressed="false">Tabloid</button>
-            <button data-r="1" aria-pressed="false">Square</button>
+            <button data-r="1.4142" data-w="11.693" data-h="16.535" aria-pressed="true">A3</button>
+            <button data-r="1.5" data-w="12" data-h="18" aria-pressed="false">12&times;18</button>
+            <button data-r="1.2941" data-w="8.5" data-h="11" aria-pressed="false">Letter</button>
+            <button data-r="1" data-w="12" data-h="12" aria-pressed="false">Square</button>
         </div>
     </fieldset>
 
@@ -82,12 +88,22 @@
         </div>
     </fieldset>
 
+    <fieldset>
+        <legend>Resolution</legend>
+        <div class="opts three" id="ppis">
+            <button data-p="72" aria-pressed="false">72</button>
+            <button data-p="150" aria-pressed="false">150</button>
+            <button data-p="300" aria-pressed="true">300</button>
+        </div>
+        <p class="dims mono" id="dims"></p>
+    </fieldset>
+
     <div class="row">
         <button class="btn" id="reroll">Reroll</button>
         <button class="btn sig" id="save">Save PNG</button>
     </div>
 
-    <p class="keys mono"><kbd>Space</kbd> reroll<br><kbd>S</kbd> save at 2400px<br><kbd>Click</kbd> the sheet to reroll</p>
+    <p class="keys mono"><kbd>Space</kbd> reroll<br><kbd>S</kbd> save at the set size<br><kbd>Click</kbd> the sheet to reroll</p>
 </aside>
 
 <nav class="exit">
@@ -101,6 +117,8 @@
 const cv = document.getElementById('p');
 const seedInput = document.getElementById('seed');
 let ratio = 1.4142;
+let sheet = { w: 11.693, h: 16.535 };
+let ppi = 300;
 let stock = 'auto';
 let seed = '';
 
@@ -311,9 +329,29 @@ document.getElementById('formats').addEventListener('click', e => {
     const b = e.target.closest('button');
     if (!b) return;
     ratio = +b.dataset.r;
+    sheet = { w: +b.dataset.w, h: +b.dataset.h };
     [...e.currentTarget.children].forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    showDims();
     draw();
 });
+
+document.getElementById('ppis').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    ppi = +b.dataset.p;
+    [...e.currentTarget.children].forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    showDims();
+});
+
+function showDims() {
+    const [w, h] = exportPixels();
+    document.getElementById('dims').textContent =
+        `${w} × ${h} px · ${Math.round(sheet.w * 25.4)} × ${Math.round(sheet.h * 25.4)} mm`;
+}
+
+function exportPixels() {
+    return [Math.round(sheet.w * ppi), Math.round(sheet.h * ppi)];
+}
 document.getElementById('stocks').addEventListener('click', e => {
     const b = e.target.closest('button');
     if (!b) return;
@@ -325,15 +363,59 @@ document.getElementById('stocks').addEventListener('click', e => {
 document.getElementById('reroll').addEventListener('click', reroll);
 cv.addEventListener('click', reroll);
 
+const CRC = (() => {
+    const t = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+        let c = n;
+        for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+        t[n] = c >>> 0;
+    }
+    return t;
+})();
+
+function crc32(bytes, from, to) {
+    let c = 0xFFFFFFFF;
+    for (let i = from; i < to; i++) c = CRC[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+/* A bare canvas PNG has no resolution, so print software opens it at 72.
+   pHYs goes straight after IHDR, which is always the first chunk. */
+function stampResolution(buffer, dpi) {
+    const src = new Uint8Array(buffer);
+    const at = 8 + 4 + 4 + 13 + 4;
+    const ppm = Math.round(dpi / 0.0254);
+    const chunk = new Uint8Array(21);
+    const dv = new DataView(chunk.buffer);
+    dv.setUint32(0, 9);
+    chunk.set([0x70, 0x48, 0x59, 0x73], 4);
+    dv.setUint32(8, ppm);
+    dv.setUint32(12, ppm);
+    chunk[16] = 1;
+    dv.setUint32(17, crc32(chunk, 4, 17));
+
+    const out = new Uint8Array(src.length + chunk.length);
+    out.set(src.subarray(0, at), 0);
+    out.set(chunk, at);
+    out.set(src.subarray(at), at + chunk.length);
+    return out;
+}
+
 function save() {
+    const [w, h] = exportPixels();
     const big = document.createElement('canvas');
-    big.width = Math.round(2400 / ratio);
-    big.height = 2400;
-    compose(big.getContext('2d'), big.width, big.height, seed);
-    const a = document.createElement('a');
-    a.href = big.toDataURL('image/png');
-    a.download = `visuospatials-poster-${seed}.png`;
-    a.click();
+    big.width = w;
+    big.height = h;
+    compose(big.getContext('2d'), w, h, seed);
+    big.toBlob(async blob => {
+        const stamped = stampResolution(await blob.arrayBuffer(), ppi);
+        const url = URL.createObjectURL(new Blob([stamped], { type: 'image/png' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `visuospatials-${seed}-${ppi}ppi.png`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }, 'image/png');
 }
 document.getElementById('save').addEventListener('click', save);
 
@@ -347,8 +429,11 @@ let rs;
 new ResizeObserver(() => { clearTimeout(rs); rs = setTimeout(draw, 120); }).observe(cv.parentElement);
 addEventListener('load', draw);
 
+showDims();
 reroll();
 </script>
+<button class="stow" aria-pressed="false">Hide</button>
+<script src="/stow.js"></script>
 <script src="/menu.js"></script>
 </body>
 </html>

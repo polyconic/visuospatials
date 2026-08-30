@@ -11,6 +11,9 @@
     <style>
         html, body { height: 100%; overflow: hidden; }
         body { display: grid; grid-template-rows: 1fr auto; }
+        body.stowed { grid-template-rows: 1fr; }
+        body.stowed .console { display: none; }
+        body.stowed .stage { min-height: 100vh; padding: 3vh 3vw; }
         @media (max-width: 900px) {
             html, body { height: auto; overflow: visible; }
             .stage { min-height: 56vh; }
@@ -51,6 +54,8 @@
                font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
                padding: 11px 14px; cursor: pointer; white-space: nowrap; }
         .btn:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+        .btn[aria-pressed="true"] { background: var(--sig); color: #000; border-color: var(--sig); }
+        #italic { font-style: italic; }
 
         .door { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
                 font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
@@ -84,6 +89,7 @@
     <div class="ctl"><label for="width">Width <b id="widthv">1.00</b></label><input id="width" type="range" min="30" max="220" value="100"></div>
     <div class="ctl"><label for="amp">Amplitude <b id="ampv">1.00</b></label><input id="amp" type="range" min="0" max="300" value="100"></div>
     <div class="acts">
+        <button class="btn" id="italic" aria-pressed="false">Italic</button>
         <button class="btn" id="flip">Invert</button>
         <button class="btn" id="copy">Copy CSS</button>
     </div>
@@ -101,6 +107,7 @@ const word = document.getElementById('word');
 const door = document.getElementById('door');
 let move = 'rest';
 let S = { size: 60, track: 25, width: 100, amp: 100 };
+let italic = false;
 let spans = [];
 let t = 0;
 
@@ -119,6 +126,7 @@ function style() {
     word.style.fontSize = (S.size / 10) + 'vw';
     word.style.letterSpacing = (S.track / 100) + 'em';
     word.style.transform = `scaleX(${S.width / 100})`;
+    word.style.fontStyle = italic ? 'italic' : 'normal';
 }
 
 function tick() {
@@ -186,10 +194,16 @@ bind('track', 'track', v => (v / 100).toFixed(2) + 'em');
 bind('width', 'width', v => (v / 100).toFixed(2));
 bind('amp', 'amp', v => (v / 100).toFixed(2));
 
+document.getElementById('italic').addEventListener('click', e => {
+    italic = !italic;
+    e.currentTarget.setAttribute('aria-pressed', String(italic));
+    style();
+});
+
 document.getElementById('flip').addEventListener('click', () => document.body.classList.toggle('light'));
 
 document.getElementById('copy').addEventListener('click', async e => {
-    const css = `font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;\nfont-weight: 700;\ntext-transform: uppercase;\nfont-size: ${(S.size / 10).toFixed(1)}vw;\nletter-spacing: ${(S.track / 100).toFixed(2)}em;\nline-height: 0.9;\ntransform: scaleX(${(S.width / 100).toFixed(2)});`;
+    const css = `font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;\nfont-weight: 700;\nfont-style: ${italic ? 'italic' : 'normal'};\ntext-transform: uppercase;\nfont-size: ${(S.size / 10).toFixed(1)}vw;\nletter-spacing: ${(S.track / 100).toFixed(2)}em;\nline-height: 0.9;\ntransform: scaleX(${(S.width / 100).toFixed(2)});`;
     try { await navigator.clipboard.writeText(css); e.target.textContent = 'Copied'; }
     catch (err) { e.target.textContent = 'Blocked'; }
     setTimeout(() => { e.target.textContent = 'Copy CSS'; }, 1400);
@@ -199,6 +213,8 @@ setText('VISUOSPATIALS');
 style();
 tick();
 </script>
+<button class="stow" aria-pressed="false">Hide</button>
+<script src="/stow.js"></script>
 <script src="/menu.js"></script>
 </body>
 </html>
