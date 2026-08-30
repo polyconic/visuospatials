@@ -49,9 +49,18 @@
                 d.r -= (size * 0.0008 + horizon * horizon * 0.0075 / (d.r * d.r)) * rate;
                 if (d.r <= horizon) { d.a = Math.random() * 6.2832; d.r = size / 2 - Math.random() * 6; }
                 const t = Math.min(1, (d.r - horizon) / reach);
-                ctx.fillStyle = 'rgba(242, 242, 239, ' + (0.85 - t * 0.65) + ')';
+                ctx.fillStyle = 'rgba(242, 242, 239, ' + (0.98 - t * 0.55) + ')';
                 ctx.fillRect(c + Math.cos(d.a) * d.r, c + Math.sin(d.a) * d.r, 1.4, 1.4);
             }
+
+            // A halo under the horizon so the hole reads on light and dark grounds alike.
+            const halo = ctx.createRadialGradient(c, c, horizon * 0.9, c, c, horizon * 2.4);
+            halo.addColorStop(0, 'rgba(0, 0, 0, 0.85)');
+            halo.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = halo;
+            ctx.beginPath();
+            ctx.arc(c, c, horizon * 2.4, 0, 6.2832);
+            ctx.fill();
 
             ctx.fillStyle = '#000';
             ctx.beginPath();
@@ -59,7 +68,7 @@
             ctx.fill();
 
             ctx.strokeStyle = pull > 0.02 ? 'rgba(255, 45, 0, ' + (0.35 + pull * 0.65) + ')'
-                                          : 'rgba(242, 242, 239, 0.22)';
+                                          : 'rgba(242, 242, 239, 0.5)';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.arc(c, c, horizon + 1.5, 0, 6.2832);

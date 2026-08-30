@@ -27,7 +27,7 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `studio.html` | The collaboration idea and the contact. |
 | `void.html` | Unlisted. Lists every secret on the site. `noindex`. |
 | `404.html` | Dot-matrix 404 that repels the pointer. GitHub Pages serves this. |
-| `menu.js` | Builds the index overlay and wires the `V` mark. Loaded by every page. |
+| `menu.js` | Builds the index overlay and wires the sandwich mark. Loaded by every page. |
 | `stow.js` | Drives the Hide/Edit toggle. Loaded by the four tool rooms only. |
 | `hole.js` | Draws the black hole. `data-scatter` drops it in a random safe band. |
 
@@ -100,6 +100,16 @@ image raises the save-image callout and eats the gesture on touch.
   `body.menu-open` (set by `menu.js`) so the index stays clean, and `H` is
   ignored while the index is up. `H` toggles, `Esc` un-stows.
   `.exit` reserves 96px of right padding so the button never lands on it.
+
+## Images
+
+- **Max 2560px on the long edge, webp quality 85**, same rule as the portfolio:
+  `magick in.webp -resize 2560x2560\> -quality 85 -define webp:method=6 out.webp`
+  Commit the original first so the full-resolution file stays in history, then
+  resize in a second commit.
+- `visuowallpaper.webp` is the front page hero. `visuo.webp` is **not** dead —
+  it is the default image halftone loads, and the high-contrast black and white
+  suits that room better than the wallpaper would. Don't delete it.
 
 ## Canvas rooms
 
