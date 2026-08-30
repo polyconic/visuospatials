@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type &mdash; Visuospatials</title>
+    <link rel="icon" type="image/png" href="../faviconv.png">
+    <meta name="description" content="A kinetic type specimen. Set your own words, move them, take the CSS with you.">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+        body { display: grid; grid-template-rows: 1fr auto; }
+        @media (max-width: 900px) {
+            html, body { height: auto; overflow: visible; }
+            .stage { min-height: 56vh; }
+            .console { padding-bottom: 120px; }
+        }
+        body.light { --bg: #f2f2ef; --fg: #0a0a0a; --dim: #6a6a66; --rule: #dcdcd6; background: #f2f2ef; }
+
+        .stage { position: relative; display: grid; place-items: center; overflow: hidden; padding: 4vh 3vw; }
+        #word { text-align: center; line-height: 0.9; text-transform: uppercase; font-weight: 700;
+                user-select: none; will-change: transform; }
+        #word span { display: inline-block; will-change: transform; }
+
+        .console { border-top: 1px solid var(--rule); padding: 16px clamp(16px, 4vw, 40px) 52px;
+                   display: grid; grid-template-columns: minmax(190px, 1.4fr) repeat(4, minmax(96px, 1fr)) auto;
+                   gap: 14px clamp(14px, 2.4vw, 34px); align-items: end; }
+        @media (max-width: 900px) { .console { grid-template-columns: 1fr 1fr; } }
+
+        .field label, .ctl label { display: flex; justify-content: space-between; font-family: var(--mono);
+                   font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
+                   margin-bottom: 7px; }
+        .ctl label b { color: var(--fg); font-weight: 400; }
+        input[type=range] { width: 100%; accent-color: var(--sig); }
+        input[type=text] { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--rule);
+                   color: var(--fg); font-family: var(--sans); font-size: 17px; padding: 4px 0 8px;
+                   letter-spacing: 0.04em; }
+        input[type=text]:focus { outline: 0; border-bottom-color: var(--sig); }
+
+        .moves { display: flex; gap: 1px; background: var(--rule); border: 1px solid var(--rule);
+                 grid-column: 1 / -1; }
+        .moves button { flex: 1; appearance: none; border: 0; background: var(--bg); color: var(--dim);
+                 cursor: pointer; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+                 text-transform: uppercase; padding: 11px 6px; }
+        .moves button:hover { color: var(--fg); }
+        .moves button[aria-pressed="true"] { background: var(--sig); color: #000; }
+
+        .acts { display: flex; gap: 9px; }
+        .btn { appearance: none; border: 1px solid var(--rule); background: transparent; color: var(--fg);
+               font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+               padding: 11px 14px; cursor: pointer; white-space: nowrap; }
+        .btn:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+        .door { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+                font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+                color: var(--sig); text-decoration: none; opacity: 0; transition: opacity 1.2s; }
+        .door.on { opacity: 1; }
+    </style>
+</head>
+<body>
+<div class="stage">
+    <div id="word">VISUOSPATIALS</div>
+    <a class="door" id="door" href="../void.html">you spelled the way out</a>
+</div>
+
+<div class="console">
+    <div class="moves" id="moves">
+        <button data-move="rest" aria-pressed="true">Rest</button>
+        <button data-move="wave" aria-pressed="false">Wave</button>
+        <button data-move="jitter" aria-pressed="false">Jitter</button>
+        <button data-move="explode" aria-pressed="false">Explode</button>
+        <button data-move="orbit" aria-pressed="false">Orbit</button>
+        <button data-move="swarm" aria-pressed="false">Swarm</button>
+    </div>
+
+    <div class="field">
+        <label for="text">Setting</label>
+        <input id="text" type="text" value="VISUOSPATIALS" spellcheck="false" autocomplete="off">
+    </div>
+    <div class="ctl"><label for="size">Size <b id="sizev">6.0vw</b></label><input id="size" type="range" min="20" max="220" value="60"></div>
+    <div class="ctl"><label for="track">Tracking <b id="trackv">0.25em</b></label><input id="track" type="range" min="-30" max="60" value="25"></div>
+    <div class="ctl"><label for="width">Width <b id="widthv">1.00</b></label><input id="width" type="range" min="30" max="220" value="100"></div>
+    <div class="ctl"><label for="amp">Amplitude <b id="ampv">1.00</b></label><input id="amp" type="range" min="0" max="300" value="100"></div>
+    <div class="acts">
+        <button class="btn" id="flip">Invert</button>
+        <button class="btn" id="copy">Copy CSS</button>
+    </div>
+</div>
+
+<nav class="exit">
+    <a href="../">Visuospatials</a><a href="./">Lab</a>
+    <span class="here">03 Type</span>
+    <span class="spacer"></span>
+    <a href="moire.html">&larr; 02</a><a href="poster.html">04 &rarr;</a>
+</nav>
+
+<script>
+const word = document.getElementById('word');
+const door = document.getElementById('door');
+let move = 'rest';
+let S = { size: 60, track: 25, width: 100, amp: 100 };
+let spans = [];
+let t = 0;
+
+function setText(str) {
+    word.textContent = '';
+    spans = [...(str || ' ')].map(ch => {
+        const s = document.createElement('span');
+        s.textContent = ch === ' ' ? ' ' : ch;
+        word.appendChild(s);
+        return s;
+    });
+    door.classList.toggle('on', str.trim().toLowerCase() === 'void');
+}
+
+function style() {
+    word.style.fontSize = (S.size / 10) + 'vw';
+    word.style.letterSpacing = (S.track / 100) + 'em';
+    word.style.transform = `scaleX(${S.width / 100})`;
+}
+
+function tick() {
+    t += 0.016;
+    const a = S.amp / 100;
+    spans.forEach((s, i) => {
+        if (move === 'rest' || move === 'explode') return;
+        if (move === 'wave') {
+            s.style.transform = `translateY(${Math.sin(t * 2.2 + i * 0.45) * 26 * a}px)`;
+        } else if (move === 'jitter') {
+            s.style.transform = `translate(${(Math.random() - 0.5) * 14 * a}px, ${(Math.random() - 0.5) * 14 * a}px)`;
+        } else if (move === 'orbit') {
+            s.style.transform = `rotate(${Math.sin(t * 1.6 + i * 0.6) * 24 * a}deg) translateY(${Math.cos(t * 1.6 + i * 0.6) * 12 * a}px)`;
+        } else if (move === 'swarm') {
+            s.style.transform = `translate(${Math.sin(t * 1.1 + i) * 34 * a}px, ${Math.cos(t * 0.7 + i * 1.7) * 26 * a}px) scale(${1 + Math.sin(t + i) * 0.16 * a})`;
+        }
+    });
+    requestAnimationFrame(tick);
+}
+
+let explodeTimer = null;
+function explode() {
+    const a = S.amp / 100;
+    spans.forEach(s => {
+        const ang = Math.random() * 6.2832;
+        const d = (160 + Math.random() * 340) * a;
+        s.style.transition = 'transform 6s ease-in-out, opacity 6s ease-in-out';
+        s.style.transform = `translate(${Math.cos(ang) * d}px, ${Math.sin(ang) * d}px)`;
+        s.style.opacity = '0';
+    });
+    setTimeout(() => spans.forEach(s => {
+        s.style.transition = 'transform 2.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 2s ease-out';
+        s.style.transform = '';
+        s.style.opacity = '';
+    }), 6000);
+}
+
+function setMove(m) {
+    move = m;
+    clearInterval(explodeTimer);
+    spans.forEach(s => { s.style.transition = ''; s.style.transform = ''; s.style.opacity = ''; });
+    if (m === 'explode') { explode(); explodeTimer = setInterval(explode, 9500); }
+}
+
+document.getElementById('moves').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    [...e.currentTarget.children].forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    setMove(b.dataset.move);
+});
+
+document.getElementById('text').addEventListener('input', e => {
+    setText(e.target.value.toUpperCase());
+    setMove(move);
+});
+
+const bind = (id, key, fmt) => {
+    const el = document.getElementById(id), lab = document.getElementById(id + 'v');
+    const apply = () => { S[key] = +el.value; lab.textContent = fmt(+el.value); style(); };
+    el.addEventListener('input', apply);
+    apply();
+};
+bind('size', 'size', v => (v / 10).toFixed(1) + 'vw');
+bind('track', 'track', v => (v / 100).toFixed(2) + 'em');
+bind('width', 'width', v => (v / 100).toFixed(2));
+bind('amp', 'amp', v => (v / 100).toFixed(2));
+
+document.getElementById('flip').addEventListener('click', () => document.body.classList.toggle('light'));
+
+document.getElementById('copy').addEventListener('click', async e => {
+    const css = `font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;\nfont-weight: 700;\ntext-transform: uppercase;\nfont-size: ${(S.size / 10).toFixed(1)}vw;\nletter-spacing: ${(S.track / 100).toFixed(2)}em;\nline-height: 0.9;\ntransform: scaleX(${(S.width / 100).toFixed(2)});`;
+    try { await navigator.clipboard.writeText(css); e.target.textContent = 'Copied'; }
+    catch (err) { e.target.textContent = 'Blocked'; }
+    setTimeout(() => { e.target.textContent = 'Copy CSS'; }, 1400);
+});
+
+setText('VISUOSPATIALS');
+style();
+tick();
+</script>
+</body>
+</html>

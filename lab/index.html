@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Lab &mdash; Visuospatials</title>
+    <link rel="icon" type="image/png" href="../faviconv.png">
+    <meta name="description" content="Five rooms of image and type tools. Everything runs in the browser.">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        body { padding: clamp(28px, 6vh, 70px) clamp(20px, 6vw, 90px) 90px; }
+        @media (max-width: 620px) { body { padding-bottom: 140px; } }
+
+        header { display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap;
+                 padding-bottom: clamp(24px, 5vh, 54px); }
+        h1 { font-size: clamp(40px, 12vw, 168px); line-height: 0.82; letter-spacing: -0.045em;
+             font-weight: 700; text-transform: uppercase; }
+        h1 em { font-style: normal; color: var(--sig); }
+        header p { margin-left: auto; max-width: 30ch; padding-top: 8px; line-height: 1.7; }
+
+        .rooms { list-style: none; }
+        .rooms li { border-top: 1px solid var(--rule); }
+        .rooms li:last-child { border-bottom: 1px solid var(--rule); }
+
+        .room { position: relative; display: grid; grid-template-columns: 3.5em 1fr auto;
+                align-items: center; gap: clamp(12px, 3vw, 40px);
+                padding: clamp(16px, 3.2vh, 34px) 0; text-decoration: none; color: var(--fg);
+                overflow: hidden; }
+        .room::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0;
+                        transition: opacity 0.45s ease; }
+        .room:hover::before, .room:focus-visible::before { opacity: 0.4; }
+        .room .n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--dim);
+                   transition: color 0.25s; }
+        .room .t { font-size: clamp(26px, 6vw, 76px); font-weight: 700; line-height: 0.95;
+                   letter-spacing: -0.03em; text-transform: uppercase;
+                   transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+        .room .d { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+                   text-transform: uppercase; color: var(--dim); text-align: right; max-width: 18ch;
+                   line-height: 1.8; }
+        .room:hover .t, .room:focus-visible .t { transform: translateX(clamp(8px, 2vw, 30px)); }
+        .room:hover .n, .room:focus-visible .n { color: var(--sig); }
+        @media (max-width: 700px) { .room { grid-template-columns: 3em 1fr; } .room .d { display: none; } }
+
+        li:nth-child(1) .room::before { background:
+            radial-gradient(circle at center, var(--fg) 1.4px, transparent 1.5px) 0 0 / 13px 13px; }
+        li:nth-child(2) .room::before { background:
+            repeating-linear-gradient(48deg, var(--fg) 0 1px, transparent 1px 7px),
+            repeating-linear-gradient(-48deg, var(--fg) 0 1px, transparent 1px 7px); }
+        li:nth-child(3) .room::before { background:
+            repeating-linear-gradient(90deg, var(--fg) 0 2px, transparent 2px 22px); }
+        li:nth-child(4) .room::before { background:
+            repeating-linear-gradient(0deg, var(--fg) 0 1px, transparent 1px 26px),
+            repeating-linear-gradient(90deg, var(--fg) 0 1px, transparent 1px 26px); }
+        li:nth-child(5) .room::before { background:
+            repeating-conic-gradient(from 0deg, var(--fg) 0deg 6deg, transparent 6deg 12deg); }
+
+        .colophon { margin-top: clamp(30px, 7vh, 70px); display: flex; gap: 30px 60px; flex-wrap: wrap;
+                    line-height: 1.9; }
+        .colophon p { max-width: 44ch; }
+
+        /* The unlisted sixth room. Reads as a dead rule until you touch it. */
+        .seam { display: block; height: 26px; margin-top: 30px; border: 0; background: transparent;
+                cursor: default; position: relative; width: 100%; }
+        .seam::after { content: ""; position: absolute; left: 0; top: 12px; height: 1px; width: 100%;
+                       background: var(--rule); transition: background 0.6s, box-shadow 0.6s; }
+        .seam:hover::after, .seam:focus-visible::after {
+            background: var(--sig); box-shadow: 0 0 22px var(--sig); }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The<br>Lab<em>.</em></h1>
+        <p class="mono">Five rooms. Image and type instruments, all running on your own machine. Nothing you drop in here is uploaded anywhere &mdash; there is no anywhere.</p>
+    </header>
+
+    <ol class="rooms">
+        <li><a class="room" href="halftone.html"><span class="n">01</span><span class="t">Halftone</span><span class="d">Dot, dither &amp; ascii<br>Drop any image</span></a></li>
+        <li><a class="room" href="moire.html"><span class="n">02</span><span class="t">Moir&eacute;</span><span class="d">Interference fields<br>Pointer driven</span></a></li>
+        <li><a class="room" href="type.html"><span class="n">03</span><span class="t">Type</span><span class="d">Kinetic specimen<br>Set your own words</span></a></li>
+        <li><a class="room" href="poster.html"><span class="n">04</span><span class="t">Poster</span><span class="d">Generative grid<br>Space to reroll</span></a></li>
+        <li><a class="room" href="../studio.html"><span class="n">05</span><span class="t">Studio</span><span class="d">The idea<br>And how to join it</span></a></li>
+    </ol>
+
+    <a class="seam" href="../void.html" aria-label="&nbsp;"></a>
+
+    <div class="colophon mono">
+        <p>Every room exports. Canvas rooms give you a PNG at full resolution; hold nothing back.</p>
+        <p>Built as static HTML. No dependencies, no analytics, no fonts fetched from anyone.</p>
+    </div>
+
+    <nav class="exit">
+        <a href="../">&larr; Visuospatials</a>
+        <span class="here">Lab</span>
+        <span class="spacer"></span>
+        <a href="halftone.html">01</a><a href="moire.html">02</a><a href="type.html">03</a><a href="poster.html">04</a>
+    </nav>
+</body>
+</html>
