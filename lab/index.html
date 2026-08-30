@@ -59,13 +59,13 @@
                     line-height: 1.9; }
         .colophon p { max-width: 44ch; }
 
-        /* The unlisted sixth room. Reads as a dead rule until you touch it. */
-        .seam { display: block; height: 26px; margin-top: 30px; border: 0; background: transparent;
-                cursor: default; position: relative; width: 100%; }
-        .seam::after { content: ""; position: absolute; left: 0; top: 12px; height: 1px; width: 100%;
-                       background: var(--rule); transition: background 0.6s, box-shadow 0.6s; }
-        .seam:hover::after, .seam:focus-visible::after {
-            background: var(--sig); box-shadow: 0 0 22px var(--sig); }
+        /* The unlisted room. Labelled nowhere; it just sits there pulling. */
+        .hole { display: block; width: 168px; height: 168px; margin: clamp(34px, 7vh, 74px) auto 0;
+                border-radius: 50%; }
+        /* Without the mask the canvas reads as a lighter square against the page. */
+        .hole canvas { display: block; width: 100%; height: 100%;
+                -webkit-mask-image: radial-gradient(circle, #000 50%, transparent 76%);
+                mask-image: radial-gradient(circle, #000 50%, transparent 76%); }
     </style>
 </head>
 <body>
@@ -84,7 +84,7 @@
         <li><a class="room" href="../studio.html"><span class="n">05</span><span class="t">Studio</span><span class="d">The idea<br>And how to join it</span></a></li>
     </ol>
 
-    <a class="seam" href="../void.html" aria-label="&nbsp;"></a>
+    <a class="hole" id="hole" href="../void.html" aria-label="Room 00"><canvas></canvas></a>
 
     <div class="colophon mono">
         <p>Every room exports. Canvas rooms give you a PNG at full resolution.</p>
@@ -97,5 +97,71 @@
         <a href="halftone.html">01</a><a href="moire.html">02</a><a href="type.html">03</a><a href="poster.html">04</a>
     </nav>
 <script src="/menu.js"></script>
+<script>
+const hole = document.getElementById('hole');
+const hc = hole.querySelector('canvas');
+const hx = hc.getContext('2d');
+const SIZE = 168;
+const HORIZON = 27;
+let dots = [];
+let pull = 0;
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function seed() {
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    hc.width = SIZE * dpr;
+    hc.height = SIZE * dpr;
+    hx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    dots = Array.from({ length: 240 }, () => ({
+        a: Math.random() * 6.2832,
+        r: HORIZON + Math.random() * (SIZE / 2 - HORIZON)
+    }));
+}
+
+function respawn(d) {
+    d.a = Math.random() * 6.2832;
+    d.r = SIZE / 2 - Math.random() * 8;
+}
+
+function spin() {
+    hx.fillStyle = 'rgba(10, 10, 10, 0.24)';
+    hx.fillRect(0, 0, SIZE, SIZE);
+
+    const c = SIZE / 2;
+    const rate = 1 + pull * 1.9;
+
+    for (const d of dots) {
+        // Closer in, faster around and faster down. Nothing climbs back out.
+        d.a += (7.5 / d.r) * 0.045 * rate;
+        d.r -= (0.14 + 5.5 / (d.r * d.r)) * rate;
+        if (d.r <= HORIZON) respawn(d);
+
+        const t = Math.min(1, (d.r - HORIZON) / (SIZE / 2 - HORIZON));
+        hx.fillStyle = `rgba(242, 242, 239, ${0.85 - t * 0.65})`;
+        hx.fillRect(c + Math.cos(d.a) * d.r, c + Math.sin(d.a) * d.r, 1.4, 1.4);
+    }
+
+    hx.fillStyle = '#000';
+    hx.beginPath();
+    hx.arc(c, c, HORIZON, 0, 6.2832);
+    hx.fill();
+
+    hx.strokeStyle = pull > 0.02 ? `rgba(255, 45, 0, ${0.35 + pull * 0.65})` : 'rgba(242, 242, 239, 0.22)';
+    hx.lineWidth = 1;
+    hx.beginPath();
+    hx.arc(c, c, HORIZON + 1.5, 0, 6.2832);
+    hx.stroke();
+
+    if (!still) requestAnimationFrame(spin);
+}
+
+hole.addEventListener('pointerenter', () => { pull = 1; });
+hole.addEventListener('pointerleave', () => { pull = 0; });
+hole.addEventListener('focus', () => { pull = 1; });
+hole.addEventListener('blur', () => { pull = 0; });
+
+seed();
+if (still) { for (let i = 0; i < 90; i++) spin(); } else spin();
+</script>
 </body>
 </html>
