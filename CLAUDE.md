@@ -2,8 +2,12 @@
 
 A design and artwork studio site. Static HTML, no build step, no dependencies,
 no analytics, no fonts fetched from anyone. Every page is a plain `.html` file
-with inline `<style>` and `<script>`; the only shared files are `base.css` and
-`menu.js`.
+with inline `<style>` and `<script>`. The shared files are `base.css`,
+`menu.js`, `stow.js`, `theme.js` and `cross.js`.
+
+**`README.md` is the public face of the repo — short, no secrets.** This file is
+the working document. Keep them separate: anything that spoils `void.html` or
+reads as an internal note belongs here, not there.
 
 ## Deploy
 
@@ -61,9 +65,10 @@ log. That is Greg's call, not an oversight; don't add them back.
 
 The short version: press and hold anywhere on the front page (a ring closes
 around the pointer over 1.1s), the 7%-opacity dot bottom-right,
-typing `lab` / `void` / `spatial`, the Konami code, the dead hairline under the
-lab's room list, backtick in halftone, space/s/h in moiré, setting type's text to
-VOID, poster seeds, the 404, and the console log on the front page.
+typing `lab` / `void` / `spatial`, the Konami code, the three drifting lines in
+the front page's bottom left corner, backtick in halftone, space/s/h in moiré,
+setting type's text to VOID, poster seeds, the 404, and the console log on the
+front page.
 
 Secrets are shortcuts, never the only route. Every room is reachable from the
 `.exit` bar and from `lab/`. The front page reveals a "hold anywhere" whisper
@@ -76,7 +81,7 @@ image raises the save-image callout and eats the gesture on touch.
 ## Conventions
 
 - `base.css` holds tokens, the reset, the grain overlay, the `.exit` bar, the
-  `V` mark and the index overlay. Page-specific CSS stays inline in that page.
+  corner marks and the index overlay. Page-specific CSS stays inline in that page.
   Don't grow `base.css` into a framework.
 
 - **Every page except the front carries two corner marks.** An
@@ -123,7 +128,7 @@ image raises the save-image callout and eats the gesture on touch.
   the button label; each room decides for itself what that class hides, so a new
   room must add its own `body.stowed` rules — hide the panel, collapse the grid
   to one track, and give the work `min-height: 100vh` with minimal padding.
-  `base.css` handles the shared part: the `V` and the `.exit` bar fade out and
+  `base.css` handles the shared part: the corner marks and the `.exit` bar fade out and
   the button itself drops to 22% until hovered. It hides entirely under
   `body.menu-open` (set by `menu.js`) so the index stays clean, and `H` is
   ignored while the index is up. `H` toggles, `Esc` un-stows.
