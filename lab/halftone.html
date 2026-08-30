@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halftone &mdash; Visuospatials</title>
+    <link rel="icon" type="image/png" href="../faviconv.png">
+    <meta name="description" content="Turn any image into dot halftone, dither, ascii or scanlines. Runs entirely in your browser.">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        html, body { height: 100%; }
+        body { display: grid; grid-template-columns: 262px 1fr; overflow: hidden; }
+        @media (max-width: 820px) {
+            html, body { height: auto; }
+            body { grid-template-columns: 1fr; grid-template-rows: auto auto; overflow: visible; }
+        }
+
+        aside { border-right: 1px solid var(--rule); padding: 26px 22px 74px; overflow-y: auto; }
+        @media (max-width: 820px) { aside { border-right: 0; border-bottom: 1px solid var(--rule); padding-bottom: 26px; overflow: visible; } }
+
+        h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; text-transform: uppercase; line-height: 1; }
+        .sub { margin: 10px 0 26px; line-height: 1.8; }
+
+        fieldset { border: 0; margin-bottom: 22px; }
+        legend { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+                 color: var(--dim); padding-bottom: 10px; }
+
+        .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+        .modes button { appearance: none; border: 0; background: var(--bg); color: var(--dim); cursor: pointer;
+                        font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+                        padding: 11px 4px; transition: background 0.2s, color 0.2s; }
+        .modes button:hover { color: var(--fg); }
+        .modes button[aria-pressed="true"] { background: var(--sig); color: #000; }
+
+        .ctl { margin-bottom: 15px; }
+        .ctl label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px;
+                     letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 7px; }
+        .ctl label b { color: var(--fg); font-weight: 400; }
+        input[type=range] { width: 100%; accent-color: var(--sig); background: transparent; }
+
+        .row { display: flex; gap: 9px; flex-wrap: wrap; }
+        .btn { flex: 1; appearance: none; border: 1px solid var(--rule); background: transparent; color: var(--fg);
+               font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+               padding: 12px 10px; cursor: pointer; text-align: center; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+        .btn:hover { background: var(--fg); color: #000; border-color: var(--fg); }
+        .btn.sig:hover { background: var(--sig); border-color: var(--sig); }
+
+        main { position: relative; display: grid; place-items: center; padding: 26px 26px 62px; overflow: hidden; }
+        @media (max-width: 820px) { main { min-height: 70vh; padding-bottom: 110px; } }
+        canvas#out { max-width: 100%; max-height: 100%; display: block; image-rendering: crisp-edges; }
+
+        main.drag::after { content: "release"; position: absolute; inset: 14px; z-index: 5;
+            border: 1px dashed var(--sig); color: var(--sig); display: grid; place-items: center;
+            font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+            background: rgba(0,0,0,0.72); }
+
+        .hint { position: absolute; right: 26px; top: 22px; text-align: right; line-height: 1.9; }
+
+        .sheet { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.985); padding: 4vh 4vw;
+                 display: none; grid-template-rows: auto 1fr; gap: 20px; }
+        .sheet.on { display: grid; }
+        .sheet .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+                       gap: 16px; align-content: start; overflow-y: auto; }
+        .sheet figure { border: 1px solid var(--rule); }
+        .sheet canvas { width: 100%; display: block; }
+        .sheet figcaption { padding: 8px 10px; border-top: 1px solid var(--rule); }
+    </style>
+</head>
+<body>
+<aside>
+    <h1>Halftone</h1>
+    <p class="sub mono">Drop an image anywhere. It never leaves this tab.</p>
+
+    <fieldset>
+        <legend>Process</legend>
+        <div class="modes" id="modes">
+            <button data-mode="dots" aria-pressed="true">Dots</button>
+            <button data-mode="bayer" aria-pressed="false">Ordered</button>
+            <button data-mode="floyd" aria-pressed="false">Diffuse</button>
+            <button data-mode="ascii" aria-pressed="false">Ascii</button>
+            <button data-mode="lines" aria-pressed="false">Scanline</button>
+            <button data-mode="cross" aria-pressed="false">Crosshatch</button>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Adjust</legend>
+        <div class="ctl"><label for="cell">Cell <b id="cellv">10</b></label><input id="cell" type="range" min="3" max="40" value="10"></div>
+        <div class="ctl"><label for="contrast">Contrast <b id="contrastv">1.00</b></label><input id="contrast" type="range" min="20" max="320" value="100"></div>
+        <div class="ctl"><label for="bright">Exposure <b id="brightv">0</b></label><input id="bright" type="range" min="-60" max="60" value="0"></div>
+        <div class="ctl"><label for="angle">Screen angle <b id="anglev">15&deg;</b></label><input id="angle" type="range" min="0" max="90" value="15"></div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Output</legend>
+        <div class="row" style="margin-bottom:9px">
+            <button class="btn" id="invert">Invert</button>
+            <button class="btn" id="reset">Reset</button>
+        </div>
+        <div class="row">
+            <button class="btn" id="load">Open image</button>
+            <button class="btn sig" id="save">Save PNG</button>
+        </div>
+        <input type="file" id="file" accept="image/*" hidden>
+    </fieldset>
+</aside>
+
+<main id="stage">
+    <canvas id="out"></canvas>
+    <p class="hint mono">` &nbsp;proof sheet</p>
+</main>
+
+<div class="sheet" id="sheet">
+    <p class="mono">Proof sheet &mdash; every process at the current settings &middot; ` or Esc to close</p>
+    <div class="grid" id="sheetgrid"></div>
+</div>
+
+<nav class="exit">
+    <a href="../">Visuospatials</a><a href="./">Lab</a>
+    <span class="here">01 Halftone</span>
+    <span class="spacer"></span>
+    <a href="moire.html">02 &rarr;</a>
+</nav>
+
+<script>
+const out = document.getElementById('out');
+const octx = out.getContext('2d');
+const stage = document.getElementById('stage');
+const MODES = { dots: 'Dots', bayer: 'Ordered', floyd: 'Diffuse', ascii: 'Ascii', lines: 'Scanline', cross: 'Crosshatch' };
+const RAMP = ' .:-=+*#%@';
+const BAYER = [[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
+
+let img = new Image();
+let mode = 'dots';
+let invert = false;
+let params = { cell: 10, contrast: 1, bright: 0, angle: 15 };
+
+/* Luminance grid in unrotated space; every process samples this, not the pixels. */
+function buildGrid(source, longEdge, cell) {
+    const s = longEdge / Math.max(source.width, source.height);
+    const w = Math.max(1, Math.round(source.width * s));
+    const h = Math.max(1, Math.round(source.height * s));
+    const tmp = document.createElement('canvas');
+    tmp.width = w; tmp.height = h;
+    const tctx = tmp.getContext('2d', { willReadFrequently: true });
+    tctx.drawImage(source, 0, 0, w, h);
+    const px = tctx.getImageData(0, 0, w, h).data;
+
+    const cols = Math.ceil(w / cell), rows = Math.ceil(h / cell);
+    const g = new Float32Array(cols * rows);
+    for (let ry = 0; ry < rows; ry++) {
+        for (let rx = 0; rx < cols; rx++) {
+            let sum = 0, n = 0;
+            const x1 = Math.min(w, (rx + 1) * cell), y1 = Math.min(h, (ry + 1) * cell);
+            for (let y = ry * cell; y < y1; y += 1) {
+                for (let x = rx * cell; x < x1; x += 1) {
+                    const i = (y * w + x) * 4;
+                    sum += 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2];
+                    n++;
+                }
+            }
+            let v = n ? sum / n / 255 : 0;
+            v = (v - 0.5) * params.contrast + 0.5 + params.bright / 100;
+            g[ry * cols + rx] = Math.min(1, Math.max(0, v));
+        }
+    }
+    return { g, cols, rows, w, h, cell };
+}
+
+function sample(G, x, y) {
+    const cx = Math.min(G.cols - 1, Math.max(0, Math.floor(x / G.cell)));
+    const cy = Math.min(G.rows - 1, Math.max(0, Math.floor(y / G.cell)));
+    const v = G.g[cy * G.cols + cx];
+    return invert ? 1 - v : v;
+}
+
+function render(canvas, longEdge, useMode) {
+    if (!img.width) return;
+    const m = useMode || mode;
+    const cell = Math.max(2, Math.round(params.cell * longEdge / 1400));
+    const G = buildGrid(img, longEdge, cell);
+    canvas.width = G.w; canvas.height = G.h;
+    const ctx = canvas.getContext('2d');
+
+    const ink = invert ? '#000' : '#fff';
+    ctx.fillStyle = invert ? '#fff' : '#000';
+    ctx.fillRect(0, 0, G.w, G.h);
+    ctx.fillStyle = ink;
+    ctx.strokeStyle = ink;
+
+    /* Coverage is how much ink a cell wants, so inverting swaps the ground, not the tones. */
+    const cov = i => invert ? 1 - G.g[i] : G.g[i];
+
+    if (m === 'bayer' || m === 'floyd') {
+        const v = Float32Array.from(G.g, (_, i) => cov(i));
+        if (m === 'floyd') {
+            for (let y = 0; y < G.rows; y++) for (let x = 0; x < G.cols; x++) {
+                const i = y * G.cols + x, old = v[i], nw = old > 0.5 ? 1 : 0;
+                v[i] = nw;
+                const err = old - nw;
+                if (x + 1 < G.cols) v[i + 1] += err * 7 / 16;
+                if (y + 1 < G.rows) {
+                    if (x > 0) v[i + G.cols - 1] += err * 3 / 16;
+                    v[i + G.cols] += err * 5 / 16;
+                    if (x + 1 < G.cols) v[i + G.cols + 1] += err * 1 / 16;
+                }
+            }
+        }
+        for (let y = 0; y < G.rows; y++) for (let x = 0; x < G.cols; x++) {
+            const val = v[y * G.cols + x];
+            const on = m === 'floyd' ? val > 0.5 : val > (BAYER[y & 3][x & 3] + 0.5) / 16;
+            if (on) ctx.fillRect(x * cell, y * cell, cell, cell);
+        }
+        return;
+    }
+
+    if (m === 'ascii') {
+        ctx.font = `${cell * 1.28}px ui-monospace, Menlo, monospace`;
+        ctx.textBaseline = 'top';
+        for (let y = 0; y < G.rows; y++) for (let x = 0; x < G.cols; x++) {
+            const val = cov(y * G.cols + x);
+            const ch = RAMP[Math.min(RAMP.length - 1, Math.round(val * (RAMP.length - 1)))];
+            if (ch !== ' ') ctx.fillText(ch, x * cell, y * cell - cell * 0.18);
+        }
+        return;
+    }
+
+    const a = params.angle * Math.PI / 180;
+    const cos = Math.cos(-a), sin = Math.sin(-a);
+    const diag = Math.hypot(G.w, G.h);
+    ctx.save();
+    ctx.translate(G.w / 2, G.h / 2);
+    ctx.rotate(a);
+
+    if (m === 'dots') {
+        for (let y = -diag / 2; y < diag / 2; y += cell) {
+            for (let x = -diag / 2; x < diag / 2; x += cell) {
+                const sx = x * cos - y * sin + G.w / 2;
+                const sy = x * sin + y * cos + G.h / 2;
+                const r = Math.sqrt(sample(G, sx, sy)) * cell * 0.72;
+                if (r < 0.25) continue;
+                ctx.beginPath();
+                ctx.arc(x + cell / 2, y + cell / 2, r, 0, 6.284);
+                ctx.fill();
+            }
+        }
+    } else {
+        const sets = m === 'cross' ? [0, Math.PI / 2] : [0];
+        for (const extra of sets) {
+            ctx.save();
+            ctx.rotate(extra);
+            for (let y = -diag / 2; y < diag / 2; y += cell) {
+                for (let x = -diag / 2; x < diag / 2; x += 2) {
+                    const rx = x * Math.cos(extra) - y * Math.sin(extra);
+                    const ry = x * Math.sin(extra) + y * Math.cos(extra);
+                    const sx = rx * cos - ry * sin + G.w / 2;
+                    const sy = rx * sin + ry * cos + G.h / 2;
+                    const t = sample(G, sx, sy) * cell * 0.92;
+                    if (t < 0.4) continue;
+                    ctx.fillRect(x, y - t / 2, 2.4, t);
+                }
+            }
+            ctx.restore();
+        }
+    }
+    ctx.restore();
+}
+
+function draw() {
+    const box = stage.getBoundingClientRect();
+    render(out, Math.min(1500, Math.max(700, Math.round(Math.max(box.width, box.height) * 1.4))));
+}
+
+/* Controls */
+const bind = (id, key, fmt, xform) => {
+    const el = document.getElementById(id), lab = document.getElementById(id + 'v');
+    const apply = () => {
+        params[key] = xform ? xform(+el.value) : +el.value;
+        lab.textContent = fmt(params[key]);
+        draw();
+    };
+    el.addEventListener('input', apply);
+    apply();
+};
+bind('cell', 'cell', v => v);
+bind('contrast', 'contrast', v => v.toFixed(2), v => v / 100);
+bind('bright', 'bright', v => (v > 0 ? '+' : '') + v);
+bind('angle', 'angle', v => v + '°');
+
+document.getElementById('modes').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    mode = b.dataset.mode;
+    [...e.currentTarget.children].forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    draw();
+});
+
+document.getElementById('invert').addEventListener('click', () => { invert = !invert; draw(); });
+document.getElementById('reset').addEventListener('click', () => {
+    invert = false;
+    for (const [id, v] of [['cell', 10], ['contrast', 100], ['bright', 0], ['angle', 15]]) {
+        const el = document.getElementById(id);
+        el.value = v;
+        el.dispatchEvent(new Event('input'));
+    }
+});
+
+document.getElementById('load').addEventListener('click', () => document.getElementById('file').click());
+document.getElementById('file').addEventListener('change', e => { if (e.target.files[0]) accept(e.target.files[0]); });
+
+document.getElementById('save').addEventListener('click', () => {
+    const big = document.createElement('canvas');
+    render(big, 2400);
+    let url;
+    try { url = big.toDataURL('image/png'); }
+    catch (err) { alert('Canvas is locked. Serve the page over http rather than opening the file directly.'); return; }
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `visuospatials-${mode}-${Date.now()}.png`;
+    a.click();
+});
+
+function accept(file) {
+    const fr = new FileReader();
+    fr.onload = () => { img = new Image(); img.onload = draw; img.src = fr.result; };
+    fr.readAsDataURL(file);
+}
+
+['dragenter', 'dragover'].forEach(t => document.addEventListener(t, e => { e.preventDefault(); stage.classList.add('drag'); }));
+['dragleave', 'drop'].forEach(t => document.addEventListener(t, e => { e.preventDefault(); if (e.type === 'drop' || e.target === document.documentElement) stage.classList.remove('drag'); }));
+document.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f && f.type.startsWith('image/')) accept(f); });
+
+const sheet = document.getElementById('sheet');
+const sheetgrid = document.getElementById('sheetgrid');
+function proof() {
+    sheetgrid.innerHTML = '';
+    for (const [m, label] of Object.entries(MODES)) {
+        const c = document.createElement('canvas');
+        render(c, 620, m);
+        const fig = document.createElement('figure');
+        const cap = document.createElement('figcaption');
+        cap.className = 'mono';
+        cap.textContent = label;
+        fig.append(c, cap);
+        sheetgrid.append(fig);
+    }
+    sheet.classList.add('on');
+}
+
+document.addEventListener('keydown', e => {
+    if (e.target instanceof Element && e.target.matches('input, textarea, button')) return;
+    if (e.key === '`') { sheet.classList.contains('on') ? sheet.classList.remove('on') : proof(); }
+    if (e.key === 'Escape') sheet.classList.remove('on');
+});
+sheet.addEventListener('click', () => sheet.classList.remove('on'));
+
+let resizeAt;
+new ResizeObserver(() => { clearTimeout(resizeAt); resizeAt = setTimeout(draw, 160); }).observe(stage);
+addEventListener('load', draw);
+
+img.onload = draw;
+img.src = '../visuo.webp';
+</script>
+</body>
+</html>
