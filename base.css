@@ -248,3 +248,15 @@ body.stowed .exit { opacity: 0; pointer-events: none; }
 body.stowed .stow { opacity: 0.22; }
 body.stowed .stow:hover, body.stowed .stow:focus-visible { opacity: 1; }
 body.menu-open .stow { opacity: 0; pointer-events: none; }
+
+/* The unlisted room. Labelled nowhere; it just sits there pulling. */
+.hole { display: block; border-radius: 50%; }
+/* Without the mask the canvas reads as a lighter square against the page. */
+.hole canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  -webkit-mask-image: radial-gradient(circle, #000 50%, transparent 76%);
+  mask-image: radial-gradient(circle, #000 50%, transparent 76%);
+}
+.hole[data-scatter] { position: fixed; z-index: 20; }
