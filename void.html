@@ -35,7 +35,9 @@
                  border: 1px solid var(--rule); padding: 1px 6px; }
         dd a { color: var(--fg); }
 
-        .sign { margin-top: clamp(44px, 9vh, 90px); line-height: 2; }
+        .foot { margin-top: clamp(40px, 8vh, 80px); display: flex; align-items: baseline;
+                justify-content: space-between; gap: 6px 30px; flex-wrap: wrap; }
+        .sign { line-height: 2; }
     </style>
     <!-- Must stay in <head>: moving it later reintroduces the theme flash. -->
     <script>
@@ -75,9 +77,10 @@
         <div class="door"><dt>Seeds</dt><dd>Every <a href="lab/poster.html">poster</a> has a six character address. Write one down and it comes back exactly.</dd></div>
     </dl>
 
-    <p class="sign label">Visuospatials &middot; <a href="/">back to the front</a> &middot; <a href="lab/">the lab</a> &middot; <a href="studio.html">studio</a></p>
-
-    <p class="copy label">&copy; 2026 Audiospatials</p>
+    <div class="foot">
+        <p class="sign label">Visuospatials &middot; <a href="/">back to the front</a> &middot; <a href="lab/">the lab</a> &middot; <a href="studio.html">studio</a></p>
+        <p class="copy label">&copy; 2026 Audiospatials</p>
+    </div>
 </div>
 
 <script src="/menu.js"></script>
