@@ -178,6 +178,10 @@ not Visuospatials — that is what Greg asked for.
   the default image halftone loads. Don't delete it.
 - Superseded heroes are removed from the tree but stay in history, originals
   included: `git log --oneline --diff-filter=D -- '*.webp' '*.jpg'` finds them.
+- The favicon is `favicon.png` (512px) plus `apple-touch-icon.png` (180px), both
+  cut from a 2133px original in history. It carries its own black ground rather
+  than transparency, so the white mark reads on a light browser tab too. Every
+  page links both, root-absolute.
 
 ## Canvas rooms
 
