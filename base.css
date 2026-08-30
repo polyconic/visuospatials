@@ -80,11 +80,41 @@ a { color: inherit; }
   }
 }
 
-/* The V: fixed mark on every page, opens the index in place. */
+/* Corner marks: home, then the V. Both sit above the index overlay. */
+.homemark {
+  position: fixed;
+  top: 13px;
+  left: 15px;
+  z-index: 210;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  mix-blend-mode: difference;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.homemark svg {
+  display: block;
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.homemark:hover, .homemark:focus-visible {
+  mix-blend-mode: normal;
+  color: var(--sig);
+  transform: scale(1.14);
+}
+
+/* The V: opens the index in place. */
 .vmark {
   position: fixed;
   top: 12px;
-  left: 15px;
+  left: 53px;
   z-index: 210;
   padding: 3px 5px;
   font-family: var(--sans);
@@ -198,8 +228,9 @@ a { color: inherit; }
 }
 .stow:hover, .stow:focus-visible { color: var(--fg); border-color: var(--fg); }
 
-.vmark, .exit { transition: opacity 0.3s ease; }
+.vmark, .homemark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
 body.stowed .vmark,
+body.stowed .homemark,
 body.stowed .exit { opacity: 0; pointer-events: none; }
 body.stowed .stow { opacity: 0.22; }
 body.stowed .stow:hover, body.stowed .stow:focus-visible { opacity: 1; }

@@ -56,8 +56,9 @@ image raises the save-image callout and eats the gesture on touch.
   `V` mark and the index overlay. Page-specific CSS stays inline in that page.
   Don't grow `base.css` into a framework.
 
-- **Every page except the front carries the `V`.** One
-  `<a class="vmark" href="/">V</a>` right after `<body>`, and
+- **Every page except the front carries two corner marks.** An
+  `<a class="homemark" href="/">` holding an inline arrow SVG, then
+  `<a class="vmark" href="/">V</a>` beside it, both right after `<body>`, and
   `<script src="/menu.js"></script>` right before `</body>`. The landing page
   loads `menu.js` but shows no mark — it is meant to look like a dead end, and
   the hold gesture is its way in. `menu.js` no-ops when there is no `.vmark`.
@@ -67,9 +68,11 @@ image raises the save-image callout and eats the gesture on touch.
   Paths in `ROOMS` and in the two shared tags are **root-absolute**, so they work
   the same from `/` and from `/lab/`; they do not work over `file://`.
 
-- The `V` uses `mix-blend-mode: difference` so it stays readable over any ground.
-  It flips to normal blend and the signal red on hover.
-  Anything placed in the top-left corner of a page has to clear it — that is why
+- Both marks use `mix-blend-mode: difference` so they stay readable over any
+  ground, and flip to normal blend and the signal red on hover. The arrow is an
+  SVG rather than the `←` character so its weight matches the V instead of
+  depending on whatever font the glyph falls back to.
+  Anything placed in the top-left corner of a page has to clear them — that is why
   halftone's sidebar, moiré's panel, poster's stage and type's stage carry extra
   top padding, and why the editorial pages bump `padding-top` under 620px.
 - Palette is `--bg` near-black, `--fg` near-white, one signal red `--sig`.
