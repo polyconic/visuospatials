@@ -107,9 +107,10 @@ image raises the save-image callout and eats the gesture on touch.
   `magick in.webp -resize 2560x2560\> -quality 85 -define webp:method=6 out.webp`
   Commit the original first so the full-resolution file stays in history, then
   resize in a second commit.
-- `visuowallpaper.webp` is the front page hero. `visuo.webp` is **not** dead —
-  it is the default image halftone loads, and the high-contrast black and white
-  suits that room better than the wallpaper would. Don't delete it.
+- `visuofinal.webp` is the front page hero. `visuo.webp` is **not** dead — it is
+  the default image halftone loads. Don't delete it.
+- Superseded heroes are removed from the tree but stay in history, originals
+  included: `git log --oneline --diff-filter=D -- '*.webp' '*.jpg'` finds them.
 
 ## Canvas rooms
 
