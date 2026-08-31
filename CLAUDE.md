@@ -144,7 +144,9 @@ Every page resolves the class in an inline `<head>` script **before first paint*
 Do not move that into a deferred script or the page flashes the wrong theme.
 
 The pair of controls lives in `<div class="corner">` at top right: the toggle
-then mail. Both are difference-blended like the left-hand marks, and both fade
+then mail. **The landing page has the mail only** — no toggle, and it does not
+load `theme.js`. It still runs the inline `<head>` script, so a theme chosen
+elsewhere is honoured there; there is just nothing to switch it with. Both are difference-blended like the left-hand marks, and both fade
 out under `body.stowed` and `body.menu-open`. Anything a page puts in its top
 right corner has to clear them — that is why halftone's proof-sheet hint sits at
 `top: 56px` and poster's sidebar carries 58px of top padding.
