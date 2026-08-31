@@ -84,9 +84,9 @@ image raises the save-image callout and eats the gesture on touch.
   corner marks and the index overlay. Page-specific CSS stays inline in that page.
   Don't grow `base.css` into a framework.
 
-- **Every page except the front carries two corner marks.** An
-  `<a class="homemark" href="/">` holding an inline arrow SVG, then an
-  `<a class="menumark" href="/">` holding a three-line sandwich SVG, both right
+- **Every page except the front carries three corner marks**, left to right:
+  `<a class="backmark">` (arrow), `<a class="homemark">` (house), and
+  `<a class="menumark">` (sandwich, opens the index). All three sit right
   after `<body>`, and
   `<script src="/menu.js"></script>` right before `</body>`. The landing page
   loads `menu.js` but shows no marks — it is meant to look like a dead end, and
@@ -97,8 +97,14 @@ image raises the save-image callout and eats the gesture on touch.
   Paths in `ROOMS` and in the two shared tags are **root-absolute**, so they work
   the same from `/` and from `/lab/`; they do not work over `file://`.
 
-- Both marks are inline SVG, not characters, so their stroke weights match each
-  other rather than depending on font fallback. Both use `mix-blend-mode:
+- **The back arrow is history, not a link home.** `menu.js` calls `history.back()`
+  only when `document.referrer` is same-origin; otherwise the `href="/"` takes
+  over. Testing `history.length` alone is not enough — it counts entries from
+  anywhere, so a visitor arriving from a search result would be walked straight
+  back out of the site. The arrow is site navigation; it should never leave.
+
+- All three marks are inline SVG, not characters, so their stroke weights match
+  each other rather than depending on font fallback. They use `mix-blend-mode:
   difference` so they stay readable over any ground, and flip to normal blend
   and the signal red on hover. The sandwich's three lines cross into an X under
   `body.menu-open`, so it reads as the toggle it is.

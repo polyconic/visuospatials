@@ -93,11 +93,10 @@ a { color: inherit; }
   }
 }
 
-/* Corner marks: home, then the V. Both sit above the index overlay. */
-.homemark {
+/* Corner marks: back, home, then the sandwich. All sit above the index overlay. */
+.backmark, .homemark {
   position: fixed;
   top: 13px;
-  left: 15px;
   z-index: 210;
   display: grid;
   place-items: center;
@@ -107,7 +106,10 @@ a { color: inherit; }
   mix-blend-mode: difference;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.homemark svg {
+.backmark { left: 15px; }
+.homemark { left: 53px; }
+
+.backmark svg, .homemark svg {
   display: block;
   width: 21px;
   height: 21px;
@@ -117,6 +119,7 @@ a { color: inherit; }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.backmark:hover, .backmark:focus-visible,
 .homemark:hover, .homemark:focus-visible {
   mix-blend-mode: normal;
   color: var(--sig);
@@ -127,7 +130,7 @@ a { color: inherit; }
 .menumark {
   position: fixed;
   top: 13px;
-  left: 53px;
+  left: 91px;
   z-index: 210;
   display: grid;
   place-items: center;
@@ -254,9 +257,10 @@ body.menu-open .menumark .c { transform: translateY(-5px) rotate(-45deg); }
 }
 .stow:hover, .stow:focus-visible { color: var(--fg); border-color: var(--fg); }
 
-.menumark, .homemark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+.menumark, .homemark, .backmark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
 body.stowed .menumark,
 body.stowed .homemark,
+body.stowed .backmark,
 body.stowed .exit { opacity: 0; pointer-events: none; }
 body.stowed .stow { opacity: 0.22; }
 body.stowed .stow:hover, body.stowed .stow:focus-visible { opacity: 1; }
