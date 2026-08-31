@@ -35,4 +35,4 @@ Deployed from `main` with GitHub Pages.
 
 ---
 
-© 2026 Audiospatials
+© 2026 Visuospatials

@@ -164,11 +164,10 @@ Canvases paint their own ground and cannot inherit a class, so each handles it:
 
 ## Footer
 
-Every page except the landing page carries `&copy; 2026 Audiospatials`. On pages
+Every page except the landing page carries `&copy; 2026 Visuospatials`. On pages
 with the `.exit` bar it is the last item in that bar; void and 404 have no bar,
 so it sits in flow at the end of the content — on the void it shares a
-`.foot` flex row with the nav line, matching the bar's left/right split. Note the name: **Audiospatials**,
-not Visuospatials — that is what Greg asked for.
+`.foot` flex row with the nav line, matching the bar's left/right split.
 
 ## Images
 
