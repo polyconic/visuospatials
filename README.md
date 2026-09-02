@@ -7,8 +7,7 @@ By Gregor Egan & Hunter Bowersmith. Los Angeles & Santa Cruz.
 
 ## The lab
 
-Five rooms of browser instruments. Everything runs on your own machine — nothing
-you drop in is uploaded anywhere — and every room exports at print resolution.
+Five rooms of browser instruments. Everything runs on your own machine.
 
 | | |
 |---|---|
