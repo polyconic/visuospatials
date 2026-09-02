@@ -18,17 +18,6 @@ you drop in is uploaded anywhere — and every room exports at print resolution.
 | **Poster** | A seeded generative poster; every composition has an address you can return to |
 | **Studio/About** | What this is, and how to bring something to it |
 
-## Running it
-
-Static HTML. No build step, no dependencies, no analytics, no fonts fetched from
-anyone. Clone it and serve the folder:
-
-```
-python3 -m http.server 8000
-```
-
-Deployed from `main` with GitHub Pages.
-
 ## Contact
 
 [gregor.art@pm.me](mailto:gregor.art@pm.me)
