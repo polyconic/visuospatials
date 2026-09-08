@@ -175,6 +175,20 @@ with the `.exit` bar it is the last item in that bar; void and 404 have no bar,
 so it sits in flow at the end of the content — on the void it shares a
 `.foot` flex row with the nav line, matching the bar's left/right split.
 
+## Search
+
+- **Every indexable page declares a canonical.** Without one, `/lab/` and
+  `/lab/index.html` both return 200 and Google reports "Duplicate without
+  user-selected canonical". Add the tag when you add a page, and add the page to
+  `sitemap.xml`.
+- `void.html` and `404.html` are `noindex` and are **not** in the sitemap.
+- `robots.txt` deliberately says nothing about `void.html`. robots.txt is public,
+  so a `Disallow` line would advertise the room — and it would also stop Google
+  reading the `noindex` that actually keeps it out. Leave it crawlable and
+  noindexed.
+- "Page with redirect" in Search Console is expected: `www` and the
+  `polyconic.github.io` address both 301 to the apex domain. Nothing to fix.
+
 ## Images
 
 - **Max 2560px on the long edge, webp quality 85**, same rule as the portfolio:

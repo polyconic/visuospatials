@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://visuospatials.com/sitemap.xml
