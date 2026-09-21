@@ -1,11 +1,7 @@
 (function () {
     const ROOMS = [
-        ['01', 'Halftone', 'Dot · dither · ascii', '/lab/halftone.html'],
-        ['02', 'Moiré', 'Interference fields', '/lab/moire.html'],
-        ['03', 'Type', 'Kinetic specimen', '/lab/type.html'],
-        ['04', 'Poster', 'Generative grid', '/lab/poster.html'],
-        ['05', 'The Lab', 'All rooms', '/lab/'],
-        ['06', 'Studio/About', 'The idea', '/studio.html']
+        ['01', 'Studio/About', 'The idea', '/studio.html'],
+        ['02', 'The Lab', 'Four instruments', '/lab/']
     ];
 
     const here = location.pathname.replace(/index\.html$/, '');

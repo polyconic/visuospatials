@@ -40,6 +40,9 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 
 - **No corner marks.** The home and sandwich marks are on every page *except* this
   one. That is deliberate: the front should read as a dead end. Don't add them.
+- **The hold gesture goes to Studio/About**, not to an index. About is the main
+  content; the Lab is a bonus you reach from the sandwich once you are inside.
+  The front page does not load `menu.js` at all — there is no overlay there.
 - **The wordmark is static.** The explode animation still exists but nothing runs
   it on a timer — only typing `spatial` fires it. Greg asked for still; do not
   restore the interval.
