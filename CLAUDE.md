@@ -23,7 +23,9 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | File | What it is |
 |---|---|
 | `index.html` | The front. Photo, exploding wordmark, hidden index. |
-| `lab/index.html` | Directory of the five rooms. |
+| `work/index.html` | The portfolio grid. Reads `work/pieces.js`; empty state points at Instagram. |
+| `work/pieces.js` | The manifest — the one file to edit when a piece is added. |
+| `lab/index.html` | Directory of the four rooms. |
 | `lab/halftone.html` | Image → dot halftone, ordered/diffusion dither, ascii, scanline, crosshatch. |
 | `lab/moire.html` | Two overlaid grids composited with `difference`. Pointer steers layer two. |
 | `lab/type.html` | Kinetic type specimen. Copies its own CSS. |
@@ -184,6 +186,21 @@ sits in flow at the end of the content.
 - `404.html` is `noindex` and is **not** in the sitemap.
 - "Page with redirect" in Search Console is expected: `www` and the
   `polyconic.github.io` address both 301 to the apex domain. Nothing to fix.
+
+## The work page
+
+`work/pieces.js` is the whole interface: one object per piece, newest first. Add
+the file to `work/`, add a line, done — `work/index.html` builds the grid and the
+viewer from the array and never needs touching.
+
+- **Give every piece `w` and `h`.** The grid is CSS `columns`, so without an
+  intrinsic size the whole column reflows as each file lands.
+- `.mp4` / `.webm` / `.mov` render as muted looping video in the grid and gain
+  controls in the viewer. Everything else is an `<img>`.
+- A piece with `link` becomes an `<a>` that opens the release instead of the
+  viewer. Without one it is a `<button>` that opens the viewer.
+- With the array empty the page says so and sends people to Instagram. That is
+  deliberate — the account is the live feed and the site is the finished cut.
 
 ## Images
 

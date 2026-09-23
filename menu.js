@@ -1,7 +1,8 @@
 (function () {
     const ROOMS = [
         ['01', 'Studio/About', 'The idea', '/studio.html'],
-        ['02', 'The Lab', 'Four instruments', '/lab/']
+        ['02', 'Work', 'What we have made', '/work/'],
+        ['03', 'The Lab', 'Four instruments', '/lab/']
     ];
 
     const here = location.pathname.replace(/index\.html$/, '');
