@@ -6,7 +6,7 @@ with inline `<style>` and `<script>`. The shared files are `base.css`,
 `menu.js`, `stow.js`, `theme.js` and `cross.js`.
 
 **`README.md` is the public face of the repo — short, no secrets.** This file is
-the working document. Keep them separate: anything that spoils `void.html` or
+the working document. Keep them separate: anything that spoils a secret or
 reads as an internal note belongs here, not there.
 
 ## Deploy
@@ -29,11 +29,10 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `lab/type.html` | Kinetic type specimen. Copies its own CSS. |
 | `lab/poster.html` | Seeded generative poster, exports at 2400px. |
 | `studio.html` | The collaboration idea and the contact. |
-| `void.html` | Unlisted. Lists every secret on the site. `noindex`. |
 | `404.html` | Dot-matrix 404 that repels the pointer. GitHub Pages serves this. |
 | `menu.js` | Builds the index overlay and wires the sandwich mark. Loaded by every page. |
 | `stow.js` | Drives the Hide/Edit toggle. Loaded by the four tool rooms only. |
-| `cross.js` | Draws the three drifting lines. `data-corner` pins them bottom left. |
+| `cross.js` | Draws the three drifting lines. `data-corner` pins them bottom left. Decorative. |
 | `theme.js` | Wires the light/dark toggle. Loaded by every page. |
 
 ## The front page
@@ -61,17 +60,16 @@ task, not a bug.
 
 ## The secrets
 
-`void.html` lists the doors and is written for a visitor. **If you add or move a
-door, update that page** — a stale map is worse than none. Four doors are left off it on
-purpose: the corner lines, the Konami code, the 404 and the front page console
-log. That is Greg's call, not an oversight; don't add them back.
+There is no index of the doors any more. `void.html` used to list them and was
+removed on 2026-09-23 — Greg called it gimmicky. **Don't rebuild it**, and don't
+add a room whose only way in is a secret.
 
-The short version: press and hold anywhere on the front page (a ring closes
-around the pointer over 1.1s), the 7%-opacity dot bottom-right,
-typing `lab` / `void` / `spatial`, the Konami code, the three drifting lines in
-the front page's bottom left corner, backtick in halftone, space/s/h in moiré,
-setting type's text to VOID, poster seeds, the 404, and the console log on the
-front page.
+The full set: press and hold anywhere on the front page (a ring closes around
+the pointer over 1.1s, then goes to Studio/About), the 7%-opacity dot
+bottom-right, typing `lab` or `spatial`, the Konami code, backtick in halftone,
+space/s/h in moiré, poster seeds, the 404, and the console log on the front
+page. The three drifting lines bottom left are now decoration only — they were
+the door to the void and still animate on hover, but they link nowhere.
 
 Secrets are shortcuts, never the only route. Every room is reachable from the
 `.exit` bar and from `lab/`. The front page reveals a "hold anywhere" whisper
@@ -174,9 +172,8 @@ Canvases paint their own ground and cannot inherit a class, so each handles it:
 ## Footer
 
 Every page except the landing page carries `&copy; 2026 Visuospatials`. On pages
-with the `.exit` bar it is the last item in that bar; void and 404 have no bar,
-so it sits in flow at the end of the content — on the void it shares a
-`.foot` flex row with the nav line, matching the bar's left/right split.
+with the `.exit` bar it is the last item in that bar; the 404 has no bar, so it
+sits in flow at the end of the content.
 
 ## Search
 
@@ -184,11 +181,7 @@ so it sits in flow at the end of the content — on the void it shares a
   `/lab/index.html` both return 200 and Google reports "Duplicate without
   user-selected canonical". Add the tag when you add a page, and add the page to
   `sitemap.xml`.
-- `void.html` and `404.html` are `noindex` and are **not** in the sitemap.
-- `robots.txt` deliberately says nothing about `void.html`. robots.txt is public,
-  so a `Disallow` line would advertise the room — and it would also stop Google
-  reading the `noindex` that actually keeps it out. Leave it crawlable and
-  noindexed.
+- `404.html` is `noindex` and is **not** in the sitemap.
 - "Page with redirect" in Search Console is expected: `www` and the
   `polyconic.github.io` address both 301 to the apex domain. Nothing to fix.
 

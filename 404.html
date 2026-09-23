@@ -18,8 +18,6 @@
         .mid a { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--rule);
                  padding-bottom: 2px; margin: 0 10px; transition: color 0.2s, border-color 0.2s; }
         .mid a:hover { color: var(--sig); border-color: var(--sig); }
-        .mid .quiet { color: var(--faint); border: 0; }
-        .mid .quiet:hover { color: var(--sig); }
     </style>
     <!-- Must stay in <head>: moving it later reintroduces the theme flash. -->
     <script>
@@ -47,7 +45,7 @@
 <canvas id="c"></canvas>
 <div class="mid">
     <p class="label">There is no page at this address.<br>The dots know it too.</p>
-    <p class="label"><a href="/">Front</a><a href="/lab/">The lab</a><a href="/studio.html">Studio/About</a><a class="quiet" href="/void.html">&middot;</a></p>
+    <p class="label"><a href="/">Front</a><a href="/lab/">The lab</a><a href="/studio.html">Studio/About</a></p>
     <p class="copy label">&copy; 2026 Visuospatials</p>
 </div>
 
