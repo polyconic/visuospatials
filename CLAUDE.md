@@ -44,9 +44,23 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 - **The hold gesture goes to Studio/About**, not to an index. About is the main
   content; the Lab is a bonus you reach from the exit bar once you are inside.
   The front page does not load `nav.js` at all — it has no arrow to wire.
-- **The wordmark is static.** The explode animation still exists but nothing runs
-  it on a timer — only typing `spatial` fires it. Greg asked for still; do not
-  restore the interval.
+- **The wordmark is a dot field**, the same mask trick as the 404: the type is
+  drawn into an offscreen canvas, `getImageData` finds the letterforms, and a dot
+  is kept wherever one landed. The pointer pushes them aside. The `<span>` still
+  holds the real text for readers and search — it is only made transparent — and
+  the metrics are read back off it with `getComputedStyle`, so the CSS clamp
+  stays the single source of truth for the size.
+  - Below 760px, without a fine pointer, or under reduced motion, the canvas is
+    removed and the plain text shows. Dots that small cannot resolve into
+    letters and a phone has no cursor to react to.
+  - CSS `width: 100%; height: 100%` on the canvas is **required**. A canvas is a
+    replaced element, so `inset: 0` alone does not stretch it — it falls back to
+    its intrinsic size and the drawing lands at device-pixel scale.
+- **Nothing animates the wordmark on a timer.** The explode is still only
+  reachable by typing `spatial`; in dot mode it scatters the dots instead of the
+  letter spans. Greg asked for still; do not restore the interval. The blast
+  clock starts at `-1e9`, not `0` — `performance.now()` begins near zero, so a
+  zero start puts a freshly loaded page inside the explode window.
 - Its colour is the literal `#5c5c58`, deliberately a step darker than `--dim`
   and tuned against the current hero. Worth re-checking if the hero changes.
 - The hero has been swapped several times. The routine each time: commit the

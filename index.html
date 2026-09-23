@@ -54,6 +54,17 @@
             cursor: default;
         }
         .flicker-text span { display: inline-block; }
+        /* The dot field draws the wordmark instead; the text stays for readers. */
+        .flicker-text.dotted { opacity: 0; }
+
+        .dots {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
 
         body { user-select: none; -webkit-touch-callout: none; }
 
@@ -128,6 +139,7 @@
 </div>
     <img src="blur.webp" alt="Visuospatials">
     <span class="flicker-text">VISUOSPATIALS</span>
+    <canvas class="dots" id="dots" aria-hidden="true"></canvas>
 
     <svg class="hold" id="hold" viewBox="0 0 100 100" aria-hidden="true">
         <circle class="track" cx="50" cy="50" r="46"></circle>
@@ -145,8 +157,10 @@
     <script src="/cross.js"></script>
     <script>
         const container = document.querySelector('.flicker-text');
+        const MARK = '#5c5c58';
 
-        const letters = container.textContent.split('');
+        const WORD = container.textContent;
+        const letters = WORD.split('');
         container.textContent = '';
         letters.forEach(char => {
             const span = document.createElement('span');
@@ -154,8 +168,106 @@
             container.appendChild(span);
         });
 
+        /* The wordmark as a dot field, the same trick as the 404: draw the type
+           into an offscreen canvas, read the pixels, and keep a dot wherever the
+           letterforms landed. The pointer pushes them aside.
+
+           Only on a real pointer and a wide enough viewport — the dots need room
+           to resolve into letters, and on a phone there is no cursor to react to.
+           Everywhere else the plain text stays and explode() moves the spans. */
+        const DOTTED = matchMedia('(hover: hover) and (pointer: fine)').matches &&
+                       !matchMedia('(prefers-reduced-motion: reduce)').matches &&
+                       innerWidth >= 760;
+
+        const canvas = document.getElementById('dots');
+        const cx = canvas.getContext('2d');
+        const mouse = { x: -9999, y: -9999 };
+        let W = 0, H = 0, cell = 6, reach = 170, shove = 15, dots = [];
+        let blastAt = -1e9;
+
+        function build() {
+            W = innerWidth; H = innerHeight;
+            if (W < 2 || H < 2) { dots = []; return; }
+            const dpr = Math.min(2, devicePixelRatio || 1);
+            canvas.width = W * dpr;
+            canvas.height = H * dpr;
+            cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            // The span owns the type; read it back rather than repeating the clamp.
+            const cs = getComputedStyle(container);
+            const size = parseFloat(cs.fontSize);
+            const track = parseFloat(cs.letterSpacing) || 0;
+            cell = Math.max(3, Math.round(size * 0.072));
+            // Proportional to the type, so the disturbance covers the same
+            // couple of letters whatever the viewport resolves the clamp to.
+            reach = size * 2.6;
+            shove = size * 0.24;
+
+            const m = document.createElement('canvas');
+            m.width = W; m.height = H;
+            const mc = m.getContext('2d', { willReadFrequently: true });
+            mc.fillStyle = '#000';
+            mc.fillRect(0, 0, W, H);
+            mc.fillStyle = '#fff';
+            mc.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+            mc.textBaseline = 'alphabetic';
+
+            // CSS adds tracking after every character, the last one included, and
+            // centres that whole advance. Match it or the field sits off-centre.
+            const widths = letters.map(ch => mc.measureText(ch).width);
+            const total = widths.reduce((a, b) => a + b, 0) + track * letters.length;
+            const box = mc.measureText(WORD);
+            const y = H / 2 + (box.actualBoundingBoxAscent - box.actualBoundingBoxDescent) / 2;
+            let x = (W - total) / 2;
+            letters.forEach((ch, i) => { mc.fillText(ch, x, y); x += widths[i] + track; });
+
+            const px = mc.getImageData(0, 0, W, H).data;
+            dots = [];
+            for (let dy = 0; dy < H; dy += cell) {
+                for (let dx = 0; dx < W; dx += cell) {
+                    if (px[(dy * W + dx) * 4] < 128) continue;
+                    const a = Math.random() * 6.2832;
+                    const d = 200 + Math.random() * 400;
+                    dots.push({ x: dx, y: dy, bx: Math.cos(a) * d, by: Math.sin(a) * d });
+                }
+            }
+        }
+
+        // Blows out over 6s and settles back over 2.5s, as the letters used to.
+        function blast() {
+            const t = (performance.now() - blastAt) / 1000;
+            if (t < 0 || t > 8.5) return 0;
+            if (t < 6) { const k = t / 6; return k * k * (3 - 2 * k); }
+            const k = 1 - (t - 6) / 2.5;
+            return k * k * k;
+        }
+
+        function loop() {
+            if (!dots.length || W !== innerWidth || H !== innerHeight) build();
+            cx.clearRect(0, 0, W, H);
+
+            const b = blast();
+            cx.globalAlpha = 1 - b;
+            cx.fillStyle = MARK;
+
+            for (let i = 0; i < dots.length; i++) {
+                const d = dots[i];
+                const ox = d.x - mouse.x, oy = d.y - mouse.y;
+                const push = Math.max(0, 1 - Math.hypot(ox, oy) / reach);
+                const a = Math.atan2(oy, ox);
+                cx.beginPath();
+                cx.arc(d.x + Math.cos(a) * push * shove + d.bx * b,
+                       d.y + Math.sin(a) * push * shove + d.by * b,
+                       cell * 0.40 + push * cell * 0.3, 0, 6.2832);
+                cx.fill();
+            }
+            requestAnimationFrame(loop);
+        }
+
         // Only reachable by typing "spatial"; nothing runs this on a timer.
         function explode() {
+            if (DOTTED) { blastAt = performance.now(); return; }
+
             const spans = container.querySelectorAll('span');
 
             // Slow explosion over 6 seconds
@@ -177,6 +289,16 @@
                     span.style.opacity = '';
                 });
             }, 6000);
+        }
+
+        if (DOTTED) {
+            container.classList.add('dotted');
+            addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+            addEventListener('pointerleave', () => { mouse.x = mouse.y = -9999; });
+            build();
+            loop();
+        } else {
+            canvas.remove();
         }
 
         const hold = document.getElementById('hold');
