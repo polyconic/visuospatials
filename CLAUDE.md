@@ -97,6 +97,9 @@ image raises the save-image callout and eats the gesture on touch.
   the same three sections. **The section list now lives in the exit bars and
   nowhere else**, so adding a section means editing each page's bar: the front
   page has none, the 404 uses its own nav line, and the rest carry `.exit`.
+  **The Lab goes last in every list.** It is the bonus, not the work; Greg asked
+  for that ordering on 2026-09-23 and it holds for the exit bars, the 404's nav
+  line and studio's links row alike.
   Paths in the shared tags are **root-absolute**, so they work the same from `/`
   and from `/lab/`; they do not work over `file://`.
 
