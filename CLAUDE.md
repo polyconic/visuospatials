@@ -3,7 +3,7 @@
 A design and artwork studio site. Static HTML, no build step, no dependencies,
 no analytics, no fonts fetched from anyone. Every page is a plain `.html` file
 with inline `<style>` and `<script>`. The shared files are `base.css`,
-`menu.js`, `stow.js`, `theme.js` and `cross.js`.
+`nav.js`, `stow.js`, `theme.js` and `cross.js`.
 
 **`README.md` is the public face of the repo — short, no secrets.** This file is
 the working document. Keep them separate: anything that spoils a secret or
@@ -32,18 +32,18 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `lab/poster.html` | Seeded generative poster, exports at 2400px. |
 | `studio.html` | The collaboration idea and the contact. |
 | `404.html` | Dot-matrix 404 that repels the pointer. GitHub Pages serves this. |
-| `menu.js` | Builds the index overlay and wires the sandwich mark. Loaded by every page. |
+| `nav.js` | Wires the back arrow. Loaded by every page except the front. |
 | `stow.js` | Drives the Hide/Edit toggle. Loaded by the four tool rooms only. |
 | `cross.js` | Draws the three drifting lines. `data-corner` pins them bottom left. Decorative. |
 | `theme.js` | Wires the light/dark toggle. Loaded by every page. |
 
 ## The front page
 
-- **No corner marks.** The home and sandwich marks are on every page *except* this
+- **No corner marks.** The back and home marks are on every page *except* this
   one. That is deliberate: the front should read as a dead end. Don't add them.
 - **The hold gesture goes to Studio/About**, not to an index. About is the main
-  content; the Lab is a bonus you reach from the sandwich once you are inside.
-  The front page does not load `menu.js` at all — there is no overlay there.
+  content; the Lab is a bonus you reach from the exit bar once you are inside.
+  The front page does not load `nav.js` at all — it has no arrow to wire.
 - **The wordmark is static.** The explode animation still exists but nothing runs
   it on a timer — only typing `spatial` fires it. Greg asked for still; do not
   restore the interval.
@@ -83,36 +83,35 @@ image raises the save-image callout and eats the gesture on touch.
 
 ## Conventions
 
-- `base.css` holds tokens, the reset, the grain overlay, the `.exit` bar, the
-  corner marks and the index overlay. Page-specific CSS stays inline in that page.
+- `base.css` holds tokens, the reset, the grain overlay, the `.exit` bar and the
+  corner marks. Page-specific CSS stays inline in that page.
   Don't grow `base.css` into a framework.
 
-- **Every page except the front carries three corner marks**, left to right:
-  `<a class="backmark">` (arrow), `<a class="homemark">` (house), and
-  `<a class="menumark">` (sandwich, opens the index). All three sit right
-  after `<body>`, and
-  `<script src="/menu.js"></script>` right before `</body>`. The landing page
-  loads `menu.js` but shows no marks — it is meant to look like a dead end, and
-  the hold gesture is its way in. `menu.js` no-ops when there is no `.menumark`.
-  The href is the no-JS fallback; `menu.js` intercepts the click and opens the
-  index in place instead of navigating. The room list lives in `ROOMS` in
-  `menu.js` and nowhere else — add a room there and it appears everywhere at once.
-  Paths in `ROOMS` and in the two shared tags are **root-absolute**, so they work
-  the same from `/` and from `/lab/`; they do not work over `file://`.
+- **Every page except the front carries two corner marks**, left to right:
+  `<a class="backmark">` (arrow) and `<a class="homemark">` (house). Both sit
+  right after `<body>`, with `<script src="/nav.js"></script>` right before
+  `</body>`. `nav.js` no-ops when there is no `.backmark`.
 
-- **The back arrow is history, not a link home.** `menu.js` calls `history.back()`
+  There was a third mark — a sandwich that opened a full-screen index overlay.
+  Greg had it removed on 2026-09-23, once the `.exit` bar on every page carried
+  the same three sections. **The section list now lives in the exit bars and
+  nowhere else**, so adding a section means editing each page's bar: the front
+  page has none, the 404 uses its own nav line, and the rest carry `.exit`.
+  Paths in the shared tags are **root-absolute**, so they work the same from `/`
+  and from `/lab/`; they do not work over `file://`.
+
+- **The back arrow is history, not a link home.** `nav.js` calls `history.back()`
   only when `document.referrer` is same-origin; otherwise the `href="/"` takes
   over. Testing `history.length` alone is not enough — it counts entries from
   anywhere, so a visitor arriving from a search result would be walked straight
   back out of the site. The arrow is site navigation; it should never leave.
 
-- All three marks are inline SVG, not characters, so their stroke weights match
+- Both marks are inline SVG, not characters, so their stroke weights match
   each other rather than depending on font fallback. They use `mix-blend-mode:
   difference` so they stay readable over any ground, and flip to normal blend
-  and the signal red on hover. The sandwich's three lines cross into an X under
-  `body.menu-open`, so it reads as the toggle it is.
+  and the signal red on hover.
 
-- `base.css`, `menu.js` and `stow.js` are unversioned, so a returning visitor can
+- `base.css`, `nav.js` and `stow.js` are unversioned, so a returning visitor can
   briefly run a stale copy after a deploy — GitHub Pages caches assets for ten
   minutes. The marks degrade to plain links to `/` in that window rather than
   breaking. Worth remembering when a change "doesn't work" right after a push.
@@ -138,9 +137,7 @@ image raises the save-image callout and eats the gesture on touch.
   room must add its own `body.stowed` rules — hide the panel, collapse the grid
   to one track, and give the work `min-height: 100vh` with minimal padding.
   `base.css` handles the shared part: the corner marks and the `.exit` bar fade out and
-  the button itself drops to 22% until hovered. It hides entirely under
-  `body.menu-open` (set by `menu.js`) so the index stays clean, and `H` is
-  ignored while the index is up. `H` toggles, `Esc` un-stows.
+  the button itself drops to 22% until hovered. `H` toggles, `Esc` un-stows.
   `.exit` reserves 96px of right padding so the button never lands on it.
 
 ## Theme
@@ -156,7 +153,7 @@ The pair of controls lives in `<div class="corner">` at top right: the toggle
 then mail. **The landing page has the mail only** — no toggle, and it does not
 load `theme.js`. It still runs the inline `<head>` script, so a theme chosen
 elsewhere is honoured there; there is just nothing to switch it with. Both are difference-blended like the left-hand marks, and both fade
-out under `body.stowed` and `body.menu-open`. Anything a page puts in its top
+out under `body.stowed`. Anything a page puts in its top
 right corner has to clear them — that is why halftone's proof-sheet hint sits at
 `top: 56px` and poster's sidebar carries 58px of top padding.
 

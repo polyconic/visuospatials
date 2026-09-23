@@ -126,117 +126,6 @@ a { color: inherit; }
   transform: scale(1.14);
 }
 
-/* The sandwich: opens the index in place, and crosses into an X while it is up. */
-.menumark {
-  position: fixed;
-  top: 13px;
-  left: 91px;
-  z-index: 210;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  color: #fff;
-  mix-blend-mode: difference;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.menumark svg {
-  display: block;
-  width: 21px;
-  height: 21px;
-  stroke: currentColor;
-  stroke-width: 2.6;
-  stroke-linecap: round;
-}
-.menumark svg line {
-  transform-box: view-box;
-  transform-origin: 12px 12px;
-  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-}
-.menumark:hover, .menumark:focus-visible {
-  mix-blend-mode: normal;
-  color: var(--sig);
-  transform: scale(1.14);
-}
-body.menu-open .menumark .a { transform: translateY(5px) rotate(45deg); }
-body.menu-open .menumark .b { opacity: 0; }
-body.menu-open .menumark .c { transform: translateY(-5px) rotate(-45deg); }
-
-.vs-menu {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 6vh 7vw;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.45s ease;
-}
-.vs-menu.on { opacity: 1; pointer-events: auto; }
-.vs-menu:focus, .vs-menu:focus-visible { outline: none; }
-.vs-menu h2 {
-  font-family: var(--sans);
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  font-weight: 400;
-  color: var(--dim);
-  text-transform: uppercase;
-  margin-bottom: 5vh;
-}
-.vs-menu ol { list-style: none; }
-.vs-menu li { border-top: 1px solid var(--rule); }
-.vs-menu li:last-child { border-bottom: 1px solid var(--rule); }
-.vs-menu a {
-  display: flex;
-  align-items: baseline;
-  gap: clamp(14px, 3vw, 46px);
-  padding: clamp(10px, 1.8vh, 22px) 0;
-  text-decoration: none;
-  color: var(--fg);
-  transition: color 0.2s, padding-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.vs-menu a:hover, .vs-menu a:focus-visible { color: var(--sig); padding-left: 18px; }
-.vs-menu a[aria-current="page"] { color: var(--dim); }
-.vs-menu a[aria-current="page"] .t::after {
-  content: "";
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin-left: 0.4em;
-  background: var(--sig);
-  vertical-align: 0.12em;
-}
-.vs-menu .n { font-family: var(--sans); font-size: 11px; color: var(--dim); width: 2.4em; flex: none; }
-.vs-menu a:hover .n { color: var(--sig); }
-.vs-menu .t {
-  font-size: clamp(22px, 5vw, 62px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  line-height: 1;
-}
-.vs-menu .d {
-  margin-left: auto;
-  text-align: right;
-  font-family: var(--sans);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-@media (max-width: 620px) { .vs-menu .d { display: none; } }
-.vs-menu .close {
-  margin-top: 5vh;
-  font-family: var(--sans);
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  color: var(--dim);
-  text-transform: uppercase;
-}
-
 /* Stow: drops the editing chrome so the work goes full bleed. */
 .stow {
   position: fixed;
@@ -257,14 +146,12 @@ body.menu-open .menumark .c { transform: translateY(-5px) rotate(-45deg); }
 }
 .stow:hover, .stow:focus-visible { color: var(--fg); border-color: var(--fg); }
 
-.menumark, .homemark, .backmark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-body.stowed .menumark,
+.homemark, .backmark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
 body.stowed .homemark,
 body.stowed .backmark,
 body.stowed .exit { opacity: 0; pointer-events: none; }
 body.stowed .stow { opacity: 0.22; }
 body.stowed .stow:hover, body.stowed .stow:focus-visible { opacity: 1; }
-body.menu-open .stow { opacity: 0; pointer-events: none; }
 
 /* The unlisted room. Labelled nowhere; three lines that never settle. */
 .cross { display: block; }
@@ -330,6 +217,5 @@ body.menu-open .stow { opacity: 0; pointer-events: none; }
 
 body.stowed .corner { opacity: 0; pointer-events: none; }
 .corner { transition: opacity 0.3s ease; }
-body.menu-open .corner { opacity: 0; pointer-events: none; }
 
 .copy { color: var(--dim); }
