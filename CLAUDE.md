@@ -40,8 +40,12 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 
 - **No corner marks.** The back and home marks are on every page *except* this
   one. That is deliberate: the front should read as a dead end. Don't add them.
-- **The hold gesture goes to Studio/About**, not to an index. About is the main
-  content; the Lab is a bonus you reach from the exit bar once you are inside.
+- **The name is the way in.** The wordmark is `<a class="flicker-text"
+  href="/studio.html">` — the transparent text under the dot field is the link,
+  so the whole logo clicks through to Studio/About, not to an index. About is the
+  main content; the Lab is a bonus you reach from the exit bar once inside. It
+  replaced a hold-anywhere gesture on 2026-09-23. Being a real link, it gets the
+  page fade, the prerender and keyboard access for free.
   The front page does not load `nav.js` at all — it has no arrow to wire.
 - **The wordmark is a dot field**, the same mask trick as the 404: the type is
   drawn into an offscreen canvas, `getImageData` finds the letterforms, and a dot
@@ -87,30 +91,27 @@ There is no index of the doors any more. `void.html` used to list them and was
 removed on 2026-09-23 — Greg called it gimmicky. **Don't rebuild it**, and don't
 add a room whose only way in is a secret.
 
-The full set: press and hold anywhere on the front page (a ring closes around
-the pointer over 1.1s, then goes to Studio/About), the 7%-opacity dot
-bottom-right, typing `lab` or `spatial`, the Konami code, backtick in halftone,
+The full set: the 7%-opacity dot bottom-right, typing `lab` or `spatial`, the Konami code, backtick in halftone,
 space/s/h in moiré, poster seeds, the 404, and the console log on the front
 page. The three drifting lines that used to sit bottom left were the door to the
 void; they went on 2026-09-23 along with `cross.js`.
 
 Secrets are shortcuts, never the only route. Every room is reachable from the
-`.exit` bar and from `lab/`. The front page reveals a "hold anywhere" whisper
-after 24 seconds so nobody is stuck behind a gesture they can't guess.
+`.exit` bar and from `lab/`. The front page reveals a "click the name" (or "tap
+the name" on touch) whisper after 24 seconds, because the dots don't read as a
+button to everyone.
 
-The hold gesture is bound to `document`, so it fires over the photo too. On
-touch that needs three things, and losing any one breaks entering on a phone:
+On touch, a finger that travels more than 12px between pressing the name and
+lifting doesn't count as a tap — a drag is playing with the dots. The link pads
+its box vertically (`padding: 0.4em 0`) so it's an easy target on a phone.
 
-- The photo has `pointer-events: none`. iOS answers a long press on an `<img>` by
-  shrinking it into a preview (the "squish"), and taking over that gesture
-  cancels the hold. With the photo out of hit-testing the press lands on the page.
-- `html, body { touch-action: none; }` on the front page. Otherwise a finger's
-  natural drift reads as a pan, the browser fires `pointercancel`, and the ring
-  resets at the last moment.
-- `contextmenu` is suppressed, for the save-image callout on other browsers.
+Touch on the front page also needs:
 
-On touch, moving more than 14px cancels the hold — a drag is playing with the
-dots, a still finger is asking to go in. Mouse holds ignore movement.
+- `pointer-events: none` on the photo. iOS answers a long press on an `<img>` by
+  shrinking it into a preview (the "squish"), which swallows a drag.
+- `html, body { touch-action: none; }`. Otherwise a finger's drift through the
+  dots reads as a pan and the browser fires `pointercancel`.
+- `contextmenu` suppressed, for the save-image callout on other browsers.
 
 ## Conventions
 
@@ -129,8 +130,10 @@ dots, a still finger is asking to go in. Mouse holds ignore movement.
   nowhere else**, so adding a section means editing each page's bar: the front
   page has none, the 404 uses its own nav line, and the rest carry `.exit`.
   **The Lab goes last in every list.** It is the bonus, not the work; Greg asked
-  for that ordering on 2026-09-23 and it holds for the exit bars, the 404's nav
-  line and studio's links row alike.
+  for that ordering on 2026-09-23 and it holds for the exit bars and the 404's
+  nav line. **Don't repeat the bar in page content.** Studio's links row used to
+  list Work / Front / The lab right above a bar that already did; it now holds
+  only what the bar can't — Instagram and gregoregan.com.
   Paths in the shared tags are **root-absolute**, so they work the same from `/`
   and from `/lab/`; they do not work over `file://`.
 
@@ -164,7 +167,7 @@ dots, a still finger is asking to go in. Mouse holds ignore movement.
 - **Prerendering (Chromium only).** `nav.js` injects speculation rules that
   prerender a same-origin page once a pointer settles on its link; the front
   page carries its own rules and prerenders `/studio.html` eagerly, since the
-  hold always lands there. Safari ignores them. The in-app browser doesn't
+  name always leads there. Safari ignores them. The in-app browser doesn't
   prerender under automation, so `activationStart` reads 0 there.
 - **Overlays take a history entry.** Halftone's proof sheet and the work viewer
   `pushState` when they open, so a phone's back gesture closes them instead of

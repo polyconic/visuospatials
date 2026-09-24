@@ -36,8 +36,8 @@
             position: relative;
             z-index: 0;
             animation: drift 90s ease-in-out infinite alternate;
-            /* iOS shrinks an image under a long press to preview it, and taking
-               over that gesture cancels the hold. Touches go to the page instead. */
+            /* iOS shrinks an image under a long press to preview it, which also
+               swallows a drag through the dots. Touches go to the page instead. */
             pointer-events: none;
             -webkit-user-drag: none;
         }
@@ -59,7 +59,10 @@
             user-select: none;
             z-index: 10;
             white-space: nowrap;
-            cursor: default;
+            text-decoration: none;
+            cursor: pointer;
+            /* A taller hit area than the letters, so it's an easy tap on a phone. */
+            padding: 0.4em 0;
         }
         .flicker-text span { display: inline-block; }
         /* The dot field draws the wordmark instead; the text stays for readers. */
@@ -75,27 +78,8 @@
         }
 
         body { user-select: none; -webkit-touch-callout: none; }
-        /* Every touch here is the hold or the dots; a pan or pinch would cancel both. */
+        /* Every touch here plays with the dots; a pan or pinch would cancel the drag. */
         html, body { touch-action: none; }
-
-        /* Follows the pointer and closes on itself while held. */
-        .hold {
-            position: fixed;
-            z-index: 40;
-            width: 102px;
-            height: 102px;
-            margin: -51px 0 0 -51px;
-            pointer-events: none;
-            opacity: 0;
-            transform: scale(0.72);
-            transition: opacity 0.18s ease, transform 0.18s ease;
-        }
-        .hold.on { opacity: 1; transform: scale(1); }
-        .hold circle { fill: none; stroke-width: 3; }
-        .hold .track { stroke: rgba(255, 255, 255, 0.34); }
-        .hold .sweep { stroke: var(--sig); stroke-linecap: round;
-                       transform: rotate(-90deg); transform-origin: 50% 50%; }
-        .hold .core { fill: var(--sig); stroke: none; }
 
         .whisper {
             position: absolute;
@@ -147,16 +131,11 @@
 </a>
 </div>
     <img src="blur.webp" alt="Visuospatials">
-    <span class="flicker-text">VISUOSPATIALS</span>
+    <a class="flicker-text" href="/studio.html" aria-label="Visuospatials">VISUOSPATIALS</a>
     <canvas class="dots" id="dots" aria-hidden="true"></canvas>
 
-    <svg class="hold" id="hold" viewBox="0 0 100 100" aria-hidden="true">
-        <circle class="track" cx="50" cy="50" r="46"></circle>
-        <circle class="sweep" cx="50" cy="50" r="46"></circle>
-        <circle class="core" cx="50" cy="50" r="3"></circle>
-    </svg>
 
-    <p class="whisper label" id="whisper">hold anywhere</p>
+    <p class="whisper label" id="whisper">tap the name</p>
 
     <a class="pin" href="lab/" aria-label="Index" title="Index">&#9679;</a>
 
@@ -332,50 +311,22 @@
             canvas.remove();
         }
 
-        const hold = document.getElementById('hold');
-        const sweep = hold.querySelector('.sweep');
-        const whisper = document.getElementById('whisper');
-        const CIRC = 2 * Math.PI * 46;
-        let holdTimer = null;
-        let holdFrom = null;
-
-        sweep.style.strokeDasharray = CIRC;
-        sweep.style.strokeDashoffset = CIRC;
-
-        function startHold(e) {
-            if (e.target instanceof Element && e.target.closest('a')) return;
-            hold.style.left = e.clientX + 'px';
-            hold.style.top = e.clientY + 'px';
-            hold.classList.add('on');
-            holdFrom = { x: e.clientX, y: e.clientY, touch: e.pointerType !== 'mouse' };
-            sweep.style.transition = 'none';
-            sweep.style.strokeDashoffset = CIRC;
-            void sweep.getBoundingClientRect();
-            sweep.style.transition = 'stroke-dashoffset 1.1s linear';
-            sweep.style.strokeDashoffset = '0';
-            holdTimer = setTimeout(() => { cancelHold(); location.href = '/studio.html'; }, 1100);
-        }
-        function cancelHold() {
-            clearTimeout(holdTimer);
-            holdFrom = null;
-            hold.classList.remove('on');
-            sweep.style.transition = 'stroke-dashoffset 0.25s ease-out';
-            sweep.style.strokeDashoffset = CIRC;
-        }
-
-        document.addEventListener('pointerdown', startHold);
-        // On touch, dragging plays with the dots; only a still finger goes in.
-        document.addEventListener('pointermove', e => {
-            if (holdFrom && holdFrom.touch &&
-                Math.hypot(e.clientX - holdFrom.x, e.clientY - holdFrom.y) > 14) cancelHold();
+        /* The name is the way in. On touch, a drag across it is playing with the
+           dots, so a finger that travelled doesn't count as a tap. */
+        let pressedAt = null;
+        container.addEventListener('pointerdown', e => { pressedAt = { x: e.clientX, y: e.clientY }; });
+        container.addEventListener('click', e => {
+            if (pressedAt && Math.hypot(e.clientX - pressedAt.x, e.clientY - pressedAt.y) > 12) e.preventDefault();
+            pressedAt = null;
         });
-        document.addEventListener('pointerup', cancelHold);
-        document.addEventListener('pointercancel', cancelHold);
-        document.addEventListener('pointerleave', cancelHold);
+
+        const whisper = document.getElementById('whisper');
+        if (matchMedia('(hover: hover)').matches) whisper.textContent = 'click the name';
+
         // Long-press on the photo would otherwise raise the save-image callout.
         document.addEventListener('contextmenu', e => e.preventDefault());
 
-        // Nobody should be trapped by a gesture they cannot perform.
+        // The dots don't read as a button to everyone.
         setTimeout(() => whisper.classList.add('on'), 24000);
 
         const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
@@ -397,7 +348,7 @@
         });
 
         console.log('%cVISUOSPATIALS', 'font: 700 42px/1 Helvetica Neue, Arial; color:#ff2d00');
-        console.log('%chold anywhere. or type: lab / spatial', 'font: 12px/1.6 monospace; color:#787874');
+        console.log('%cclick the name. or type: lab / spatial', 'font: 12px/1.6 monospace; color:#787874');
     </script>
 </body>
 </html>
