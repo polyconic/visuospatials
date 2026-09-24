@@ -30,6 +30,11 @@
         .panel h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; text-transform: uppercase;
                     margin-bottom: 14px; }
         body.stowed .panel { display: none; }
+        /* A blur behind the panel is recomputed every frame over a moving canvas,
+           which a phone GPU pays for in dropped frames. */
+        @media (hover: none) {
+            .panel { backdrop-filter: none; background: color-mix(in srgb, var(--bg) 90%, transparent); }
+        }
 
         .kinds { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule);
                  border: 1px solid var(--rule); margin-bottom: 16px; }
@@ -169,8 +174,13 @@ function frame() {
     ctx.globalCompositeOperation = 'source-over';
 }
 
-function loop() {
-    if (!frozen) { t += 0.016; frame(); }
+// Driven by elapsed time, not frame count: counting frames ran it double speed on
+// 120Hz phones and slowed it whenever frames dropped.
+let last = performance.now();
+function loop(now = performance.now()) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (!frozen) { t += dt * 0.96; frame(); }  // 0.96: the old speed at 60fps
     requestAnimationFrame(loop);
 }
 

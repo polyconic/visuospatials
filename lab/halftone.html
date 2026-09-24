@@ -90,8 +90,15 @@
         .sheet .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
                        gap: 16px; align-content: start; overflow-y: auto; }
         .sheet figure { border: 1px solid var(--rule); }
-        .sheet canvas { width: 100%; display: block; }
+        .sheet canvas { width: 100%; display: block; background: var(--rule); }
         .sheet figcaption { padding: 8px 10px; border-top: 1px solid var(--rule); }
+        .sheet .grid { overscroll-behavior: contain; }
+        .sheet .label { padding-right: 44px; }
+        .sheet .shut { position: fixed; top: 13px; right: 15px; appearance: none; background: none;
+                       border: 0; padding: 8px; color: var(--dim); cursor: pointer; transition: color 0.2s; }
+        .sheet .shut:hover { color: var(--fg); }
+        .sheet .shut svg { display: block; width: 20px; height: 20px; fill: none;
+                           stroke: currentColor; stroke-width: 1.6; }
     </style>
     <!-- Must stay in <head>: moving it later reintroduces the theme flash. -->
     <script>
@@ -162,6 +169,7 @@
 </main>
 
 <div class="sheet" id="sheet">
+    <button class="shut" type="button" aria-label="Close proof sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
     <p class="label">Proof sheet &mdash; every process at the current settings &middot; <span class="keyclose">` or Esc to close</span><span class="tapclose">tap to close</span></p>
     <div class="grid" id="sheetgrid"></div>
 </div>
@@ -325,12 +333,18 @@ function draw() {
 }
 
 /* Controls */
+// A slider fires far faster than a render finishes on a phone; draw at most
+// once a frame, or the renders queue up and the drag lags behind the finger.
+let queued = 0;
+function redraw() {
+    if (!queued) queued = requestAnimationFrame(() => { queued = 0; draw(); });
+}
 const bind = (id, key, fmt, xform) => {
     const el = document.getElementById(id), lab = document.getElementById(id + 'v');
     const apply = () => {
         params[key] = xform ? xform(+el.value) : +el.value;
         lab.textContent = fmt(params[key]);
-        draw();
+        redraw();
     };
     el.addEventListener('input', apply);
     apply();
@@ -385,30 +399,59 @@ document.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (
 
 const sheet = document.getElementById('sheet');
 const sheetgrid = document.getElementById('sheetgrid');
+/* Opens at once and renders one tile a frame. Rendering all six first froze the
+   tap for most of a second on a phone. Each tile is sized up front so nothing
+   jumps as they fill in. */
+let proofRun = 0;
 function proof() {
+    const run = ++proofRun;
     sheetgrid.innerHTML = '';
-    for (const [m, label] of Object.entries(MODES)) {
+    const tiles = Object.entries(MODES).map(([m, label]) => {
         const c = document.createElement('canvas');
-        render(c, 620, m);
+        c.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
         const fig = document.createElement('figure');
         const cap = document.createElement('figcaption');
         cap.className = 'mono';
         cap.textContent = label;
         fig.append(c, cap);
         sheetgrid.append(fig);
-    }
+        return [c, m];
+    });
     sheet.classList.add('on');
+    const next = () => {
+        if (run !== proofRun || !sheet.classList.contains('on') || !tiles.length) return;
+        const [c, m] = tiles.shift();
+        render(c, 620, m);
+        requestAnimationFrame(next);
+    };
+    requestAnimationFrame(next);
 }
 
 document.addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.target instanceof Element && e.target.matches('input[type=text], input:not([type]), textarea')) return;
     if (e.key === ' ' && e.target instanceof Element && e.target.matches('button')) return;
-    if (e.key === '`') { sheet.classList.contains('on') ? sheet.classList.remove('on') : proof(); }
-    if (e.key === 'Escape') sheet.classList.remove('on');
+    if (e.key === '`') { sheet.classList.contains('on') ? closeSheet() : openSheet(); }
+    if (e.key === 'Escape') closeSheet();
 });
-sheet.addEventListener('click', () => sheet.classList.remove('on'));
-document.getElementById('proofbtn').addEventListener('click', proof);
+
+/* The sheet takes a history entry, so a phone's back gesture closes it instead
+   of leaving the room. Closing any other way spends that entry. */
+function openSheet() {
+    proof();
+    if (!(history.state && history.state.sheet)) history.pushState({ sheet: true }, '');
+}
+function closeSheet() {
+    if (!sheet.classList.contains('on')) return;
+    sheet.classList.remove('on');
+    if (history.state && history.state.sheet) history.back();
+}
+addEventListener('popstate', () => sheet.classList.remove('on'));
+// A reload with the sheet open leaves an entry that would make back do nothing.
+if (history.state && history.state.sheet) history.replaceState(null, '');
+
+sheet.addEventListener('click', closeSheet);
+document.getElementById('proofbtn').addEventListener('click', openSheet);
 
 let resizeAt;
 new ResizeObserver(() => { clearTimeout(resizeAt); resizeAt = setTimeout(draw, 160); }).observe(stage);

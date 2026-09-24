@@ -152,13 +152,32 @@ dots, a still finger is asking to go in. Mouse holds ignore movement.
   Anything placed in the top-left corner of a page has to clear them — that is why
   halftone's sidebar, moiré's panel, poster's stage and type's stage carry extra
   top padding, and why the editorial pages bump `padding-top` under 620px.
-- **Page changes crossfade** via a cross-document view transition —
-  `@view-transition { navigation: auto; }` in `base.css`, 0.45s, skipped under
-  reduced motion. Both pages must opt in, which is why it lives in `base.css`:
-  every page loads it. Browsers without support (Firefox, for now) just navigate.
-  It covers links, the back arrow's `history.back()` and the front page's
-  `location.href`. To check it runs, record `!!e.viewTransition` from a
-  `pageswap` listener on the outgoing page — it is too quick to judge by eye.
+- **Page changes fade through** via a cross-document view transition —
+  `@view-transition { navigation: auto; }` in `base.css`, skipped under reduced
+  motion. The old page fades out (0.2s) before the new one fades in (0.34s from
+  0.12s), so two layouts never sit on top of each other; a plain crossfade
+  ghosted headings over each other mid-fade. Both pages must opt in, which is
+  why it lives in `base.css`. Browsers without support (Firefox) just navigate.
+  To check it runs, record `!!e.viewTransition` from a `pageswap` listener on
+  the outgoing page. **The in-app browser pane skips transitions and runs at
+  1fps when it isn't focused** — click into the page before measuring anything.
+- **Prerendering (Chromium only).** `nav.js` injects speculation rules that
+  prerender a same-origin page once a pointer settles on its link; the front
+  page carries its own rules and prerenders `/studio.html` eagerly, since the
+  hold always lands there. Safari ignores them. The in-app browser doesn't
+  prerender under automation, so `activationStart` reads 0 there.
+- **Overlays take a history entry.** Halftone's proof sheet and the work viewer
+  `pushState` when they open, so a phone's back gesture closes them instead of
+  leaving the page; closing any other way calls `history.back()` to spend it,
+  and a reload with one open replaces the stale entry.
+- **Heavy canvases never redraw per input event.** Halftone's sliders go through
+  `redraw()`, one render a frame at most — a render is 17–67ms on a laptop and
+  far more on a phone, and rendering per event queued them up behind the finger.
+  The proof sheet opens at once and renders one tile a frame. Moiré advances by
+  elapsed time, not frame count (it ran double speed at 120Hz), and drops the
+  panel's backdrop blur on touch screens.
+- Batching the dot fills on the front page and 404 into one path was measured
+  and made no difference in Chrome; the arcs are the cost, not the fill calls.
 - Palette is `--bg` near-black, `--fg` near-white, one signal red `--sig`.
   Monochrome plus the one red; no second accent.
 - **Everything is Helvetica.** One family site-wide, no webfonts; `--sans` is the

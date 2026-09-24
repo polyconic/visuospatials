@@ -201,12 +201,21 @@ function open(n) {
     count.textContent = String(at + 1).padStart(2, '0') + ' / ' + String(PIECES.length).padStart(2, '0');
     viewer.classList.add('on');
     viewer.querySelector('.shut').focus();
+    // One entry per visit to the viewer, so a phone's back gesture closes it.
+    if (!(history.state && history.state.viewer)) history.pushState({ viewer: true }, '');
 }
-function shut() {
+function closeViewer() {
     viewer.classList.remove('on');
     slot.replaceChildren();
     if (opener && opener.focus) opener.focus();
 }
+function shut() {
+    if (!viewer.classList.contains('on')) return;
+    closeViewer();
+    if (history.state && history.state.viewer) history.back();
+}
+addEventListener('popstate', () => { if (viewer.classList.contains('on')) closeViewer(); });
+if (history.state && history.state.viewer) history.replaceState(null, '');
 
 viewer.querySelector('.shut').addEventListener('click', shut);
 viewer.querySelector('.prev').addEventListener('click', () => open(at - 1));

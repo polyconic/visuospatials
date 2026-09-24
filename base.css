@@ -24,16 +24,20 @@
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Pages crossfade into each other. Browsers without cross-document view
-   transitions just navigate as before. */
+/* Pages fade through each other: the old one leaves first, then the new one
+   arrives, so two layouts never sit on top of each other mid-fade. Browsers
+   without cross-document view transitions just navigate as before. */
 @media (prefers-reduced-motion: no-preference) {
   @view-transition { navigation: auto; }
-  ::view-transition-old(root),
+  ::view-transition-old(root) {
+    animation: vs-out 0.2s cubic-bezier(0.4, 0, 1, 1) both;
+  }
   ::view-transition-new(root) {
-    animation-duration: 0.45s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation: vs-in 0.34s cubic-bezier(0, 0, 0.2, 1) 0.12s both;
   }
 }
+@keyframes vs-out { to { opacity: 0; } }
+@keyframes vs-in { from { opacity: 0; } }
 
 html { -webkit-text-size-adjust: 100%; }
 
