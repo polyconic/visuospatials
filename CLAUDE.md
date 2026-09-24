@@ -141,6 +141,13 @@ image raises the save-image callout and eats the gesture on touch.
   Anything placed in the top-left corner of a page has to clear them — that is why
   halftone's sidebar, moiré's panel, poster's stage and type's stage carry extra
   top padding, and why the editorial pages bump `padding-top` under 620px.
+- **Page changes crossfade** via a cross-document view transition —
+  `@view-transition { navigation: auto; }` in `base.css`, 0.45s, skipped under
+  reduced motion. Both pages must opt in, which is why it lives in `base.css`:
+  every page loads it. Browsers without support (Firefox, for now) just navigate.
+  It covers links, the back arrow's `history.back()` and the front page's
+  `location.href`. To check it runs, record `!!e.viewTransition` from a
+  `pageswap` listener on the outgoing page — it is too quick to judge by eye.
 - Palette is `--bg` near-black, `--fg` near-white, one signal red `--sig`.
   Monochrome plus the one red; no second accent.
 - **Everything is Helvetica.** One family site-wide, no webfonts; `--sans` is the
