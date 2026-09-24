@@ -138,6 +138,7 @@ const capM = viewer.querySelector('figcaption .m');
 const count = viewer.querySelector('.count');
 const isVideo = p => /\.(mp4|webm|mov)$/i.test(p.src);
 let at = 0;
+let opener = null;
 
 function media(p, big) {
     if (isVideo(p)) {
@@ -191,6 +192,7 @@ function build() {
 }
 
 function open(n) {
+    if (!viewer.classList.contains('on')) opener = document.activeElement;
     at = (n + PIECES.length) % PIECES.length;
     const p = PIECES[at];
     slot.replaceChildren(media(p, true));
@@ -203,6 +205,7 @@ function open(n) {
 function shut() {
     viewer.classList.remove('on');
     slot.replaceChildren();
+    if (opener && opener.focus) opener.focus();
 }
 
 viewer.querySelector('.shut').addEventListener('click', shut);

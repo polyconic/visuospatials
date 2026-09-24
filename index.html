@@ -294,7 +294,7 @@
         if (DOTTED) {
             container.classList.add('dotted');
             addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-            addEventListener('pointerleave', () => { mouse.x = mouse.y = -9999; });
+            addEventListener('pointerout', e => { if (!e.relatedTarget) mouse.x = mouse.y = -9999; });
             build();
             loop();
         } else {

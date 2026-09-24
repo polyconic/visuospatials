@@ -385,7 +385,9 @@ function proof() {
 }
 
 document.addEventListener('keydown', e => {
-    if (e.target instanceof Element && e.target.matches('input, textarea, button')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target instanceof Element && e.target.matches('input[type=text], input:not([type]), textarea')) return;
+    if (e.key === ' ' && e.target instanceof Element && e.target.matches('button')) return;
     if (e.key === '`') { sheet.classList.contains('on') ? sheet.classList.remove('on') : proof(); }
     if (e.key === 'Escape') sheet.classList.remove('on');
 });

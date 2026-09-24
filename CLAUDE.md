@@ -246,6 +246,13 @@ viewer from the array and never needs touching.
   export opens as 72ppi in print software no matter how many pixels it has.
 - Keydown handlers guard `e.target instanceof Element` before `matches()` —
   `document` has no `matches` and the handler throws without it.
+- **Shortcut guards, in this order, in every room and in `stow.js`:** bail on any
+  modifier (Cmd+S would save *and* open the browser's Save Page; Cmd+H would stow
+  as the app hides); bail when focus is in a text field; and bail on Space only
+  when focus is on a button, since a button clicks itself on Space. Do **not**
+  go back to guarding every `input` and `button` — a slider keeps focus after a
+  drag, so that version killed tweak-then-press-S, and one click on any button
+  silenced every shortcut until you clicked empty space.
 
 ## Contact
 

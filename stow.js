@@ -13,7 +13,8 @@
     });
 
     document.addEventListener('keydown', function (e) {
-        if (e.target instanceof Element && e.target.matches('input, textarea, button')) return;
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        if (e.target instanceof Element && e.target.matches('input[type=text], input:not([type]), textarea')) return;
         if (e.key.toLowerCase() === 'h') set(!document.body.classList.contains('stowed'));
         if (e.key === 'Escape' && document.body.classList.contains('stowed')) set(false);
     });
