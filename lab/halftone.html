@@ -67,6 +67,19 @@
         .hint kbd { font-family: var(--sans); font-size: 11px; color: var(--fg);
                     border: 1px solid var(--rule); padding: 1px 6px; margin-right: 3px; }
 
+        .proofrow { display: none; margin-top: 9px; }
+        .sheet .tapclose { display: none; }
+        /* Stacked, the stage runs full width, so the floating hint lands on the image,
+           and a phone has no backtick key anyway. The panel gets a button instead. */
+        @media (max-width: 820px), (hover: none) {
+            .hint { display: none; }
+            .proofrow { display: flex; }
+        }
+        @media (hover: none) {
+            .sheet .keyclose { display: none; }
+            .sheet .tapclose { display: inline; }
+        }
+
         body.stowed { grid-template-columns: 1fr; }
         body.stowed aside, body.stowed .hint { display: none; }
         body.stowed main { min-height: 100vh; padding: 14px; }
@@ -136,6 +149,9 @@
             <button class="btn" id="load">Open image</button>
             <button class="btn sig" id="save">Save PNG</button>
         </div>
+        <div class="row proofrow">
+            <button class="btn" id="proofbtn">Proof sheet</button>
+        </div>
         <input type="file" id="file" accept="image/*" hidden>
     </fieldset>
 </aside>
@@ -146,7 +162,7 @@
 </main>
 
 <div class="sheet" id="sheet">
-    <p class="label">Proof sheet &mdash; every process at the current settings &middot; ` or Esc to close</p>
+    <p class="label">Proof sheet &mdash; every process at the current settings &middot; <span class="keyclose">` or Esc to close</span><span class="tapclose">tap to close</span></p>
     <div class="grid" id="sheetgrid"></div>
 </div>
 
@@ -392,6 +408,7 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') sheet.classList.remove('on');
 });
 sheet.addEventListener('click', () => sheet.classList.remove('on'));
+document.getElementById('proofbtn').addEventListener('click', proof);
 
 let resizeAt;
 new ResizeObserver(() => { clearTimeout(resizeAt); resizeAt = setTimeout(draw, 160); }).observe(stage);

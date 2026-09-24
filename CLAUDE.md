@@ -171,7 +171,11 @@ dots, a still finger is asking to go in. Mouse holds ignore movement.
 - **Every room works without a keyboard.** Keyboard shortcuts are extras; each
   action they trigger also needs a button, because a phone has no keys. Moiré
   used to be keys-only and could not freeze or save on a phone. Rooms hide their
-  `.keys` hint under `@media (hover: none)`.
+  `.keys` hint under `@media (hover: none)`. Halftone's backtick chip floats over
+  the stage, so it also hides whenever the layout stacks (≤820px) — there the
+  stage runs full width and the chip landed on tall images. A Proof sheet button
+  in the Output section replaces it at those sizes, and the sheet's close hint
+  reads "tap to close" on touch.
 - Poster, stacked on a phone, lets the page scroll and gives the stage a fixed
   `72vh`. Keeping `body` pinned at 100% squeezed the sidebar into a 180px
   scroller under the exit bar; sizing the stage to its content would feed back,
