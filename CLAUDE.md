@@ -50,6 +50,13 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
   holds the real text for readers and search — it is only made transparent — and
   the metrics are read back off it with `getComputedStyle`, so the CSS clamp
   stays the single source of truth for the size.
+  - **The grid is locked to the type, not the window.** Cap height is exactly
+    `ROWS` cells (11), every letter's origin is snapped to a column, and a cell
+    gets a dot when at least half of it is ink in a 4x supersampled mask. That
+    makes repeated letters (three S, two A, two I) dot-for-dot identical and
+    keeps the word looking the same at every width. The first version sampled
+    one pixel per cell on a grid pinned to the window corner, so the phase
+    drifted letter to letter and the rest state looked scattered. Don't go back.
   - Below 760px, without a fine pointer, or under reduced motion, the canvas is
     removed and the plain text shows. Dots that small cannot resolve into
     letters and a phone has no cursor to react to.
