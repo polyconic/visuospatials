@@ -97,9 +97,9 @@ page. The three drifting lines that used to sit bottom left were the door to the
 void; they went on 2026-09-23 along with `cross.js`.
 
 Secrets are shortcuts, never the only route. Every room is reachable from the
-`.exit` bar and from `lab/`. The front page reveals a "click the name" (or "tap
-the name" on touch) whisper after 24 seconds, because the dots don't read as a
-button to everyone.
+`.exit` bar and from `lab/`. There is no on-screen hint for the name link; a
+"click the name" whisper was removed on 2026-09-24 at Greg's request. Don't add
+one back. The console log still says it, for anyone who looks there.
 
 On touch, a finger that travels more than 12px between pressing the name and
 lifting doesn't count as a tap — a drag is playing with the dots. The link pads

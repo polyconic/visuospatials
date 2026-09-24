@@ -81,18 +81,6 @@
         /* Every touch here plays with the dots; a pan or pinch would cancel the drag. */
         html, body { touch-action: none; }
 
-        .whisper {
-            position: absolute;
-            bottom: 26px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 12;
-            opacity: 0;
-            transition: opacity 3s ease;
-            text-align: center;
-        }
-        .whisper.on { opacity: 0.55; }
-
 
         .pin {
             position: fixed;
@@ -134,8 +122,6 @@
     <a class="flicker-text" href="/studio.html" aria-label="Visuospatials">VISUOSPATIALS</a>
     <canvas class="dots" id="dots" aria-hidden="true"></canvas>
 
-
-    <p class="whisper label" id="whisper">tap the name</p>
 
     <a class="pin" href="lab/" aria-label="Index" title="Index">&#9679;</a>
 
@@ -320,14 +306,8 @@
             pressedAt = null;
         });
 
-        const whisper = document.getElementById('whisper');
-        if (matchMedia('(hover: hover)').matches) whisper.textContent = 'click the name';
-
         // Long-press on the photo would otherwise raise the save-image callout.
         document.addEventListener('contextmenu', e => e.preventDefault());
-
-        // The dots don't read as a button to everyone.
-        setTimeout(() => whisper.classList.add('on'), 24000);
 
         const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
         let konamiAt = 0;
