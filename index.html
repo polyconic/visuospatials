@@ -32,6 +32,10 @@
             position: relative;
             z-index: 0;
             animation: drift 90s ease-in-out infinite alternate;
+            /* iOS shrinks an image under a long press to preview it, and taking
+               over that gesture cancels the hold. Touches go to the page instead. */
+            pointer-events: none;
+            -webkit-user-drag: none;
         }
         @keyframes drift {
             from { transform: scale(1.04) translate(0.4%, -0.4%); }
@@ -67,6 +71,8 @@
         }
 
         body { user-select: none; -webkit-touch-callout: none; }
+        /* Every touch here is the hold or the dots; a pan or pinch would cancel both. */
+        html, body { touch-action: none; }
 
         /* Follows the pointer and closes on itself while held. */
         .hold {
@@ -166,14 +172,10 @@
 
         /* The wordmark as a dot field, the same trick as the 404: draw the type
            into an offscreen canvas, read the pixels, and keep a dot wherever the
-           letterforms landed. The pointer pushes them aside.
-
-           Only on a real pointer and a wide enough viewport — the dots need room
-           to resolve into letters, and on a phone there is no cursor to react to.
-           Everywhere else the plain text stays and explode() moves the spans. */
-        const DOTTED = matchMedia('(hover: hover) and (pointer: fine)').matches &&
-                       !matchMedia('(prefers-reduced-motion: reduce)').matches &&
-                       innerWidth >= 760;
+           letterforms landed. The pointer pushes them aside; on touch, a finger
+           does. Under reduced motion the plain text stays and explode() moves
+           the spans instead. */
+        const DOTTED = !matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         const canvas = document.getElementById('dots');
         const cx = canvas.getContext('2d');
@@ -185,7 +187,7 @@
         function build() {
             W = innerWidth; H = innerHeight;
             if (W < 2 || H < 2) { dots = []; return; }
-            const dpr = Math.min(2, devicePixelRatio || 1);
+            const dpr = Math.min(3, devicePixelRatio || 1);
             canvas.width = W * dpr;
             canvas.height = H * dpr;
             cx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -313,8 +315,13 @@
 
         if (DOTTED) {
             container.classList.add('dotted');
-            addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-            addEventListener('pointerout', e => { if (!e.relatedTarget) mouse.x = mouse.y = -9999; });
+            const aim = e => { mouse.x = e.clientX; mouse.y = e.clientY; };
+            const drop = () => { mouse.x = mouse.y = -9999; };
+            addEventListener('pointermove', aim);
+            addEventListener('pointerdown', aim);
+            addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') drop(); });
+            addEventListener('pointercancel', drop);
+            addEventListener('pointerout', e => { if (!e.relatedTarget) drop(); });
             build();
             loop();
         } else {
@@ -326,6 +333,7 @@
         const whisper = document.getElementById('whisper');
         const CIRC = 2 * Math.PI * 46;
         let holdTimer = null;
+        let holdFrom = null;
 
         sweep.style.strokeDasharray = CIRC;
         sweep.style.strokeDashoffset = CIRC;
@@ -335,6 +343,7 @@
             hold.style.left = e.clientX + 'px';
             hold.style.top = e.clientY + 'px';
             hold.classList.add('on');
+            holdFrom = { x: e.clientX, y: e.clientY, touch: e.pointerType !== 'mouse' };
             sweep.style.transition = 'none';
             sweep.style.strokeDashoffset = CIRC;
             void sweep.getBoundingClientRect();
@@ -344,12 +353,18 @@
         }
         function cancelHold() {
             clearTimeout(holdTimer);
+            holdFrom = null;
             hold.classList.remove('on');
             sweep.style.transition = 'stroke-dashoffset 0.25s ease-out';
             sweep.style.strokeDashoffset = CIRC;
         }
 
         document.addEventListener('pointerdown', startHold);
+        // On touch, dragging plays with the dots; only a still finger goes in.
+        document.addEventListener('pointermove', e => {
+            if (holdFrom && holdFrom.touch &&
+                Math.hypot(e.clientX - holdFrom.x, e.clientY - holdFrom.y) > 14) cancelHold();
+        });
         document.addEventListener('pointerup', cancelHold);
         document.addEventListener('pointercancel', cancelHold);
         document.addEventListener('pointerleave', cancelHold);

@@ -19,8 +19,11 @@
     <style>
         html, body { height: 100%; overflow: hidden; }
         body { display: grid; grid-template-columns: 1fr 246px; }
-        @media (max-width: 860px) { body { grid-template-columns: 1fr; grid-template-rows: auto auto; overflow: auto; }
-                                    main { min-height: 72vh; } }
+        /* Stacked, the page scrolls. The stage keeps a fixed height: the canvas sizes
+           itself to its parent, so a parent sized to the canvas would feed back. */
+        @media (max-width: 860px) { html, body { height: auto; overflow: visible; }
+                                    body { grid-template-columns: 1fr; grid-template-rows: auto auto; }
+                                    main { height: 72vh; } }
 
         body.stowed { grid-template-columns: 1fr; grid-template-rows: 1fr; }
         body.stowed aside { display: none; }
@@ -31,7 +34,7 @@
                  box-shadow: 0 30px 90px rgba(0,0,0,0.7); }
 
         aside { border-left: 1px solid var(--rule); padding: 58px 22px 74px; overflow-y: auto; }
-        @media (max-width: 860px) { aside { border-left: 0; border-top: 1px solid var(--rule); padding-bottom: 120px; } }
+        @media (max-width: 860px) { aside { border-left: 0; border-top: 1px solid var(--rule); padding-bottom: 120px; overflow: visible; } }
         h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; text-transform: uppercase; line-height: 1; }
         .sub { margin: 10px 0 24px; line-height: 1.8; }
 

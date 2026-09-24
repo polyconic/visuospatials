@@ -45,7 +45,18 @@
         .ctl label b { color: var(--fg); font-weight: 400; }
         input[type=range] { width: 100%; accent-color: var(--sig); }
 
+        .row { display: flex; gap: 9px; margin-bottom: 14px; }
+        .btn { flex: 1; appearance: none; border: 1px solid var(--rule); background: transparent; color: var(--fg);
+               font-family: var(--sans); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+               padding: 12px 8px; cursor: pointer; }
+        .btn:hover { background: var(--fg); color: #000; border-color: var(--fg); }
+        .btn.sig:hover { background: var(--sig); border-color: var(--sig); }
+        .btn[aria-pressed="true"] { background: var(--fg); color: #000; border-color: var(--fg); }
+        canvas { touch-action: none; }
+
         .keys { border-top: 1px solid var(--rule); padding-top: 12px; line-height: 2; }
+        /* Without a keyboard the shortcuts are just noise; the buttons cover them. */
+        @media (hover: none) { .keys { display: none; } }
         kbd { font-family: var(--sans); color: var(--fg); font-size: 10px; }
     </style>
     <!-- Must stay in <head>: moving it later reintroduces the theme flash. -->
@@ -84,6 +95,10 @@
     <div class="ctl"><label for="weight">Weight <b id="weightv">0.26</b></label><input id="weight" type="range" min="6" max="80" value="26"></div>
     <div class="ctl"><label for="twist">Twist <b id="twistv">1.1&deg;</b></label><input id="twist" type="range" min="0" max="300" value="11"></div>
     <div class="ctl"><label for="drift">Drift <b id="driftv">0.14</b></label><input id="drift" type="range" min="0" max="200" value="14"></div>
+    <div class="row">
+        <button class="btn" id="freeze" aria-pressed="false">Freeze</button>
+        <button class="btn sig" id="save">Save PNG</button>
+    </div>
     <p class="keys label"><kbd>Space</kbd> freeze &middot; <kbd>S</kbd> save png<br><kbd>H</kbd> hide panel</p>
 </div>
 
@@ -185,28 +200,36 @@ document.getElementById('kinds').addEventListener('click', e => {
     if (frozen) frame();
 });
 
+const freezeBtn = document.getElementById('freeze');
+function freeze(on) {
+    frozen = on;
+    freezeBtn.setAttribute('aria-pressed', String(on));
+}
+function save() {
+    frame();
+    let src = c;
+    if (document.documentElement.classList.contains('light')) {
+        src = document.createElement('canvas');
+        src.width = c.width;
+        src.height = c.height;
+        const sx = src.getContext('2d');
+        sx.filter = 'invert(1)';
+        sx.drawImage(c, 0, 0);
+    }
+    const a = document.createElement('a');
+    a.href = src.toDataURL('image/png');
+    a.download = `visuospatials-moire-${Date.now()}.png`;
+    a.click();
+}
+freezeBtn.addEventListener('click', () => freeze(!frozen));
+document.getElementById('save').addEventListener('click', save);
+
 document.addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.target instanceof Element && e.target.matches('input[type=text], input:not([type]), textarea')) return;
     if (e.key === ' ' && e.target instanceof Element && e.target.matches('button')) return;
-    const k = e.key.toLowerCase();
-    if (e.key === ' ') { e.preventDefault(); frozen = !frozen; }
-    if (k === 's') {
-        frame();
-        let src = c;
-        if (document.documentElement.classList.contains('light')) {
-            src = document.createElement('canvas');
-            src.width = c.width;
-            src.height = c.height;
-            const sx = src.getContext('2d');
-            sx.filter = 'invert(1)';
-            sx.drawImage(c, 0, 0);
-        }
-        const a = document.createElement('a');
-        a.href = src.toDataURL('image/png');
-        a.download = `visuospatials-moire-${Date.now()}.png`;
-        a.click();
-    }
+    if (e.key === ' ') { e.preventDefault(); freeze(!frozen); }
+    if (e.key.toLowerCase() === 's') save();
 });
 
 size();

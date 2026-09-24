@@ -56,9 +56,10 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
     keeps the word looking the same at every width. The first version sampled
     one pixel per cell on a grid pinned to the window corner, so the phase
     drifted letter to letter and the rest state looked scattered. Don't go back.
-  - Below 760px, without a fine pointer, or under reduced motion, the canvas is
-    removed and the plain text shows. Dots that small cannot resolve into
-    letters and a phone has no cursor to react to.
+  - **The dots run on phones too.** A finger pushes them while it is down and
+    releases them when it lifts; the canvas renders at up to 3x so they stay
+    crisp on phone screens, where 11 rows still resolve cleanly (checked in iOS
+    Safari). Only reduced motion gets the plain text.
   - CSS `width: 100%; height: 100%` on the canvas is **required**. A canvas is a
     replaced element, so `inset: 0` alone does not stretch it — it falls back to
     its intrinsic size and the drawing lands at device-pixel scale.
@@ -97,9 +98,19 @@ Secrets are shortcuts, never the only route. Every room is reachable from the
 `.exit` bar and from `lab/`. The front page reveals a "hold anywhere" whisper
 after 24 seconds so nobody is stuck behind a gesture they can't guess.
 
-The hold gesture is bound to `document`, so it fires over the photo too. That is
-why the front page suppresses `contextmenu` — without it a long press on the
-image raises the save-image callout and eats the gesture on touch.
+The hold gesture is bound to `document`, so it fires over the photo too. On
+touch that needs three things, and losing any one breaks entering on a phone:
+
+- The photo has `pointer-events: none`. iOS answers a long press on an `<img>` by
+  shrinking it into a preview (the "squish"), and taking over that gesture
+  cancels the hold. With the photo out of hit-testing the press lands on the page.
+- `html, body { touch-action: none; }` on the front page. Otherwise a finger's
+  natural drift reads as a pan, the browser fires `pointercancel`, and the ring
+  resets at the last moment.
+- `contextmenu` is suppressed, for the save-image callout on other browsers.
+
+On touch, moving more than 14px cancels the hold — a drag is playing with the
+dots, a still finger is asking to go in. Mouse holds ignore movement.
 
 ## Conventions
 
@@ -157,6 +168,16 @@ image raises the save-image callout and eats the gesture on touch.
   string is hardcoded in the room with a comment saying why. Widths set in `ch`
   were tuned for Helvetica's narrower advance, so re-check them if the face
   ever changes.
+- **Every room works without a keyboard.** Keyboard shortcuts are extras; each
+  action they trigger also needs a button, because a phone has no keys. Moiré
+  used to be keys-only and could not freeze or save on a phone. Rooms hide their
+  `.keys` hint under `@media (hover: none)`.
+- Poster, stacked on a phone, lets the page scroll and gives the stage a fixed
+  `72vh`. Keeping `body` pinned at 100% squeezed the sidebar into a 180px
+  scroller under the exit bar; sizing the stage to its content would feed back,
+  since the canvas sizes itself to its parent.
+- Arrows used as ornaments need `\FE0E` after them (`" \2197\FE0E"`), or iOS
+  draws a blue emoji tile.
 - Control panels share a shape across rooms: `legend` + `.ctl` rows + range
   inputs + the `.btn` row. Copy an existing room rather than inventing a fourth
   panel style.
