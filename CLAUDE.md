@@ -3,7 +3,7 @@
 A design and artwork studio site. Static HTML, no build step, no dependencies,
 no analytics, no fonts fetched from anyone. Every page is a plain `.html` file
 with inline `<style>` and `<script>`. The shared files are `base.css`,
-`nav.js`, `stow.js`, `theme.js` and `cross.js`.
+`nav.js`, `stow.js` and `theme.js`.
 
 **`README.md` is the public face of the repo — short, no secrets.** This file is
 the working document. Keep them separate: anything that spoils a secret or
@@ -34,7 +34,6 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `404.html` | Dot-matrix 404 that repels the pointer. GitHub Pages serves this. |
 | `nav.js` | Wires the back arrow. Loaded by every page except the front. |
 | `stow.js` | Drives the Hide/Edit toggle. Loaded by the four tool rooms only. |
-| `cross.js` | Draws the three drifting lines. `data-corner` pins them bottom left. Decorative. |
 | `theme.js` | Wires the light/dark toggle. Loaded by every page. |
 
 ## The front page
@@ -91,8 +90,8 @@ The full set: press and hold anywhere on the front page (a ring closes around
 the pointer over 1.1s, then goes to Studio/About), the 7%-opacity dot
 bottom-right, typing `lab` or `spatial`, the Konami code, backtick in halftone,
 space/s/h in moiré, poster seeds, the 404, and the console log on the front
-page. The three drifting lines bottom left are now decoration only — they were
-the door to the void and still animate on hover, but they link nowhere.
+page. The three drifting lines that used to sit bottom left were the door to the
+void; they went on 2026-09-23 along with `cross.js`.
 
 Secrets are shortcuts, never the only route. Every room is reachable from the
 `.exit` bar and from `lab/`. The front page reveals a "hold anywhere" whisper
