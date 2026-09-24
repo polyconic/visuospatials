@@ -36,9 +36,20 @@
         .call a.big:hover { color: var(--sig); }
         .call a.big::after { content: " \2197\FE0E"; font-size: 0.5em; vertical-align: super; color: var(--sig); }
         .call p { margin-top: 20px; line-height: 1.9; }
-        .call .links { margin-top: 26px; display: flex; gap: 26px; flex-wrap: wrap; }
-        .call .links a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
-        .call .links a:hover { color: var(--fg); }
+        /* The same ruled rows as the lab's room list, in miniature. */
+        .elsewhere { margin-top: clamp(44px, 9vh, 88px); max-width: 560px; }
+        .elsewhere ul { list-style: none; margin-top: 14px; }
+        .elsewhere li { border-top: 1px solid var(--rule); }
+        .elsewhere li:last-child { border-bottom: 1px solid var(--rule); }
+        .elsewhere a { display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+                       padding: 15px 0; color: var(--fg); text-decoration: none;
+                       transition: color 0.2s, padding-left 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+        .elsewhere .n { font-size: 15px; letter-spacing: -0.005em; }
+        .elsewhere .u { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+                        color: var(--dim); transition: color 0.2s; white-space: nowrap; }
+        .elsewhere .u::after { content: " \2197\FE0E"; }
+        .elsewhere a:hover, .elsewhere a:focus-visible { color: var(--sig); padding-left: 10px; }
+        .elsewhere a:hover .u, .elsewhere a:focus-visible .u { color: var(--sig); }
     </style>
     <!-- Must stay in <head>: moving it later reintroduces the theme flash. -->
     <script>
@@ -72,10 +83,15 @@
     <div class="call">
         <a class="big" href="mailto:gregor.art@pm.me?subject=Visuospatials">Bring something</a>
         <p class="label">Send a link, a rough, a half-finished thing. Loose ideas are welcome.</p>
-        <div class="links label">
-            <a href="https://instagram.com/visuospatials" rel="me noopener" target="_blank">Instagram</a>
-            <a href="https://gregoregan.com" rel="me">gregoregan.com</a>
-        </div>
+    </div>
+
+    <div class="elsewhere">
+        <p class="label">Elsewhere</p>
+        <ul>
+            <li><a href="https://www.audiospatials.com/" rel="me noopener" target="_blank"><span class="n">Audiospatials</span><span class="u">audiospatials.com</span></a></li>
+            <li><a href="https://www.instagram.com/visuospatials/" rel="me noopener" target="_blank"><span class="n">Instagram</span><span class="u">@visuospatials</span></a></li>
+            <li><a href="https://gregoregan.com/" rel="me noopener" target="_blank"><span class="n">Gregor Egan</span><span class="u">gregoregan.com</span></a></li>
+        </ul>
     </div>
 </div>
 

@@ -132,8 +132,11 @@ Touch on the front page also needs:
   **The Lab goes last in every list.** It is the bonus, not the work; Greg asked
   for that ordering on 2026-09-23 and it holds for the exit bars and the 404's
   nav line. **Don't repeat the bar in page content.** Studio's links row used to
-  list Work / Front / The lab right above a bar that already did; it now holds
-  only what the bar can't — Instagram and gregoregan.com.
+  list Work / Front / The lab right above a bar that already did. Outside links
+  now live in studio's **Elsewhere** list — Audiospatials, Instagram, Gregor
+  Egan — as ruled rows like the lab's room list: name left, address right with
+  a ↗. Links go to final URLs (`www.audiospatials.com`, `www.instagram.com`)
+  to skip a redirect, and all open in a new tab.
   Paths in the shared tags are **root-absolute**, so they work the same from `/`
   and from `/lab/`; they do not work over `file://`.
 
