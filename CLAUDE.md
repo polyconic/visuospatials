@@ -22,7 +22,8 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 
 | File | What it is |
 |---|---|
-| `index.html` | The front. Photo, exploding wordmark, hidden index. |
+| `index.html` | The front. Cluster belt, exploding wordmark, hidden index. |
+| `belt/` | The ten cluster SVGs the front page's belt runs. |
 | `work/index.html` | The portfolio grid. Reads `work/pieces.js`; empty state points at Instagram. |
 | `work/pieces.js` | The manifest — the one file to edit when a piece is added. |
 | `lab/index.html` | Directory of the four rooms. |
@@ -37,6 +38,16 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `theme.js` | Wires the light/dark toggle. Loaded by every page. |
 
 ## The front page
+
+- **The ground is a belt, not a photo.** Ten cluster SVGs in `belt/` sit side
+  by side on one strip that runs right to left, continuously, one lap every
+  70s. The eleventh `<img>` repeats `01.svg` so the wrap back to zero lands on
+  an identical frame — keep it matching the first if the files change. The
+  files come from `~/Desktop/belt/make.py` (outside the repo, since the site has
+  no build step); Greg will redraw them in Illustrator, so a swapped file only
+  needs the same name. All ten share one viewBox so the clusters keep a common
+  scale. Reduced motion holds the first cluster still. `blur.webp` is no longer
+  on the page but is still the `og:image`.
 
 - **No corner marks.** The back and home marks are on every page *except* this
   one. That is deliberate: the front should read as a dead end. Don't add them.
