@@ -38,6 +38,8 @@
         .call p { margin-top: 20px; line-height: 1.9; }
         .elsewhere { margin-top: clamp(44px, 9vh, 88px); max-width: 560px; }
         .elsewhere ul { list-style: none; margin-top: 14px; }
+        /* The studio's own feed sits on its own, just above Elsewhere. */
+        .follow + .elsewhere { margin-top: clamp(30px, 5vh, 48px); }
         .elsewhere li { border-top: 1px solid var(--rule); }
         .elsewhere li:last-child { border-bottom: 1px solid var(--rule); }
         .elsewhere a { display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
@@ -81,11 +83,17 @@
         <p class="label">Send a link, a rough, a half-finished thing. Loose ideas are welcome.</p>
     </div>
 
+    <div class="elsewhere follow">
+        <p class="label">Visuospatials on Instagram</p>
+        <ul>
+            <li><a href="https://www.instagram.com/visuospatials/" rel="me noopener" target="_blank"><span class="n">@visuospatials</span><span class="u">Follow</span></a></li>
+        </ul>
+    </div>
+
     <div class="elsewhere">
         <p class="label">Elsewhere</p>
         <ul>
             <li class="pair"><span class="n">Audiospatials</span><span class="links"><a class="u" href="https://www.audiospatials.com/" rel="me noopener" target="_blank">audiospatials.com</a><a class="u" href="https://www.instagram.com/audiospatials/" rel="me noopener" target="_blank">@audiospatials</a></span></li>
-            <li><a href="https://www.instagram.com/visuospatials/" rel="me noopener" target="_blank"><span class="n">Instagram</span><span class="u">@visuospatials</span></a></li>
             <li class="pair"><span class="n">Gregor Egan</span><span class="links"><a class="u" href="https://gregoregan.com/" rel="me noopener" target="_blank">gregoregan.com</a><a class="u" href="https://www.instagram.com/gregor.egan/" rel="me noopener" target="_blank">@gregor.egan</a></span></li>
             <li><a href="https://www.instagram.com/h.bowersmith/" rel="noopener" target="_blank"><span class="n">Hunter Bowersmith</span><span class="u">@h.bowersmith</span></a></li>
         </ul>
