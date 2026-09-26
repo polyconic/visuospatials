@@ -132,9 +132,7 @@
         const flip = parts => parts.map(([k, a]) => [k, a.map((v, i) => i % 2 ? 1 - v : v)]);
         const PI = Math.PI;
         const GLYPHS = {
-            // Measured identical, a V still reads lighter than its flipped A, so its
-            // strokes carry a little extra weight to look the same.
-            V: { w: 0.7, parts: vee(T * 1.14) },
+            V: { w: 0.7, parts: vee(T) },
             A: { w: 0.7, parts: flip(vee(T)) },
             I: { w: T, parts: [bar(0, 0, T, 1)] },
             S: { w: 2 * R, parts: [ring(R, R, R, PI / 2, PI * 1.5), ring(R, 1 - R, R, -PI / 2, PI / 2)] },
