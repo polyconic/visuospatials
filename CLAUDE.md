@@ -47,7 +47,10 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
   no build step); Greg will redraw them in Illustrator, so a swapped file only
   needs the same name. All ten share one viewBox so the clusters keep a common
   scale. Reduced motion holds the first cluster still.
-  Nothing passes over the wordmark; an over-the-logo second belt was tried
+  **Nothing touches the wordmark.** Every cube sits above or below a band
+  across the middle (`BAND` in make.py, which refuses to build a cube inside
+  it); checked clear of the type at phone, laptop, tall and ultrawide sizes.
+  A redrawn cluster must keep out of that band too. Nothing passes over it; an over-the-logo second belt was tried
   on 2026-09-25 and dropped at Greg's request. `blur.webp` is no longer
   on the page but is still the `og:image`.
 
