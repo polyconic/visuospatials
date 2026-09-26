@@ -163,7 +163,7 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   **Don't repeat the bar in page content.** Studio's links row used to
   list the sections right above a bar that already did. Outside links
   now live in studio's **Elsewhere** list — Audiospatials, Instagram, Gregor
-  Egan — as ruled rows: name left, address right with
+  Egan, Hunter Bowersmith (his Instagram) — as ruled rows: name left, address right with
   a ↗. Links go to final URLs (`www.audiospatials.com`, `www.instagram.com`)
   to skip a redirect, and all open in a new tab.
   Paths in the shared tags are **root-absolute**, so they work the same from `/`
