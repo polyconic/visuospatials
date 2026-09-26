@@ -60,9 +60,11 @@
         P: { w: 0.49, parts: [rect(0, 0, T, 1), half(T, 0.29, 0.29, -PI / 2, PI / 2)] },
         Q: { w: 0.95, parts: [...oh, poly(0.6, 0.72, 0.74, 0.6, 0.95, 0.94, 0.8, 1)] },
         R: { w: 0.62, parts: [rect(0, 0, T, 1), half(T, 0.29, 0.29, -PI / 2, PI / 2), poly(0.22, 0.52, 0.42, 0.52, 0.62, 1, 0.42, 1)] },
-        // The S's bars stop a hair short of the half discs: when a bar and a disc
-        // land in different tones, even the seam stroke showed as an overlap.
-        S: { w: 0.56, parts: [half(0.28, 0.25, 0.25, PI / 2, 3 * PI / 2), rect(0.286, 0, 0.274, T), half(0.28, 0.75, 0.25, -PI / 2, PI / 2), rect(0, 0.8, 0.274, T)] },
+        // When an S's bar lands in a different tone from the half disc it meets,
+        // even the seam stroke reads as an overlap, so that bar swaps to its
+        // `clear` shape, stopping a hair short. Same tones keep touching.
+        S: { w: 0.56, parts: [half(0.28, 0.25, 0.25, PI / 2, 3 * PI / 2), rect(0.28, 0, 0.28, T), half(0.28, 0.75, 0.25, -PI / 2, PI / 2), rect(0, 0.8, 0.28, T)],
+             clear: { 1: [0, rect(0.286, 0, 0.274, T)], 3: [2, rect(0, 0.8, 0.274, T)] } },
         T: { w: 0.72, parts: [rect(0, 0, 0.72, T), rect(0.26, T, T, 1 - T)] },
         U: { w: 0.68, parts: [rect(0, 0, T, 0.66), rect(0.48, 0, T, 0.66), ring(0.34, 0.66, 0.34, 0.14, 0, PI)] },
         V: { w: 0.86, parts: vee },
@@ -101,7 +103,7 @@
         let x = 0;
         [...text.toUpperCase()].forEach((ch, i, all) => {
             const g = G[ch] || G[' '];
-            g.parts.forEach(d => out.push({ d, x, ch, index: i }));
+            g.parts.forEach((d, part) => out.push({ d, x, ch, index: i, part }));
             x += g.w + (i < all.length - 1 ? GAP : 0);
         });
         return { pieces: out, width: x };
@@ -200,9 +202,14 @@
             const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
             pieces = layoutPieces.map(p => {
                 const a = Math.random() * 6.2832, d = 200 + Math.random() * 400;
-                return { path: new Path2D(p.d), ax: box.x + p.x * box.s, laps: 1 + Math.floor(rnd() * 3),
+                return { d: p.d, ax: box.x + p.x * box.s, laps: 1 + Math.floor(rnd() * 3),
                          tone: rnd() < 0.2 ? DIM : INK, bx: Math.cos(a) * d, by: Math.sin(a) * d };
             });
+            layoutPieces.forEach((p, i) => {
+                const swap = ((G[p.ch] || {}).clear || {})[p.part];
+                if (swap && pieces[i - p.part + swap[0]].tone !== pieces[i].tone) pieces[i].d = swap[1];
+            });
+            pieces.forEach(q => { q.path = new Path2D(q.d); });
         }
 
         // Blows out over 6s and settles back over 2.5s.

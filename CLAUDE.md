@@ -60,7 +60,11 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
   size** (`vector-effect: non-scaling-stroke` in SVG, divided by the scale on
   the canvas). It used to be a fraction of the letter height, which on a big
   screen grew to several pixels and visibly spilled a white piece over a grey
-  neighbour. Because of that stroke, **never cut a
+  neighbour. Where two touching pieces land in **different** tones even that
+  can read as overlap, so a glyph may carry `clear` alternates: the S's bars
+  swap to a shape stopping a hair short of the half disc only when their tone
+  differs from it. Same tones must keep touching — a gap between two same-tone
+  pieces shows as a dark line (Greg flagged exactly that). Because of that stroke, **never cut a
   notch as an even-odd hole that touches a letter's outer edge** — the stroke
   traces the hole's open side as a visible line (it did across the V and A).
   Draw the notch into a single outline instead, as the V, A, K and Y are.
