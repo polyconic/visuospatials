@@ -37,12 +37,18 @@ ground, minimal. `geo.js` holds A–Z plus `0 4 . / ↗` and space, each letter 
 few primitives (bars, triangles with a notch, half discs, ring slices) in a box
 one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
 
-- **Headings**: any element with `data-geo` is redrawn as inline SVG
-  (`.geo`, one cap height tall) and its pieces assemble in from the right once,
-  on load. The text stays in a visually hidden `.geo-text` span. Pieces take
-  `currentColor`, so hover colours still work; a child in a different colour
-  (the red `<em>.`, the dim `.slash`) keeps its own. `body` clips horizontal
-  overflow so the incoming pieces don't add a scrollbar.
+- **Page headings stay Helvetica but arrive like the alphabet.** `data-arrive`
+  splits an element into per-letter spans that slide in from the right once on
+  load, with the same seeded offsets and easing as an assembling geo heading.
+  A `↗` in the text becomes the alphabet's arrow (`.geo.arrow`, cap height, red
+  via the `<em>`). Greg tried the headings in the alphabet itself on
+  2026-09-25 and went back to Helvetica for them, keeping the motion and the
+  arrow. The real text sits in a visually hidden `.geo-text` span.
+- `data-geo` still exists — it redraws an element in the alphabet as inline SVG
+  (`.geo`, one cap height tall) and assembles it — but nothing uses it now.
+  Pieces take `currentColor`, so hover colours work; a child in a different
+  colour keeps its own. `body` clips horizontal overflow so incoming letters
+  and pieces don't add a scrollbar.
 - **Canvas**: `Geo.converge(canvas, text, place, {cycle, hold})` runs the looping
   version for the front page and the 404, with `explode()` for the easter egg.
 - A missing character renders as a space — add a glyph to `G` before using a

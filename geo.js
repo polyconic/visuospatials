@@ -248,10 +248,67 @@
         };
     }
 
-    window.Geo = { glyphs: G, layout, heading, converge, T };
+    /* The same arrival as an assembling heading, but the letters stay in the
+       page's own type: each character slides in from the right once and
+       settles. A ↗ becomes the alphabet's arrow, drawn at cap height. */
+    function arrive(el) {
+        const NS = 'http://www.w3.org/2000/svg';
+        const shown = document.createElement('span');
+        shown.setAttribute('aria-hidden', 'true');
+        const letters = [];
+        (function walk(node, into) {
+            [...node.childNodes].forEach(c => {
+                if (c.nodeType === 1) {
+                    const copy = c.cloneNode(false);
+                    into.appendChild(copy);
+                    walk(c, copy);
+                    return;
+                }
+                if (c.nodeType !== 3) return;
+                [...c.textContent.replace(/\s+/g, ' ')].forEach(ch => {
+                    const span = document.createElement('span');
+                    span.className = 'arrive';
+                    if (ch === '↗') {
+                        const svg = document.createElementNS(NS, 'svg');
+                        svg.setAttribute('viewBox', '0 0 0.5 1');
+                        svg.classList.add('geo', 'arrow');
+                        const path = document.createElementNS(NS, 'path');
+                        path.setAttribute('d', G['↗'].parts[0]);
+                        svg.appendChild(path);
+                        span.appendChild(svg);
+                    } else span.textContent = ch;
+                    into.appendChild(span);
+                    letters.push(span);
+                });
+            });
+        })(el, shown);
 
-    // Any element marked data-geo is redrawn in the alphabet and assembles once.
-    const run = () => document.querySelectorAll('[data-geo]').forEach(el => heading(el, { assemble: true }));
+        const sr = document.createElement('span');
+        sr.className = 'geo-text';
+        sr.textContent = el.textContent.replace('↗', '').replace(/\s+/g, ' ').trim();
+        el.replaceChildren(shown, sr);
+
+        if (!MOVING) return;
+        let seed = 7;
+        const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+        letters.forEach(span => {
+            const from = (3 + rnd() * 9) * 0.72;
+            span.animate([
+                { transform: `translateX(${n(from)}em)`, opacity: 0 },
+                { transform: 'none', opacity: 1 }
+            ], { duration: 900 + rnd() * 900, delay: 80 + rnd() * 260,
+                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' });
+        });
+    }
+
+    window.Geo = { glyphs: G, layout, heading, arrive, converge, T };
+
+    // data-geo redraws an element in the alphabet and assembles it once;
+    // data-arrive keeps its type and only borrows the motion.
+    const run = () => {
+        document.querySelectorAll('[data-geo]').forEach(el => heading(el, { assemble: true }));
+        document.querySelectorAll('[data-arrive]').forEach(arrive);
+    };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
     else run();
 })();
