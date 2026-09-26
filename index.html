@@ -115,34 +115,22 @@
            word once a cycle; time slows around that moment so the word holds.
            Under reduced motion the word is drawn once, assembled. */
         const MOVING = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const INK = '#f2f2ef';
+        const INK = '#f2f2ef', DIM = '#8c8c88';
         const CYCLE = 26;
-
-        // Hairline geometry in a 1-unit-tall box: bars, slanted strokes and ring
-        // slices, one stroke weight throughout. w is the advance.
-        const T = 0.085;
-        const R = (1 - T) / 4 + T / 2; // S bowls meet on one shared band
-        const bar = (x, y, w, h) => ['rect', [x, y, w, h]];
-        const ring = (x, y, r, a0, a1) => ['ring', [x, y, r, r - T, a0, a1]];
-        // Two slanted strokes meeting at the bottom; t is the stroke weight.
-        const vee = t => {
-            const h = t * 0.575; // half a slanted stroke's horizontal width
-            return [['poly', [0, 0, 2 * h, 0, 0.35 + h, 1, 0.35 - h, 1]], ['poly', [0.7 - 2 * h, 0, 0.7, 0, 0.35 + h, 1, 0.35 - h, 1]]];
-        };
-        const flip = parts => parts.map(([k, a]) => [k, a.map((v, i) => i % 2 ? 1 - v : v)]);
-        const PI = Math.PI;
+        const T = 0.2;
         const GLYPHS = {
-            V: { w: 0.7, parts: vee(T) },
-            A: { w: 0.7, parts: flip(vee(T)) },
-            I: { w: T, parts: [bar(0, 0, T, 1)] },
-            S: { w: 2 * R, parts: [ring(R, R, R, PI / 2, PI * 1.5), ring(R, 1 - R, R, -PI / 2, PI / 2)] },
-            U: { w: 0.6, parts: [bar(0, 0, T, 0.7), bar(0.6 - T, 0, T, 0.7), ring(0.3, 0.7, 0.3, 0, PI)] },
-            O: { w: 1, parts: [ring(0.5, 0.5, 0.5, 0, PI * 2)] },
-            P: { w: T + 0.28, parts: [bar(0, 0, T, 1), ring(T, 0.28, 0.28, -PI / 2, PI / 2)] },
-            T: { w: 0.6, parts: [bar(0, 0, 0.6, T), bar(0.3 - T / 2, 0, T, 1)] },
-            L: { w: 0.48, parts: [bar(0, 0, T, 1), bar(0, 1 - T, 0.48, T)] },
+            V: { w: 0.8, parts: [['tri', [0, 0, 0.8, 0, 0.4, 1]], ['tri', [0.24, 0, 0.56, 0, 0.4, 0.58], 'hole']] },
+            I: { w: T, parts: [['rect', [0, 0, T, 1]]] },
+            S: { w: 0.56, parts: [['half', [0.28, 0.25, 0.25, Math.PI / 2, Math.PI * 1.5]], ['rect', [0.28, 0, 0.28, T]], ['half', [0.28, 0.75, 0.25, -Math.PI / 2, Math.PI / 2]], ['rect', [0, 0.8, 0.28, T]]] },
+            U: { w: 0.68, parts: [['rect', [0, 0, T, 0.66]], ['rect', [0.48, 0, T, 0.66]], ['ring', [0.34, 0.66, 0.34, 0.14, 0, Math.PI]]] },
+            O: { w: 0.9, parts: [['ring', [0.45, 0.5, 0.45, 0.25, 0, Math.PI * 2]]] },
+            P: { w: 0.62, parts: [['rect', [0, 0, T, 1]], ['half', [T, 0.29, 0.29, -Math.PI / 2, Math.PI / 2]], ['rect', [0.14, 0, 0.08, 0.58]]] },
+            T: { w: 0.72, parts: [['rect', [0, 0, 0.72, T]], ['rect', [0.26, 0, T, 1]]] },
+            L: { w: 0.56, parts: [['rect', [0, 0, T, 1]], ['rect', [0, 1 - T, 0.56, T]]] },
         };
-        const GAP = 0.22;
+        // A is V upside down: same triangle, same notch.
+        GLYPHS.A = { w: GLYPHS.V.w, parts: GLYPHS.V.parts.map(([k, a, h]) => [k, a.map((v, i) => i % 2 ? 1 - v : v), h]) };
+        const GAP = 0.16;
 
         const canvas = document.getElementById('geo');
         const cx = canvas.getContext('2d');
@@ -152,7 +140,8 @@
         function trace(kind, a, s, ox, oy) {
             cx.beginPath();
             if (kind === 'rect') cx.rect(ox + a[0] * s, oy + a[1] * s, a[2] * s, a[3] * s);
-            if (kind === 'poly') { for (let i = 0; i < a.length; i += 2) cx.lineTo(ox + a[i] * s, oy + a[i + 1] * s); cx.closePath(); }
+            if (kind === 'tri') { cx.moveTo(ox + a[0] * s, oy + a[1] * s); cx.lineTo(ox + a[2] * s, oy + a[3] * s); cx.lineTo(ox + a[4] * s, oy + a[5] * s); cx.closePath(); }
+            if (kind === 'half') { cx.moveTo(ox + a[0] * s, oy + a[1] * s); cx.arc(ox + a[0] * s, oy + a[1] * s, a[2] * s, a[3], a[4]); cx.closePath(); }
             if (kind === 'ring') { cx.arc(ox + a[0] * s, oy + a[1] * s, a[2] * s, a[4], a[5]); cx.arc(ox + a[0] * s, oy + a[1] * s, a[3] * s, a[5], a[4], true); cx.closePath(); }
         }
 
@@ -174,9 +163,11 @@
             pieces = [];
             [...WORD].forEach(ch => {
                 const g = GLYPHS[ch];
-                g.parts.forEach(p => {
+                const holes = g.parts.filter(p => p[2] === 'hole');
+                g.parts.filter(p => p[2] !== 'hole').forEach((p, i) => {
                     const a = Math.random() * 6.2832, d = 200 + Math.random() * 400;
-                    pieces.push({ kind: p[0], a: p[1], s, ax: x, ay: y, laps: 1 + Math.floor(rnd() * 3),
+                    pieces.push({ kind: p[0], a: p[1], holes: i === 0 ? holes : [], s, ax: x, ay: y,
+                                  laps: 1 + Math.floor(rnd() * 3), tone: rnd() < 0.2 ? DIM : INK,
                                   bx: Math.cos(a) * d, by: Math.sin(a) * d });
                 });
                 x += (g.w + GAP) * s;
@@ -184,8 +175,19 @@
         }
 
         function draw(p, ox, oy) {
+            cx.fillStyle = p.tone;
+            cx.save();
+            if (p.holes.length) {
+                cx.beginPath();
+                cx.rect(ox - p.s * 2, oy - p.s * 2, p.s * 5, p.s * 5);
+                p.holes.forEach(([, a]) => {
+                    cx.moveTo(ox + a[0] * p.s, oy + a[1] * p.s); cx.lineTo(ox + a[2] * p.s, oy + a[3] * p.s); cx.lineTo(ox + a[4] * p.s, oy + a[5] * p.s); cx.closePath();
+                });
+                cx.clip('evenodd');
+            }
             trace(p.kind, p.a, p.s, ox, oy);
             cx.fill();
+            cx.restore();
         }
 
         // Blows out over 6s and settles back over 2.5s.
@@ -206,7 +208,6 @@
             const margin = pieces[0].s * 1.2, span = W + 2 * margin;
             const b = blast();
             cx.globalAlpha = 1 - b;
-            cx.fillStyle = INK;
             pieces.forEach(q => {
                 let x = q.ax - q.laps * span * warped;
                 x = ((x + margin) % span + span) % span - margin;
