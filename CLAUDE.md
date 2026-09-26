@@ -56,7 +56,10 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
   and both use the heavy V: a short, narrow notch (Greg preferred it to the
   deeper, thinner-stroked one).
 - Pieces that butt together get a hairline stroke in the same colour (`SEAM`)
-  so no anti-aliased seam shows between them.
+  so no anti-aliased seam shows between them. Because of that stroke, **never cut a
+  notch as an even-odd hole that touches a letter's outer edge** — the stroke
+  traces the hole's open side as a visible line (it did across the V and A).
+  Draw the notch into a single outline instead, as the V, A, K and Y are.
 - Body copy, labels and the exit bar stay small Helvetica; the contrast is the
   point. The corner and viewer icons are flat filled shapes, not strokes.
 
