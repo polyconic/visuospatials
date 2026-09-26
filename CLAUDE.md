@@ -22,8 +22,7 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 
 | File | What it is |
 |---|---|
-| `index.html` | The front. Cluster belt, exploding wordmark, hidden index. |
-| `belt/` | The ten cluster SVGs the front page's belt runs. |
+| `index.html` | The front. Converging geometric wordmark, hidden index. |
 | `work/index.html` | The portfolio grid. Reads `work/pieces.js`; empty state points at Instagram. |
 | `work/pieces.js` | The manifest — the one file to edit when a piece is added. |
 | `lab/index.html` | Directory of the four rooms. |
@@ -39,60 +38,36 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 
 ## The front page
 
-- **The ground is a belt, not a photo.** Ten cluster SVGs in `belt/` sit side
-  by side on one strip that runs right to left, continuously, one lap every
-  140s. The eleventh `<img>` repeats `01.svg` so the wrap back to zero lands on
-  an identical frame — keep it matching the first if the files change. The
-  files come from `~/Desktop/belt/make.py` (outside the repo, since the site has
-  no build step); Greg will redraw them in Illustrator, so a swapped file only
-  needs the same name. All ten share one viewBox so the clusters keep a common
-  scale. Reduced motion holds the first cluster still.
-  **Nothing touches the wordmark.** Every cube sits above or below a band
-  across the middle (`BAND` in make.py, which refuses to build a cube inside
-  it); checked clear of the type at phone, laptop, tall and ultrawide sizes.
-  A redrawn cluster must keep out of that band too. Nothing passes over it; an over-the-logo second belt was tried
-  on 2026-09-25 and dropped at Greg's request. `blur.webp` is no longer
-  on the page but is still the `og:image`.
-
+- **No photo, no ground.** The page is black with the wordmark alone. The
+  photo hero was replaced on 2026-09-25, first by a belt of extruded-cube SVGs
+  and then by this; both are in history. `blur.webp` is off the page but is
+  still the `og:image`.
 - **No corner marks.** The back and home marks are on every page *except* this
   one. That is deliberate: the front should read as a dead end. Don't add them.
 - **The name is the way in.** The wordmark is `<a class="flicker-text"
-  href="/studio.html">` — the transparent text under the dot field is the link,
-  so the whole logo clicks through to Studio/About, not to an index. About is the
-  main content; the Lab is a bonus you reach from the exit bar once inside. It
-  replaced a hold-anywhere gesture on 2026-09-23. Being a real link, it gets the
-  page fade, the prerender and keyboard access for free.
+  href="/studio.html">` — its text is made transparent and sits under the
+  canvas (which ignores pointers), so the whole word area clicks through to
+  Studio/About, even while the pieces are scattered. About is the main content;
+  the Lab is a bonus you reach from the exit bar once inside. Being a real
+  link, it gets the page fade, the prerender and keyboard access for free.
   The front page does not load `nav.js` at all — it has no arrow to wire.
-- **The wordmark is a dot field**, the same mask trick as the 404: the type is
-  drawn into an offscreen canvas, `getImageData` finds the letterforms, and a dot
-  is kept wherever one landed. The pointer pushes them aside. The `<span>` still
-  holds the real text for readers and search — it is only made transparent — and
-  the metrics are read back off it with `getComputedStyle`, so the CSS clamp
-  stays the single source of truth for the size.
-  - **The grid is locked to the type, not the window.** Cap height is exactly
-    `ROWS` cells (11), every letter's origin is snapped to a column, and a cell
-    gets a dot when at least half of it is ink in a 4x supersampled mask. That
-    makes repeated letters (three S, two A, two I) dot-for-dot identical and
-    keeps the word looking the same at every width. The first version sampled
-    one pixel per cell on a grid pinned to the window corner, so the phase
-    drifted letter to letter and the rest state looked scattered. Don't go back.
-  - **The dots run on phones too.** A finger pushes them while it is down and
-    releases them when it lifts; the canvas renders at up to 3x so they stay
-    crisp on phone screens, where 11 rows still resolve cleanly (checked in iOS
-    Safari). Only reduced motion gets the plain text.
+- **The wordmark is built from flat shapes and converges.** Each letter is a
+  few primitives (`GLYPHS`: bars, triangles with a triangle cut out, half
+  discs, ring slices). Every piece slides left at 1, 2 or 3 laps per 26s
+  cycle and wraps, so they line up into the word once a cycle; time is warped
+  to slow around that moment so the word holds, then comes apart. Greg asked
+  for this motion on 2026-09-25, replacing the still dot-field wordmark (which
+  lives on in the 404). The word's size is read off the link's text width, so
+  the CSS clamp still sets it and the hit area matches the drawing. About one
+  piece in five is grey (`DIM`), chosen by a fixed seed so it's the same every
+  load. Reduced motion draws the word once, assembled.
   - CSS `width: 100%; height: 100%` on the canvas is **required**. A canvas is a
     replaced element, so `inset: 0` alone does not stretch it — it falls back to
     its intrinsic size and the drawing lands at device-pixel scale.
-- **Nothing animates the wordmark on a timer.** The explode is still only
-  reachable by typing `spatial`; in dot mode it scatters the dots instead of the
-  letter spans. Greg asked for still; do not restore the interval. The blast
-  clock starts at `-1e9`, not `0` — `performance.now()` begins near zero, so a
-  zero start puts a freshly loaded page inside the explode window.
-- Its colour is the literal `#5c5c58`, deliberately a step darker than `--dim`
-  and tuned against the current hero. Worth re-checking if the hero changes.
-- The hero has been swapped several times. The routine each time: commit the
-  original at full resolution **first**, then resize in a second commit, then
-  delete the superseded file. Everything stays recoverable from history.
+- **Typing `spatial` still explodes it**: every piece flies out and fades over
+  6s, then settles back over 2.5s. The blast clock starts at `-1e9`, not `0` —
+  `performance.now()` begins near zero, so a zero start puts a freshly loaded
+  page inside the explode window.
 
 ## Poster vocabulary
 
@@ -117,17 +92,7 @@ Secrets are shortcuts, never the only route. Every room is reachable from the
 "click the name" whisper was removed on 2026-09-24 at Greg's request. Don't add
 one back. The console log still says it, for anyone who looks there.
 
-On touch, a finger that travels more than 12px between pressing the name and
-lifting doesn't count as a tap — a drag is playing with the dots. The link pads
-its box vertically (`padding: 0.4em 0`) so it's an easy target on a phone.
-
-Touch on the front page also needs:
-
-- `pointer-events: none` on the photo. iOS answers a long press on an `<img>` by
-  shrinking it into a preview (the "squish"), which swallows a drag.
-- `html, body { touch-action: none; }`. Otherwise a finger's drift through the
-  dots reads as a pan and the browser fires `pointercancel`.
-- `contextmenu` suppressed, for the save-image callout on other browsers.
+The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on a phone.
 
 ## Conventions
 

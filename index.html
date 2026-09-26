@@ -29,30 +29,6 @@
             background: #000;
             position: relative;
         }
-        /* Ten clusters on one strip running right to left. The eleventh panel
-           repeats the first, so the wrap back to zero lands on an identical frame. */
-        .belt { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
-        .belt .track {
-            display: flex;
-            width: 1100vw;
-            height: 100%;
-            animation: belt 140s linear infinite;
-            will-change: transform;
-        }
-        .belt img {
-            flex: none;
-            width: 100vw;
-            height: 100%;
-            object-fit: contain;
-            padding: 8vh 6vw;
-            box-sizing: border-box;
-            /* iOS shrinks an image under a long press to preview it, which also
-               swallows a drag through the dots. Touches go to the page instead. */
-            pointer-events: none;
-            -webkit-user-drag: none;
-        }
-        @keyframes belt { to { transform: translateX(-1000vw); } }
-        @media (prefers-reduced-motion: reduce) { .belt .track { animation: none; } }
         .flicker-text {
             position: absolute;
             top: 50%;
@@ -72,11 +48,10 @@
             /* A taller hit area than the letters, so it's an easy tap on a phone. */
             padding: 0.4em 0;
         }
-        .flicker-text span { display: inline-block; }
-        /* The dot field draws the wordmark instead; the text stays for readers. */
-        .flicker-text.dotted { opacity: 0; }
+        /* The shapes draw the wordmark; the text stays as the link's hit area and for readers. */
+        .flicker-text.drawn { color: transparent; }
 
-        .dots {
+        .geo {
             position: absolute;
             inset: 0;
             width: 100%;
@@ -86,8 +61,6 @@
         }
 
         body { user-select: none; -webkit-touch-callout: none; }
-        /* Every touch here plays with the dots; a pan or pinch would cancel the drag. */
-        html, body { touch-action: none; }
 
 
         .pin {
@@ -126,26 +99,8 @@
 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="1.5"/><path d="M3 6.5l9 6.5 9-6.5"/></svg>
 </a>
 </div>
-    <div class="belt" aria-hidden="true">
-        <div class="track">
-            <img src="belt/01.svg" alt="">
-            <img src="belt/02.svg" alt="">
-            <img src="belt/03.svg" alt="">
-            <img src="belt/04.svg" alt="">
-            <img src="belt/05.svg" alt="">
-            <img src="belt/06.svg" alt="">
-            <img src="belt/07.svg" alt="">
-            <img src="belt/08.svg" alt="">
-            <img src="belt/09.svg" alt="">
-            <img src="belt/10.svg" alt="">
-            <img src="belt/01.svg" alt="">
-        </div>
-    </div>
     <a class="flicker-text" href="/studio.html" aria-label="Visuospatials">VISUOSPATIALS</a>
-    <canvas class="dots" id="dots" aria-hidden="true"></canvas>
-    </div>
-    </div>
-    </div>
+    <canvas class="geo" id="geo" aria-hidden="true"></canvas>
 
 
     <a class="pin" href="lab/" aria-label="Index" title="Index">&#9679;</a>
@@ -153,103 +108,88 @@
 
     <script>
         const container = document.querySelector('.flicker-text');
-        const MARK = '#5c5c58';
-
         const WORD = container.textContent;
-        const letters = WORD.split('');
-        container.textContent = '';
-        letters.forEach(char => {
-            const span = document.createElement('span');
-            span.textContent = char;
-            container.appendChild(span);
-        });
 
-        /* The wordmark as a dot field, the same trick as the 404: draw the type
-           into an offscreen canvas, read the pixels, and keep a dot wherever the
-           letterforms landed. The pointer pushes them aside; on touch, a finger
-           does. Under reduced motion the plain text stays and explode() moves
-           the spans instead. */
-        const DOTTED = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+        /* The wordmark is built from flat shapes. Each piece slides left at its own
+           speed (1, 2 or 3 laps a cycle) and wraps, so they only line up into the
+           word once a cycle; time slows around that moment so the word holds.
+           Under reduced motion the word is drawn once, assembled. */
+        const MOVING = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const INK = '#f2f2ef', DIM = '#8c8c88';
+        const CYCLE = 26;
+        const T = 0.2;
+        const GLYPHS = {
+            V: { w: 0.8, parts: [['tri', [0, 0, 0.8, 0, 0.4, 1]], ['tri', [0.24, 0, 0.56, 0, 0.4, 0.58], 'hole']] },
+            I: { w: T, parts: [['rect', [0, 0, T, 1]]] },
+            S: { w: 0.56, parts: [['half', [0.28, 0.25, 0.25, Math.PI / 2, Math.PI * 1.5]], ['rect', [0.28, 0, 0.28, T]], ['half', [0.28, 0.75, 0.25, -Math.PI / 2, Math.PI / 2]], ['rect', [0, 0.8, 0.28, T]]] },
+            U: { w: 0.68, parts: [['rect', [0, 0, T, 0.66]], ['rect', [0.48, 0, T, 0.66]], ['ring', [0.34, 0.66, 0.34, 0.14, 0, Math.PI]]] },
+            O: { w: 0.9, parts: [['ring', [0.45, 0.5, 0.45, 0.25, 0, Math.PI * 2]]] },
+            P: { w: 0.62, parts: [['rect', [0, 0, T, 1]], ['half', [T, 0.29, 0.29, -Math.PI / 2, Math.PI / 2]], ['rect', [0.14, 0, 0.08, 0.58]]] },
+            A: { w: 0.86, parts: [['tri', [0, 1, 0.43, 0, 0.86, 1]], ['tri', [0.3, 1, 0.43, 0.68, 0.56, 1], 'hole']] },
+            T: { w: 0.72, parts: [['rect', [0, 0, 0.72, T]], ['rect', [0.26, 0, T, 1]]] },
+            L: { w: 0.56, parts: [['rect', [0, 0, T, 1]], ['rect', [0, 1 - T, 0.56, T]]] },
+        };
+        const GAP = 0.16;
 
-        const canvas = document.getElementById('dots');
+        const canvas = document.getElementById('geo');
         const cx = canvas.getContext('2d');
-        const mouse = { x: -9999, y: -9999 };
-        let W = 0, H = 0, cell = 6, reach = 170, shove = 15, dots = [];
+        let W = 0, H = 0, pieces = [];
         let blastAt = -1e9;
-        const ROWS = 11;
+
+        function trace(kind, a, s, ox, oy) {
+            cx.beginPath();
+            if (kind === 'rect') cx.rect(ox + a[0] * s, oy + a[1] * s, a[2] * s, a[3] * s);
+            if (kind === 'tri') { cx.moveTo(ox + a[0] * s, oy + a[1] * s); cx.lineTo(ox + a[2] * s, oy + a[3] * s); cx.lineTo(ox + a[4] * s, oy + a[5] * s); cx.closePath(); }
+            if (kind === 'half') { cx.moveTo(ox + a[0] * s, oy + a[1] * s); cx.arc(ox + a[0] * s, oy + a[1] * s, a[2] * s, a[3], a[4]); cx.closePath(); }
+            if (kind === 'ring') { cx.arc(ox + a[0] * s, oy + a[1] * s, a[2] * s, a[4], a[5]); cx.arc(ox + a[0] * s, oy + a[1] * s, a[3] * s, a[5], a[4], true); cx.closePath(); }
+        }
 
         function build() {
             W = innerWidth; H = innerHeight;
-            if (W < 2 || H < 2) { dots = []; return; }
+            if (W < 2 || H < 2) { pieces = []; return; }
             const dpr = Math.min(3, devicePixelRatio || 1);
             canvas.width = W * dpr;
             canvas.height = H * dpr;
             cx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-            // The span owns the type; read it back rather than repeating the clamp.
-            const cs = getComputedStyle(container);
-            const size = parseFloat(cs.fontSize);
-            const track = parseFloat(cs.letterSpacing) || 0;
-            const font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
-            // Proportional to the type, so the disturbance covers the same
-            // couple of letters whatever the viewport resolves the clamp to.
-            reach = size * 2.6;
-            shove = size * 0.24;
-
-            const probe = document.createElement('canvas').getContext('2d');
-            probe.font = font;
-            const widths = letters.map(ch => probe.measureText(ch).width);
-            const total = widths.reduce((a, b) => a + b, 0) + track * letters.length;
-            const cap = probe.measureText('H').actualBoundingBoxAscent;
-
-            /* The grid is locked to the type, not the window. Cap height is a
-               whole number of rows, so every letter shares one top line and one
-               baseline; each letter starts on a column, so repeated letters (two
-               S, two A, two I) come out dot-for-dot identical. Without this the
-               grid phase drifts across the word and stems wobble between widths. */
-            cell = cap / ROWS;
-            const ox = Math.round(((W - total) / 2) / cell) * cell - 2 * cell;
-            const oy = Math.round((H / 2 - cap / 2) / cell) * cell - 2 * cell;
-            const cols = Math.ceil(total / cell) + 4;
-            const rows = ROWS + 4;
-
-            // Drawn at 4x and judged by how much of each cell is ink, not by
-            // one sample pixel, so edges fall the same way on every letter.
-            const SS = 4;
-            const m = document.createElement('canvas');
-            m.width = Math.ceil(cols * cell * SS);
-            m.height = Math.ceil(rows * cell * SS);
-            const mc = m.getContext('2d', { willReadFrequently: true });
-            mc.setTransform(SS, 0, 0, SS, 0, 0);
-            mc.font = font;
-            mc.fillStyle = '#fff';
-            let x = (W - total) / 2;
-            letters.forEach((ch, i) => {
-                const snapped = Math.round((x - ox) / cell) * cell;
-                mc.fillText(ch, snapped, 2 * cell + cap);
-                x += widths[i] + track;
+            // Sized to the link's text, so the clickable box and the drawn word match.
+            const units = [...WORD].reduce((a, ch) => a + GLYPHS[ch].w, 0) + GAP * (WORD.length - 1);
+            const s = Math.min(container.getBoundingClientRect().width / units, H * 0.16);
+            let x = (W - units * s) / 2;
+            const y = (H - s) / 2;
+            let seed = 11;
+            const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+            pieces = [];
+            [...WORD].forEach(ch => {
+                const g = GLYPHS[ch];
+                const holes = g.parts.filter(p => p[2] === 'hole');
+                g.parts.filter(p => p[2] !== 'hole').forEach((p, i) => {
+                    const a = Math.random() * 6.2832, d = 200 + Math.random() * 400;
+                    pieces.push({ kind: p[0], a: p[1], holes: i === 0 ? holes : [], s, ax: x, ay: y,
+                                  laps: 1 + Math.floor(rnd() * 3), tone: rnd() < 0.2 ? DIM : INK,
+                                  bx: Math.cos(a) * d, by: Math.sin(a) * d });
+                });
+                x += (g.w + GAP) * s;
             });
-
-            const px = mc.getImageData(0, 0, m.width, m.height).data;
-            const step = cell * SS;
-            dots = [];
-            for (let r = 0; r < rows; r++) {
-                const y0 = Math.round(r * step), y1 = Math.round((r + 1) * step);
-                for (let c = 0; c < cols; c++) {
-                    const x0 = Math.round(c * step), x1 = Math.round((c + 1) * step);
-                    let ink = 0;
-                    for (let yy = y0; yy < y1; yy++)
-                        for (let xx = x0; xx < x1; xx++) ink += px[(yy * m.width + xx) * 4 + 3];
-                    if (ink / ((y1 - y0) * (x1 - x0) * 255) < 0.5) continue;
-                    const a = Math.random() * 6.2832;
-                    const d = 200 + Math.random() * 400;
-                    dots.push({ x: ox + (c + 0.5) * cell, y: oy + (r + 0.5) * cell,
-                                bx: Math.cos(a) * d, by: Math.sin(a) * d });
-                }
-            }
         }
 
-        // Blows out over 6s and settles back over 2.5s, as the letters used to.
+        function draw(p, ox, oy) {
+            cx.fillStyle = p.tone;
+            cx.save();
+            if (p.holes.length) {
+                cx.beginPath();
+                cx.rect(ox - p.s * 2, oy - p.s * 2, p.s * 5, p.s * 5);
+                p.holes.forEach(([, a]) => {
+                    cx.moveTo(ox + a[0] * p.s, oy + a[1] * p.s); cx.lineTo(ox + a[2] * p.s, oy + a[3] * p.s); cx.lineTo(ox + a[4] * p.s, oy + a[5] * p.s); cx.closePath();
+                });
+                cx.clip('evenodd');
+            }
+            trace(p.kind, p.a, p.s, ox, oy);
+            cx.fill();
+            cx.restore();
+        }
+
+        // Blows out over 6s and settles back over 2.5s.
         function blast() {
             const t = (performance.now() - blastAt) / 1000;
             if (t < 0 || t > 8.5) return 0;
@@ -258,81 +198,40 @@
             return k * k * k;
         }
 
-        function loop() {
-            if (!dots.length || W !== innerWidth || H !== innerHeight) build();
+        function render(sec) {
+            if (!pieces.length || W !== innerWidth || H !== innerHeight) build();
+            if (!pieces.length) return;
             cx.clearRect(0, 0, W, H);
-
+            const f = sec / CYCLE - Math.floor(sec / CYCLE);
+            const warped = f - 0.94 * Math.sin(2 * Math.PI * f) / (2 * Math.PI);
+            const margin = pieces[0].s * 1.2, span = W + 2 * margin;
             const b = blast();
             cx.globalAlpha = 1 - b;
-            cx.fillStyle = MARK;
+            pieces.forEach(q => {
+                let x = q.ax - q.laps * span * warped;
+                x = ((x + margin) % span + span) % span - margin;
+                draw(q, x + q.bx * b, q.ay + q.by * b);
+            });
+        }
 
-            for (let i = 0; i < dots.length; i++) {
-                const d = dots[i];
-                const ox = d.x - mouse.x, oy = d.y - mouse.y;
-                const push = Math.max(0, 1 - Math.hypot(ox, oy) / reach);
-                const a = Math.atan2(oy, ox);
-                cx.beginPath();
-                cx.arc(d.x + Math.cos(a) * push * shove + d.bx * b,
-                       d.y + Math.sin(a) * push * shove + d.by * b,
-                       cell * 0.40 + push * cell * 0.3, 0, 6.2832);
-                cx.fill();
-            }
+        function loop(ms) {
+            render(ms / 1000);
             requestAnimationFrame(loop);
         }
 
         // Only reachable by typing "spatial"; nothing runs this on a timer.
         function explode() {
-            if (DOTTED) { blastAt = performance.now(); return; }
-
-            const spans = container.querySelectorAll('span');
-
-            // Slow explosion over 6 seconds
-            spans.forEach(span => {
-                const angle = Math.random() * 2 * Math.PI;
-                const dist = 200 + Math.random() * 400;
-                const x = Math.cos(angle) * dist;
-                const y = Math.sin(angle) * dist;
-                span.style.transition = 'transform 6s ease-in-out, opacity 6s ease-in-out';
-                span.style.transform = `translate(${x}px, ${y}px)`;
-                span.style.opacity = '0';
+            blastAt = performance.now();
+            if (!MOVING) requestAnimationFrame(function settle() {
+                render(0);
+                if (blast() > 0) requestAnimationFrame(settle);
             });
-
-            // Rebound back
-            setTimeout(() => {
-                spans.forEach(span => {
-                    span.style.transition = 'transform 2.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 2s ease-out';
-                    span.style.transform = '';
-                    span.style.opacity = '';
-                });
-            }, 6000);
         }
 
-        if (DOTTED) {
-            container.classList.add('dotted');
-            const aim = e => { mouse.x = e.clientX; mouse.y = e.clientY; };
-            const drop = () => { mouse.x = mouse.y = -9999; };
-            addEventListener('pointermove', aim);
-            addEventListener('pointerdown', aim);
-            addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') drop(); });
-            addEventListener('pointercancel', drop);
-            addEventListener('pointerout', e => { if (!e.relatedTarget) drop(); });
-            build();
-            loop();
-        } else {
-            canvas.remove();
-        }
+        container.classList.add('drawn');
+        if (MOVING) requestAnimationFrame(loop);
+        else { render(0); addEventListener('resize', () => render(0)); }
 
-        /* The name is the way in. On touch, a drag across it is playing with the
-           dots, so a finger that travelled doesn't count as a tap. */
-        let pressedAt = null;
-        container.addEventListener('pointerdown', e => { pressedAt = { x: e.clientX, y: e.clientY }; });
-        container.addEventListener('click', e => {
-            if (pressedAt && Math.hypot(e.clientX - pressedAt.x, e.clientY - pressedAt.y) > 12) e.preventDefault();
-            pressedAt = null;
-        });
-
-        // Long-press on the photo would otherwise raise the save-image callout.
-        document.addEventListener('contextmenu', e => e.preventDefault());
 
         const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
         let konamiAt = 0;
