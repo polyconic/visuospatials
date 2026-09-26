@@ -48,11 +48,12 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
   needs the same name. All ten share one viewBox so the clusters keep a common
   scale. Reduced motion holds the first cluster still.
   A second belt, `.belt.over`, runs the same animation above the dot canvas
-  and carries only `belt/over-NN.svg` — one cube each from clusters 3, 8 and
-  10 — so every so often a cube crosses over the wordmark. Its slots must stay
-  aligned with the main belt's (empty `<span>` for the others). Each over-cube
-  is the topmost shape where it sits, so redrawing it on top changes nothing
-  else; redraw the over file too if you edit that cube. `blur.webp` is no longer
+  and carries `belt/over-NN.svg`: the front of each cluster (a tail of its
+  slab list, set by `OVER` in make.py), so some cubes pass under the wordmark
+  and some over it — that split is the depth illusion. Cluster 1 has none.
+  Its slots must stay aligned with the main belt's (empty `<span>` where a
+  cluster has no over file). The over file repeats those slabs exactly, so if
+  one is redrawn in Illustrator, redraw its over file too. `blur.webp` is no longer
   on the page but is still the `og:image`.
 
 - **No corner marks.** The back and home marks are on every page *except* this
