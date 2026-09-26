@@ -176,7 +176,10 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   back out of the site. The arrow is site navigation; it should never leave.
 
 - Both marks are inline SVG flat shapes (a triangle-and-bar arrow, a house of
-  a triangle and a square), matching the alphabet. They use `mix-blend-mode:
+  a triangle and a square with a door), matching the alphabet, as is the mail
+  mark (an envelope with a V notch). **Each icon is one single outline** — no
+  holes cut with even-odd and no two shapes touching. Phones drew a hairline
+  where coincident edges met (Greg saw it on the mail and home marks). They use `mix-blend-mode:
   difference` so they stay readable over any ground, and flip to normal blend
   and the signal red on hover.
 
