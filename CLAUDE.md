@@ -46,7 +46,13 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
   files come from `~/Desktop/belt/make.py` (outside the repo, since the site has
   no build step); Greg will redraw them in Illustrator, so a swapped file only
   needs the same name. All ten share one viewBox so the clusters keep a common
-  scale. Reduced motion holds the first cluster still. `blur.webp` is no longer
+  scale. Reduced motion holds the first cluster still.
+  A second belt, `.belt.over`, runs the same animation above the dot canvas
+  and carries only `belt/over-NN.svg` — one cube each from clusters 3, 8 and
+  10 — so every so often a cube crosses over the wordmark. Its slots must stay
+  aligned with the main belt's (empty `<span>` for the others). Each over-cube
+  is the topmost shape where it sits, so redrawing it on top changes nothing
+  else; redraw the over file too if you edit that cube. `blur.webp` is no longer
   on the page but is still the `og:image`.
 
 - **No corner marks.** The back and home marks are on every page *except* this
