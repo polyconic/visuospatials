@@ -46,7 +46,10 @@
         .elsewhere .n { font-size: 15px; letter-spacing: -0.005em; }
         .elsewhere .u { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
                         color: var(--dim); transition: color 0.2s; white-space: nowrap; }
-        .elsewhere .u::after { content: " \2197\FE0E"; }
+        /* The same arrow as Bring something's, small: a triangle hung from the cap line. */
+        .elsewhere .u::after { content: ""; display: inline-block; width: 0.5em; height: 0.5em;
+                               margin-left: 0.7em; vertical-align: 0.22em; background: currentColor;
+                               clip-path: polygon(0 0, 100% 0, 100% 100%); }
         .elsewhere a:hover, .elsewhere a:focus-visible { color: var(--sig); padding-left: 10px; }
         .elsewhere a:hover .u, .elsewhere a:focus-visible .u { color: var(--sig); }
     </style>
