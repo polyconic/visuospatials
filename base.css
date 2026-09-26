@@ -11,17 +11,6 @@
   color-scheme: dark;
 }
 
-:root.light {
-  --bg: #f2f2ef;
-  --fg: #0a0a0a;
-  --dim: #6a6a66;
-  --faint: #b9b9b3;
-  --rule: #deded7;
-  --panel: rgba(242, 242, 239, 0.72);
-  --veil: rgba(242, 242, 239, 0.985);
-  color-scheme: light;
-}
-
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 /* Pages fade through each other: the old one leaves first, then the new one
@@ -43,6 +32,8 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
   min-height: 100%;
+  /* Headings assemble from pieces that start off to the right. */
+  overflow-x: clip;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--sans);
@@ -74,6 +65,15 @@ a { color: inherit; }
 }
 
 .rule { border: 0; border-top: 1px solid var(--rule); }
+
+/* Headings drawn in the geometric alphabet (geo.js). The SVG is one cap
+   height tall; the real text stays alongside for readers and search. */
+.geo { display: block; height: 0.72em; width: auto; overflow: visible; }
+.geo path { fill: currentColor; stroke: currentColor; }
+.geo-text {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
 
 /* Site-wide back-of-house bar. Every room has one so no room is a dead end. */
 .exit {
@@ -108,7 +108,7 @@ a { color: inherit; }
   }
 }
 
-/* Corner marks: back, home, then the sandwich. All sit above the index overlay. */
+/* Corner marks: back and home. Both are flat shapes like the alphabet. */
 .backmark, .homemark {
   position: fixed;
   top: 13px;
@@ -126,13 +126,9 @@ a { color: inherit; }
 
 .backmark svg, .homemark svg {
   display: block;
-  width: 21px;
-  height: 21px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
 }
 .backmark:hover, .backmark:focus-visible,
 .homemark:hover, .homemark:focus-visible {
@@ -144,7 +140,7 @@ a { color: inherit; }
 .homemark, .backmark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
 
 
-/* Top right pair: theme toggle, then mail. */
+/* Top right: mail. */
 .corner {
   position: fixed;
   top: 13px;
@@ -170,13 +166,9 @@ a { color: inherit; }
 }
 .corner svg {
   display: block;
-  width: 19px;
-  height: 19px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
 }
 .corner a:hover, .corner a:focus-visible,
 .corner button:hover, .corner button:focus-visible {
@@ -184,22 +176,6 @@ a { color: inherit; }
   color: var(--sig);
   transform: scale(1.14);
 }
-
-/* Difference lands near-black on the light ground, but not exactly; state it. */
-:root.light .corner a,
-:root.light .corner button {
-  mix-blend-mode: normal;
-  color: var(--fg);
-}
-:root.light .corner a:hover, :root.light .corner a:focus-visible,
-:root.light .corner button:hover, :root.light .corner button:focus-visible {
-  color: var(--sig);
-}
-
-/* Dark shows the sun you can switch to; light shows the moon. */
-.themetoggle .moon { display: none; }
-:root.light .themetoggle .sun { display: none; }
-:root.light .themetoggle .moon { display: block; }
 
 .corner { transition: opacity 0.3s ease; }
 

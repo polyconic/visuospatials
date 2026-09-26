@@ -3,7 +3,7 @@
 A design and artwork studio site. Static HTML, no build step, no dependencies,
 no analytics, no fonts fetched from anyone. Every page is a plain `.html` file
 with inline `<style>` and `<script>`. The shared files are `base.css`,
-`nav.js` and `theme.js`.
+`nav.js` and `geo.js`.
 
 **`README.md` is the public face of the repo — short, no secrets.** This file is
 the working document. Keep them separate: anything that spoils a secret or
@@ -26,13 +26,35 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | `work/index.html` | The portfolio grid. Reads `work/pieces.js`; empty state points at Instagram. |
 | `work/pieces.js` | The manifest — the one file to edit when a piece is added. |
 | `studio.html` | The collaboration idea and the contact. |
-| `404.html` | Dot-matrix 404 that repels the pointer. GitHub Pages serves this. |
+| `404.html` | A 404 in the geometric alphabet, converging every 16s. GitHub Pages serves this. |
 | `nav.js` | Wires the back arrow. Loaded by every page except the front. |
-| `theme.js` | Wires the light/dark toggle. Loaded by every page. |
+| `geo.js` | The geometric alphabet, heading renderer and converge engine. Loaded by every page. |
+
+## The geometric alphabet
+
+Set 2026-09-25: the whole site follows the wordmark — flat shapes, black
+ground, minimal. `geo.js` holds A–Z plus `0 4 . / ↗` and space, each letter a
+few primitives (bars, triangles with a notch, half discs, ring slices) in a box
+one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
+
+- **Headings**: any element with `data-geo` is redrawn as inline SVG
+  (`.geo`, one cap height tall) and its pieces assemble in from the right once,
+  on load. The text stays in a visually hidden `.geo-text` span. Pieces take
+  `currentColor`, so hover colours still work; a child in a different colour
+  (the red `<em>.`, the dim `.slash`) keeps its own. `body` clips horizontal
+  overflow so the incoming pieces don't add a scrollbar.
+- **Canvas**: `Geo.converge(canvas, text, place, {cycle})` runs the looping
+  version for the front page and the 404, with `explode()` for the easter egg.
+- A missing character renders as a space — add a glyph to `G` before using a
+  new letter or digit in a heading. The A is always generated as the V flipped.
+- Pieces that butt together get a hairline stroke in the same colour (`SEAM`)
+  so no anti-aliased seam shows between them.
+- Body copy, labels and the exit bar stay small Helvetica; the contrast is the
+  point. The corner and viewer icons are flat filled shapes, not strokes.
 
 ## The front page
 
-- **No photo, no ground.** The page is black with the wordmark alone. The
+- **No photo, no ground.** The page is the site's `--bg` (#0a0a0a) with the wordmark alone. The
   photo hero was replaced on 2026-09-25, first by a belt of extruded-cube SVGs
   and then by this; both are in history. `blur.webp` is off the page but is
   still the `og:image`.
@@ -44,16 +66,14 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
   Studio/About, even while the pieces are scattered. Being a real
   link, it gets the page fade, the prerender and keyboard access for free.
   The front page does not load `nav.js` at all — it has no arrow to wire.
-- **The wordmark is built from flat shapes and converges.** Each letter is a
-  few filled primitives (`GLYPHS`: bars, triangles with a triangle notch cut
-  out, half discs, ring slices). The A is generated as the V flipped, so the
-  two always carry the same weight — a hand-drawn A once had a smaller notch
-  and read visibly heavier. A thin hairline cut was tried the same day and
+- **The wordmark is `Geo.converge` over the link's text.** The A is generated
+  as the V flipped, so the two always carry the same weight — a hand-drawn A
+  once had a smaller notch and read visibly heavier. A thin hairline cut was tried the same day and
   Greg went back to this heavier one. Every piece slides left at 1, 2 or 3 laps per 26s
   cycle and wraps, so they line up into the word once a cycle; time is warped
   to slow around that moment so the word holds, then comes apart. Greg asked
   for this motion on 2026-09-25, replacing the still dot-field wordmark (which
-  lives on in the 404). The word's size is read off the link's text width, so
+  was also on the 404 until it moved to the alphabet the same day). The word's size is read off the link's text width, so
   the CSS clamp still sets it and the hit area matches the drawing. About one
   piece in five is grey (`DIM`); that and the speeds come from a fixed seed,
   so every load looks and moves the same way. Reduced motion draws the word once, assembled.
@@ -114,15 +134,17 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   anywhere, so a visitor arriving from a search result would be walked straight
   back out of the site. The arrow is site navigation; it should never leave.
 
-- Both marks are inline SVG, not characters, so their stroke weights match
-  each other rather than depending on font fallback. They use `mix-blend-mode:
+- Both marks are inline SVG flat shapes (a triangle-and-bar arrow, a house of
+  a triangle and a square), matching the alphabet. They use `mix-blend-mode:
   difference` so they stay readable over any ground, and flip to normal blend
   and the signal red on hover.
 
-- `base.css` and `nav.js` are unversioned, so a returning visitor can
+- `base.css`, `nav.js` and `geo.js` are unversioned, so a returning visitor can
   briefly run a stale copy after a deploy — GitHub Pages caches assets for ten
   minutes. The marks degrade to plain links to `/` in that window rather than
-  breaking. Worth remembering when a change "doesn't work" right after a push.
+  breaking. Worth remembering when a change "doesn't work" right after a push —
+  a stale `base.css` without the `.geo` rules shows the Helvetica heading text
+  under the drawn one until it refreshes.
   Anything placed in the top-left corner of a page has to clear them — that is why
   the editorial pages bump `padding-top` under 620px.
 - **Page changes fade through** via a cross-document view transition —
@@ -142,8 +164,6 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
 - **Overlays take a history entry.** The work viewer `pushState`s when it opens, so a phone's back gesture closes them instead of
   leaving the page; closing any other way calls `history.back()` to spend it,
   and a reload with it open replaces the stale entry.
-- Batching the dot fills on the 404 into one path was measured and made no
-  difference in Chrome; the arcs are the cost, not the fill calls.
 - Palette is `--bg` near-black, `--fg` near-white, one signal red `--sig`.
   Monochrome plus the one red; no second accent.
 - **Everything is Helvetica.** One family site-wide, no webfonts; `--sans` is the
@@ -155,24 +175,12 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   draws a blue emoji tile.
 ## Theme
 
-Two themes, one `localStorage` key, `vs-theme`, values `light` / `dark`.
-**Dark is the default** — the art direction is dark, and `prefers-color-scheme`
-is deliberately *not* consulted. Only an explicit toggle switches it.
+**Dark only**, on `--bg` #0a0a0a (RGB 10 10 10). The light theme, its toggle,
+`theme.js` and the `vs-theme` localStorage key were removed on 2026-09-25 when
+the site moved to the geometric alphabet — Greg: build it for black for now.
+All in history if a light version is wanted later. The top-right corner holds
+the mail mark only; anything a page puts in its top right has to clear it.
 
-Every page resolves the class in an inline `<head>` script **before first paint**.
-Do not move that into a deferred script or the page flashes the wrong theme.
-
-The pair of controls lives in `<div class="corner">` at top right: the toggle
-then mail. **The landing page has the mail only** — no toggle, and it does not
-load `theme.js`. It still runs the inline `<head>` script, so a theme chosen
-elsewhere is honoured there; there is just nothing to switch it with. Both are
-difference-blended like the left-hand marks. Anything a page puts in its top
-right corner has to clear them.
-
-Canvases paint their own ground and cannot inherit a class, so each handles it:
-
-- `404.html` reads the class every frame and swaps its two dot colours.
-- The front page is always black, whatever the theme; its canvas draws white.
 ## Footer
 
 Every page except the landing page carries `&copy; 2026 Visuospatials`. On pages
@@ -221,8 +229,8 @@ viewer from the array and never needs touching.
 ## Canvases
 
 - Canvases that size themselves to their container **must** tolerate a zero-size first
-  paint. `404.html` rebuilds its mask lazily in the loop and the front page
-  rebuilds whenever the window size changes, skipping a zero size. Removing
+  paint. `Geo.converge` rebuilds whenever the window size changes and skips a
+  zero size. Removing
   those guards reproduces a blank or postage-stamp canvas on load.
 - Keydown handlers guard `e.target instanceof Element` before `matches()` —
   `document` has no `matches` and the handler throws without it.
