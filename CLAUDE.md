@@ -162,8 +162,9 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   page has none, the 404 uses its own nav line, and the rest carry `.exit`.
   **Don't repeat the bar in page content.** Studio's links row used to
   list the sections right above a bar that already did. Outside links
-  now live in studio's **Elsewhere** list — Audiospatials, Instagram, Gregor
-  Egan (site and Instagram side by side in one `.pair` row, each its own link),
+  now live in studio's **Elsewhere** list — Audiospatials and Gregor Egan
+  (each with site and Instagram side by side in a `.pair` row, each its own
+  link), Instagram,
   Hunter Bowersmith (his Instagram) — as ruled rows: name left, address right with
   a ↗. Links go to final URLs (`www.audiospatials.com`, `www.instagram.com`)
   to skip a redirect, and all open in a new tab.
