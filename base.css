@@ -86,7 +86,7 @@ a { color: inherit; }
   flex-wrap: wrap;
   gap: 5px 22px;
   align-items: center;
-  padding: 12px 96px 12px 20px;
+  padding: 12px 20px;
   background: linear-gradient(to top, var(--bg) 55%, transparent);
   font-family: var(--sans);
   font-size: 10px;
@@ -141,32 +141,7 @@ a { color: inherit; }
   transform: scale(1.14);
 }
 
-/* Stow: drops the editing chrome so the work goes full bleed. */
-.stow {
-  position: fixed;
-  right: 14px;
-  bottom: 10px;
-  z-index: 220;
-  appearance: none;
-  border: 1px solid var(--rule);
-  background: var(--panel);
-  color: var(--dim);
-  font-family: var(--sans);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  padding: 9px 12px;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s, opacity 0.35s;
-}
-.stow:hover, .stow:focus-visible { color: var(--fg); border-color: var(--fg); }
-
 .homemark, .backmark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-body.stowed .homemark,
-body.stowed .backmark,
-body.stowed .exit { opacity: 0; pointer-events: none; }
-body.stowed .stow { opacity: 0.22; }
-body.stowed .stow:hover, body.stowed .stow:focus-visible { opacity: 1; }
 
 
 /* Top right pair: theme toggle, then mail. */
@@ -226,7 +201,6 @@ body.stowed .stow:hover, body.stowed .stow:focus-visible { opacity: 1; }
 :root.light .themetoggle .sun { display: none; }
 :root.light .themetoggle .moon { display: block; }
 
-body.stowed .corner { opacity: 0; pointer-events: none; }
 .corner { transition: opacity 0.3s ease; }
 
 .copy { color: var(--dim); }
