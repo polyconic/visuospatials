@@ -6,16 +6,16 @@
     <title>Work &mdash; Visuospatials</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="canonical" href="https://visuospatials.com/work/">
+    <link rel="canonical" href="https://visuospatials.com/work">
     <meta name="description" content="Covers, motion and stills. Work made with and around music.">
     <meta name="theme-color" content="#0a0a0a">
     <meta property="og:title" content="Work — Visuospatials">
     <meta property="og:description" content="Covers, motion and stills. Work made with and around music.">
     <meta property="og:image" content="https://visuospatials.com/blur.webp">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://visuospatials.com/work/">
+    <meta property="og:url" content="https://visuospatials.com/work">
     <meta name="twitter:card" content="summary_large_image">
-    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="/base.css">
     <style>
         body { padding: clamp(28px, 6vh, 70px) clamp(20px, 6vw, 90px) 90px; }
         @media (max-width: 620px) { body { padding-top: 58px; padding-bottom: 140px; } }
@@ -106,14 +106,18 @@
     </div>
 
 <nav class="exit">
-    <a href="/">Visuospatials</a><a href="/studio.html">Studio/About</a>
+    <a href="/">Visuospatials</a><a href="/studio">Studio/About</a>
     <span class="here">Work</span>
     <span class="spacer"></span>
     <span class="copy">&copy; 2026 Visuospatials</span>
 </nav>
-<script src="pieces.js"></script>
+<script src="/pieces/pieces.js"></script>
 <script src="/geo.js"></script>
 <script src="/nav.js"></script>
+<script>
+// Someone arriving at /work.html sees the clean address instead.
+if (location.pathname.endsWith('.html')) history.replaceState(history.state, '', '/work' + location.search + location.hash);
+</script>
 <script>
 const grid = document.getElementById('grid');
 const viewer = document.getElementById('viewer');
@@ -122,24 +126,26 @@ const capT = viewer.querySelector('figcaption .t');
 const capM = viewer.querySelector('figcaption .m');
 const count = viewer.querySelector('.count');
 const isVideo = p => /\.(mp4|webm|mov)$/i.test(p.src);
+// Files named in pieces.js live beside it in /pieces/.
+const inPieces = f => /^(\/|https?:)/.test(f) ? f : '/pieces/' + f;
 let at = 0;
 let opener = null;
 
 function media(p, big) {
     if (isVideo(p)) {
         const v = document.createElement('video');
-        v.src = p.src;
+        v.src = inPieces(p.src);
         v.muted = true;
         v.loop = true;
         v.playsInline = true;
         v.autoplay = !big;
         v.controls = !!big;
-        if (p.poster) v.poster = p.poster;
+        if (p.poster) v.poster = inPieces(p.poster);
         if (p.w && p.h) { v.width = p.w; v.height = p.h; }
         return v;
     }
     const i = document.createElement('img');
-    i.src = p.src;
+    i.src = inPieces(p.src);
     i.alt = p.title || '';
     i.loading = 'lazy';
     i.decoding = 'async';

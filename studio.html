@@ -6,14 +6,14 @@
     <title>Studio/About &mdash; Visuospatials</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="canonical" href="https://visuospatials.com/studio.html">
+    <link rel="canonical" href="https://visuospatials.com/studio">
     <meta name="description" content="Visuospatials is a visual hub for design and artwork, within music, or any other medium.">
     <meta name="theme-color" content="#0a0a0a">
     <meta property="og:title" content="Studio/About — Visuospatials">
     <meta property="og:description" content="Visuospatials is a visual hub for design and artwork, within music, or any other medium.">
     <meta property="og:image" content="https://visuospatials.com/blur.webp">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://visuospatials.com/studio.html">
+    <meta property="og:url" content="https://visuospatials.com/studio">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="base.css">
     <style>
@@ -82,12 +82,16 @@
 </div>
 
 <nav class="exit">
-    <a href="/">Visuospatials</a><a href="work/">Work</a>
+    <a href="/">Visuospatials</a><a href="/work">Work</a>
     <span class="here">Studio/About</span>
     <span class="spacer"></span>
     <span class="copy">&copy; 2026 Visuospatials</span>
 </nav>
 <script src="/geo.js"></script>
 <script src="/nav.js"></script>
+<script>
+// Old links still arrive at /studio.html; show the clean address.
+if (location.pathname.endsWith('.html')) history.replaceState(history.state, '', '/studio' + location.search + location.hash);
+</script>
 </body>
 </html>

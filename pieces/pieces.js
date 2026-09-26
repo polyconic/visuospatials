@@ -1,6 +1,6 @@
-/* The work, newest first. Drop the file into /work/ and add a line here.
+/* The work, newest first. Drop the file into /pieces/ and add a line here.
 
-   src    file name, relative to /work/. Image or video (.mp4 / .webm).
+   src    file name, relative to /pieces/. Image or video (.mp4 / .webm).
    w, h   pixel size. Optional, but without it the grid jumps as things load.
    title  what it is.
    meta   who it was for, and when.

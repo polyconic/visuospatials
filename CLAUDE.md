@@ -23,12 +23,26 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 | File | What it is |
 |---|---|
 | `index.html` | The front. Converging geometric wordmark, hidden index. |
-| `work/index.html` | The portfolio grid. Reads `work/pieces.js`; empty state points at Instagram. |
-| `work/pieces.js` | The manifest — the one file to edit when a piece is added. |
-| `studio.html` | The collaboration idea and the contact. |
+| `work.html` | The portfolio grid, at `/work`. Reads `pieces/pieces.js`; empty state points at Instagram. |
+| `pieces/pieces.js` | The manifest — the one file to edit when a piece is added. Files sit beside it in `pieces/`. |
+| `studio.html` | The collaboration idea and the contact, at `/studio`. |
 | `404.html` | A 404 in the geometric alphabet, converging every 16s. GitHub Pages serves this. |
 | `nav.js` | Wires the back arrow. Loaded by every page except the front. |
 | `geo.js` | The geometric alphabet, heading renderer and converge engine. Loaded by every page. |
+
+## Clean addresses
+
+The site links to `/studio` and `/work`, never `studio.html` or `work/`.
+GitHub Pages serves `studio.html` at `/studio` and `work.html` at `/work` on
+its own. The Work page moved from `work/index.html` to `work.html` on
+2026-09-26 so its address loses the trailing slash, and its manifest and files
+moved to `pieces/` — **a `work/` folder must not come back**, or Pages sees the
+folder first and redirects `/work` to `/work/`. Old links are caught: both
+pages `replaceState` a `.html` address to the clean one, and the 404 sends
+`/work/` and `/work/index.html` on to `/work`. Canonicals, `og:url` and the
+sitemap use the clean addresses. The local `python3 -m http.server` preview
+does **not** do this mapping, so test locally at `/studio.html` and
+`/work.html`.
 
 ## The geometric alphabet
 
@@ -84,7 +98,7 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
 - **No corner marks.** The back and home marks are on every page *except* this
   one. That is deliberate: the front should read as a dead end. Don't add them.
 - **The name is the way in.** The wordmark is `<a class="flicker-text"
-  href="/studio.html">` — its text is made transparent and sits under the
+  href="/studio">` — its text is made transparent and sits under the
   canvas (which ignores pointers), so the whole word area clicks through to
   Studio/About, even while the pieces are scattered. Being a real
   link, it gets the page fade, the prerender and keyboard access for free.
@@ -153,7 +167,7 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   a ↗. Links go to final URLs (`www.audiospatials.com`, `www.instagram.com`)
   to skip a redirect, and all open in a new tab.
   Paths in the shared tags are **root-absolute**, so they work the same from `/`
-  and from `/work/`; they do not work over `file://`.
+  and from any other page; they do not work over `file://`.
 
 - **The back arrow is history, not a link home.** `nav.js` calls `history.back()`
   only when `document.referrer` is same-origin; otherwise the `href="/"` takes
@@ -185,7 +199,7 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   1fps when it isn't focused** — click into the page before measuring anything.
 - **Prerendering (Chromium only).** `nav.js` injects speculation rules that
   prerender a same-origin page once a pointer settles on its link; the front
-  page carries its own rules and prerenders `/studio.html` eagerly, since the
+  page carries its own rules and prerenders `/studio` eagerly, since the
   name always leads there. Safari ignores them. The in-app browser doesn't
   prerender under automation, so `activationStart` reads 0 there.
 - **Overlays take a history entry.** The work viewer `pushState`s when it opens, so a phone's back gesture closes them instead of
@@ -216,8 +230,8 @@ sits in flow at the end of the content.
 
 ## Search
 
-- **Every indexable page declares a canonical.** Without one, `/work/` and
-  `/work/index.html` both return 200 and Google reports "Duplicate without
+- **Every indexable page declares a canonical.** Without one, `/studio` and
+  `/studio.html` both return 200 and Google reports "Duplicate without
   user-selected canonical". Add the tag when you add a page, and add the page to
   `sitemap.xml`.
 - `404.html` is `noindex` and is **not** in the sitemap.
@@ -226,8 +240,8 @@ sits in flow at the end of the content.
 
 ## The work page
 
-`work/pieces.js` is the whole interface: one object per piece, newest first. Add
-the file to `work/`, add a line, done — `work/index.html` builds the grid and the
+`pieces/pieces.js` is the whole interface: one object per piece, newest first. Add
+the file to `pieces/`, add a line, done — `work.html` builds the grid and the
 viewer from the array and never needs touching.
 
 - **Give every piece `w` and `h`.** The grid is CSS `columns`, so without an
