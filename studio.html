@@ -51,6 +51,13 @@
                                margin-left: 0.7em; vertical-align: 0.22em; background: currentColor;
                                clip-path: polygon(0 0, 100% 0, 100% 100%); }
         .elsewhere a:hover, .elsewhere a:focus-visible { color: var(--sig); padding-left: 10px; }
+        /* A row with two addresses: the name stays put and each address is its own link. */
+        .elsewhere .pair { display: flex; align-items: baseline; justify-content: space-between;
+                           gap: 20px; padding: 15px 0; }
+        .elsewhere .pair .n { white-space: nowrap; }
+        .elsewhere .pair .links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 22px; }
+        .elsewhere .pair a { display: inline; padding: 0; }
+        .elsewhere .pair a:hover, .elsewhere .pair a:focus-visible { padding-left: 0; }
         .elsewhere a:hover .u, .elsewhere a:focus-visible .u { color: var(--sig); }
     </style>
 </head>
@@ -79,7 +86,7 @@
         <ul>
             <li><a href="https://www.audiospatials.com/" rel="me noopener" target="_blank"><span class="n">Audiospatials</span><span class="u">audiospatials.com</span></a></li>
             <li><a href="https://www.instagram.com/visuospatials/" rel="me noopener" target="_blank"><span class="n">Instagram</span><span class="u">@visuospatials</span></a></li>
-            <li><a href="https://gregoregan.com/" rel="me noopener" target="_blank"><span class="n">Gregor Egan</span><span class="u">gregoregan.com</span></a></li>
+            <li class="pair"><span class="n">Gregor Egan</span><span class="links"><a class="u" href="https://gregoregan.com/" rel="me noopener" target="_blank">gregoregan.com</a><a class="u" href="https://www.instagram.com/gregor.egan/" rel="me noopener" target="_blank">@gregor.egan</a></span></li>
             <li><a href="https://www.instagram.com/h.bowersmith/" rel="noopener" target="_blank"><span class="n">Hunter Bowersmith</span><span class="u">@h.bowersmith</span></a></li>
         </ul>
     </div>
