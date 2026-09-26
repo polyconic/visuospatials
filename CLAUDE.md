@@ -51,16 +51,17 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
   the Lab is a bonus you reach from the exit bar once inside. Being a real
   link, it gets the page fade, the prerender and keyboard access for free.
   The front page does not load `nav.js` at all — it has no arrow to wire.
-- **The wordmark is built from flat shapes and converges.** Each letter is a
-  few primitives (`GLYPHS`: bars, triangles with a triangle cut out, half
-  discs, ring slices). Every piece slides left at 1, 2 or 3 laps per 26s
+- **The wordmark is built from flat shapes and converges.** Each letter is one
+  to three hairline primitives (`GLYPHS`: bars, slanted strokes, ring slices)
+  at a single stroke weight `T`, all white. A heavier first cut with cut-out
+  triangles, half discs and grey pieces was dropped the same day as not
+  minimal enough. Every piece slides left at 1, 2 or 3 laps per 26s
   cycle and wraps, so they line up into the word once a cycle; time is warped
   to slow around that moment so the word holds, then comes apart. Greg asked
   for this motion on 2026-09-25, replacing the still dot-field wordmark (which
   lives on in the 404). The word's size is read off the link's text width, so
-  the CSS clamp still sets it and the hit area matches the drawing. About one
-  piece in five is grey (`DIM`), chosen by a fixed seed so it's the same every
-  load. Reduced motion draws the word once, assembled.
+  the CSS clamp still sets it and the hit area matches the drawing. Speeds come
+  from a fixed seed, so every load moves the same way. Reduced motion draws the word once, assembled.
   - CSS `width: 100%; height: 100%` on the canvas is **required**. A canvas is a
     replaced element, so `inset: 0` alone does not stretch it — it falls back to
     its intrinsic size and the drawing lands at device-pixel scale.
