@@ -35,12 +35,13 @@
         return m;
     });
 
-    const vee = [poly(0, 0, 0.8, 0, 0.4, 1) + poly(0.24, 0, 0.56, 0, 0.4, 0.58)];
+    // Heavy strokes: a short, narrow notch.
+    const vee = [poly(0, 0, 0.86, 0, 0.43, 1) + poly(0.3, 0, 0.56, 0, 0.43, 0.32)];
     const oh = [ring(0.45, 0.5, 0.45, 0.25, 0, 2 * PI)];
 
     // w is the advance; parts are the pieces that move independently.
     const G = {
-        A: { w: 0.8, parts: vee.map(flip) },
+        A: { w: 0.86, parts: vee.map(flip) },
         B: { w: 0.47, parts: [rect(0, 0, T, 1), half(T, 0.25, 0.25, -PI / 2, PI / 2), half(T, 0.75, 0.25, -PI / 2, PI / 2)] },
         C: { w: 0.8, parts: [ring(0.45, 0.5, 0.45, 0.25, PI / 4, 7 * PI / 4)] },
         D: { w: 0.6, parts: [rect(0, 0, T, 1), ring(0.1, 0.5, 0.5, 0.3, -PI / 2, PI / 2)] },
@@ -61,8 +62,8 @@
         S: { w: 0.56, parts: [half(0.28, 0.25, 0.25, PI / 2, 3 * PI / 2), rect(0.28, 0, 0.28, T), half(0.28, 0.75, 0.25, -PI / 2, PI / 2), rect(0, 0.8, 0.28, T)] },
         T: { w: 0.72, parts: [rect(0, 0, 0.72, T), rect(0.26, T, T, 1 - T)] },
         U: { w: 0.68, parts: [rect(0, 0, T, 0.66), rect(0.48, 0, T, 0.66), ring(0.34, 0.66, 0.34, 0.14, 0, PI)] },
-        V: { w: 0.8, parts: vee },
-        W: { w: 1.24, parts: [vee[0], shift(vee[0], 0.44)] },
+        V: { w: 0.86, parts: vee },
+        W: { w: 1.3, parts: [vee[0], shift(vee[0], 0.44)] },
         X: { w: 0.7, parts: [poly(0, 0, 0.7, 0, 0.35, 0.5), poly(0, 1, 0.35, 0.5, 0.7, 1)] },
         Y: { w: 0.7, parts: [poly(0, 0, 0.7, 0, 0.35, 0.56) + poly(0.2, 0, 0.5, 0, 0.35, 0.3), rect(0.25, 0.5, T, 0.5)] },
         Z: { w: 0.7, parts: [rect(0, 0, 0.7, T), poly(0.46, T, 0.7, T, 0.24, 0.8, 0, 0.8), rect(0, 0.8, 0.7, T)] },
@@ -168,11 +169,14 @@
 
     /* The looping version, on a canvas: every piece slides left at 1, 2 or 3
        laps a cycle and wraps, so they only line up into the word once a cycle.
-       Time is warped to slow around that moment so the word holds. place()
+       Time is warped to slow around that moment so the word holds; with
+       opts.hold it also sits still, assembled, for that many seconds each
+       time it lines up, starting from the first frame. place()
        returns the word's left edge, top and unit size for the current window. */
     function converge(canvas, text, place, opts) {
         opts = opts || {};
         const CYCLE = opts.cycle || 26;
+        const HOLD = opts.hold || 0;
         const INK = opts.ink || '#f2f2ef', DIM = opts.dim || '#8c8c88';
         const cx = canvas.getContext('2d');
         const { pieces: layoutPieces, width } = layout(text);
@@ -210,8 +214,9 @@
             if (!pieces.length) return;
             cx.setTransform(canvas.width / W, 0, 0, canvas.height / H, 0, 0);
             cx.clearRect(0, 0, W, H);
-            const f = sec / CYCLE - Math.floor(sec / CYCLE);
-            const warped = f - 0.94 * Math.sin(2 * PI * f) / (2 * PI);
+            const t = sec % (CYCLE + HOLD);
+            const f = Math.max(0, t - HOLD) / CYCLE;
+            const warped = f - (HOLD ? 1 : 0.94) * Math.sin(2 * PI * f) / (2 * PI);
             const margin = box.s * 1.3, span = W + 2 * margin;
             const b = blast();
             cx.globalAlpha = 1 - b;

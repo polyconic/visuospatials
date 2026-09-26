@@ -43,10 +43,12 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
   `currentColor`, so hover colours still work; a child in a different colour
   (the red `<em>.`, the dim `.slash`) keeps its own. `body` clips horizontal
   overflow so the incoming pieces don't add a scrollbar.
-- **Canvas**: `Geo.converge(canvas, text, place, {cycle})` runs the looping
+- **Canvas**: `Geo.converge(canvas, text, place, {cycle, hold})` runs the looping
   version for the front page and the 404, with `explode()` for the easter egg.
 - A missing character renders as a space — add a glyph to `G` before using a
-  new letter or digit in a heading. The A is always generated as the V flipped.
+  new letter or digit in a heading. The A is always generated as the V flipped,
+  and both use the heavy V: a short, narrow notch (Greg preferred it to the
+  deeper, thinner-stroked one).
 - Pieces that butt together get a hairline stroke in the same colour (`SEAM`)
   so no anti-aliased seam shows between them.
 - Body copy, labels and the exit bar stay small Helvetica; the contrast is the
@@ -66,6 +68,10 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
   Studio/About, even while the pieces are scattered. Being a real
   link, it gets the page fade, the prerender and keyboard access for free.
   The front page does not load `nav.js` at all — it has no arrow to wire.
+- **Timing: hold 5s, travel 21s, hold 5s.** The word loads assembled and sits
+  still for 5s, comes apart and back together over 21s, then sits another 5s
+  (`{ hold: 5, cycle: 21 }`; Greg asked for the holds on 2026-09-25). The 404
+  uses no hold.
 - **The wordmark is `Geo.converge` over the link's text.** The A is generated
   as the V flipped, so the two always carry the same weight — a hand-drawn A
   once had a smaller notch and read visibly heavier. A thin hairline cut was tried the same day and
