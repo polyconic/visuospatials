@@ -41,20 +41,14 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 
 - **The ground is a belt, not a photo.** Ten cluster SVGs in `belt/` sit side
   by side on one strip that runs right to left, continuously, one lap every
-  70s. The eleventh `<img>` repeats `01.svg` so the wrap back to zero lands on
+  140s. The eleventh `<img>` repeats `01.svg` so the wrap back to zero lands on
   an identical frame — keep it matching the first if the files change. The
   files come from `~/Desktop/belt/make.py` (outside the repo, since the site has
   no build step); Greg will redraw them in Illustrator, so a swapped file only
   needs the same name. All ten share one viewBox so the clusters keep a common
   scale. Reduced motion holds the first cluster still.
-  A second belt, `.belt.over`, runs the same animation above the dot canvas
-  and carries `belt/over-NN.svg`: the front of each cluster (a tail of its
-  slab list, set by `OVER` in make.py), so some cubes pass under the wordmark
-  and some over it — that split is the depth illusion. Only clusters 2, 4, 6,
-  7, 8 and 10 have one.
-  Its slots must stay aligned with the main belt's (empty `<span>` where a
-  cluster has no over file). The over file repeats those slabs exactly, so if
-  one is redrawn in Illustrator, redraw its over file too. `blur.webp` is no longer
+  Nothing passes over the wordmark; an over-the-logo second belt was tried
+  on 2026-09-25 and dropped at Greg's request. `blur.webp` is no longer
   on the page but is still the `og:image`.
 
 - **No corner marks.** The back and home marks are on every page *except* this
