@@ -50,7 +50,8 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
   A second belt, `.belt.over`, runs the same animation above the dot canvas
   and carries `belt/over-NN.svg`: the front of each cluster (a tail of its
   slab list, set by `OVER` in make.py), so some cubes pass under the wordmark
-  and some over it — that split is the depth illusion. Cluster 1 has none.
+  and some over it — that split is the depth illusion. Only clusters 2, 4, 6,
+  7, 8 and 10 have one.
   Its slots must stay aligned with the main belt's (empty `<span>` where a
   cluster has no over file). The over file repeats those slabs exactly, so if
   one is redrawn in Illustrator, redraw its over file too. `blur.webp` is no longer
