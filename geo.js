@@ -60,7 +60,9 @@
         P: { w: 0.49, parts: [rect(0, 0, T, 1), half(T, 0.29, 0.29, -PI / 2, PI / 2)] },
         Q: { w: 0.95, parts: [...oh, poly(0.6, 0.72, 0.74, 0.6, 0.95, 0.94, 0.8, 1)] },
         R: { w: 0.62, parts: [rect(0, 0, T, 1), half(T, 0.29, 0.29, -PI / 2, PI / 2), poly(0.22, 0.52, 0.42, 0.52, 0.62, 1, 0.42, 1)] },
-        S: { w: 0.56, parts: [half(0.28, 0.25, 0.25, PI / 2, 3 * PI / 2), rect(0.28, 0, 0.28, T), half(0.28, 0.75, 0.25, -PI / 2, PI / 2), rect(0, 0.8, 0.28, T)] },
+        // The S's bars stop a hair short of the half discs: when a bar and a disc
+        // land in different tones, even the seam stroke showed as an overlap.
+        S: { w: 0.56, parts: [half(0.28, 0.25, 0.25, PI / 2, 3 * PI / 2), rect(0.286, 0, 0.274, T), half(0.28, 0.75, 0.25, -PI / 2, PI / 2), rect(0, 0.8, 0.274, T)] },
         T: { w: 0.72, parts: [rect(0, 0, 0.72, T), rect(0.26, T, T, 1 - T)] },
         U: { w: 0.68, parts: [rect(0, 0, T, 0.66), rect(0.48, 0, T, 0.66), ring(0.34, 0.66, 0.34, 0.14, 0, PI)] },
         V: { w: 0.86, parts: vee },
