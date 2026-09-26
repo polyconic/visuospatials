@@ -65,10 +65,14 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
 
 ## The front page
 
-- **No photo, no ground.** The page is the site's `--bg` (#0a0a0a) with the wordmark alone. The
-  photo hero was replaced on 2026-09-25, first by a belt of extruded-cube SVGs
-  and then by this; both are in history. `blur.webp` is off the page but is
-  still the `og:image`.
+- **The photo is back.** `blur.webp`, the blurred black-and-white portrait,
+  sits full bleed behind the wordmark with its slow 90s drift (`.hero`). It was
+  off the page for a day while the cube belt and then a bare #0a0a0a ground
+  were tried; Greg asked for it back on 2026-09-26. It is also the `og:image`.
+- **The wordmark is difference-blended** (`mix-blend-mode: difference` on the
+  canvas), so its pieces invert whatever is under them — white over the dark
+  side of the photo, black over the bright side. Greg loves that it reads as
+  see-through; keep it. Without it the white pieces vanish into the highlight.
 - **No corner marks.** The back and home marks are on every page *except* this
   one. That is deliberate: the front should read as a dead end. Don't add them.
 - **The name is the way in.** The wordmark is `<a class="flicker-text"
@@ -233,7 +237,7 @@ viewer from the array and never needs touching.
   `magick in.webp -resize 2560x2560\> -quality 85 -define webp:method=6 out.webp`
   Commit the original first so the full-resolution file stays in history, then
   resize in a second commit.
-- `blur.webp` is no longer on any page but is the `og:image`; keep it.
+- `blur.webp` is the front page hero and the `og:image`.
 - Superseded heroes are removed from the tree but stay in history, originals
   included: `git log --oneline --diff-filter=D -- '*.webp' '*.jpg'` finds them.
 - The favicon is `favicon.png` (512px) plus `apple-touch-icon.png` (180px), both

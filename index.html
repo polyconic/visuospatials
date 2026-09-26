@@ -29,6 +29,22 @@
             background: var(--bg);
             position: relative;
         }
+        .hero {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            animation: drift 90s ease-in-out infinite alternate;
+            /* iOS shrinks an image under a long press to preview it. */
+            pointer-events: none;
+            -webkit-user-drag: none;
+        }
+        @keyframes drift {
+            from { transform: scale(1.04) translate(0.4%, -0.4%); }
+            to   { transform: scale(1.11) translate(-0.8%, 0.6%); }
+        }
         .flicker-text {
             position: absolute;
             top: 50%;
@@ -51,7 +67,9 @@
         /* The shapes draw the wordmark; the text stays as the link's hit area and for readers. */
         .flicker-text.drawn { color: transparent; }
 
+        /* Difference keeps the white pieces readable over the bright side of the photo. */
         .geo {
+            mix-blend-mode: difference;
             position: absolute;
             inset: 0;
             width: 100%;
@@ -72,6 +90,7 @@
 <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M2 5H22V19H2ZM4 5H20L12 11.6Z"/></svg>
 </a>
 </div>
+    <img class="hero" src="blur.webp" alt="">
     <a class="flicker-text" href="/studio.html" aria-label="Visuospatials">VISUOSPATIALS</a>
     <canvas class="geo" id="geo" aria-hidden="true"></canvas>
 
