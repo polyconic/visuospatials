@@ -128,7 +128,6 @@
         const PI = Math.PI;
         const GLYPHS = {
             V: { w: 0.7, parts: [['poly', [0, 0, 2 * H2, 0, 0.35 + H2, 1, 0.35 - H2, 1]], ['poly', [0.7 - 2 * H2, 0, 0.7, 0, 0.35 + H2, 1, 0.35 - H2, 1]]] },
-            A: { w: 0.7, parts: [['poly', [0.35 - H2, 0, 0.35 + H2, 0, 2 * H2, 1, 0, 1]], ['poly', [0.35 - H2, 0, 0.35 + H2, 0, 0.7, 1, 0.7 - 2 * H2, 1]]] },
             I: { w: T, parts: [bar(0, 0, T, 1)] },
             S: { w: 2 * R, parts: [ring(R, R, R, PI / 2, PI * 1.5), ring(R, 1 - R, R, -PI / 2, PI / 2)] },
             U: { w: 0.6, parts: [bar(0, 0, T, 0.7), bar(0.6 - T, 0, T, 0.7), ring(0.3, 0.7, 0.3, 0, PI)] },
@@ -137,6 +136,8 @@
             T: { w: 0.6, parts: [bar(0, 0, 0.6, T), bar(0.3 - T / 2, 0, T, 1)] },
             L: { w: 0.48, parts: [bar(0, 0, T, 1), bar(0, 1 - T, 0.48, T)] },
         };
+        // A is V upside down, so the two stay the same letter flipped.
+        GLYPHS.A = { w: GLYPHS.V.w, parts: GLYPHS.V.parts.map(([k, a]) => [k, a.map((v, i) => i % 2 ? 1 - v : v)]) };
         const GAP = 0.22;
 
         const canvas = document.getElementById('geo');
