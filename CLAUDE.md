@@ -56,7 +56,11 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
   and both use the heavy V: a short, narrow notch (Greg preferred it to the
   deeper, thinner-stroked one).
 - Pieces that butt together get a hairline stroke in the same colour (`SEAM`)
-  so no anti-aliased seam shows between them. Because of that stroke, **never cut a
+  so no anti-aliased seam shows between them. It is **0.7 screen pixels at any
+  size** (`vector-effect: non-scaling-stroke` in SVG, divided by the scale on
+  the canvas). It used to be a fraction of the letter height, which on a big
+  screen grew to several pixels and visibly spilled a white piece over a grey
+  neighbour. Because of that stroke, **never cut a
   notch as an even-odd hole that touches a letter's outer edge** — the stroke
   traces the hole's open side as a visible line (it did across the V and A).
   Draw the notch into a single outline instead, as the V, A, K and Y are.

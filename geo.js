@@ -88,8 +88,10 @@
 
     const GAP = 0.16;
     // Pieces that butt up against each other leave an anti-aliased seam; a
-    // hairline stroke in the same colour closes it.
-    const SEAM = 0.012;
+    // hairline stroke in the same colour closes it. It is a fixed fraction of a
+    // screen pixel, not a fraction of the letter, or at large sizes it grows
+    // wide enough to spill visibly over a neighbouring piece of another tone.
+    const SEAM = 0.7;
 
     // Lay a string out: one entry per piece, with its x offset in units.
     function layout(text) {
@@ -143,7 +145,7 @@
             // Pieces in the heading's own colour follow it (hover included);
             // only a differently coloured span, like an <em>, is pinned.
             if (kept[p.index].color !== own) path.style.fill = path.style.stroke = kept[p.index].color;
-            path.style.strokeWidth = SEAM;
+            path.style.strokeWidth = SEAM + 'px';
             svg.appendChild(path);
         });
 
@@ -228,7 +230,7 @@
                 cx.translate(x + q.bx * b, box.y + q.by * b);
                 cx.scale(box.s, box.s);
                 cx.fillStyle = cx.strokeStyle = q.tone;
-                cx.lineWidth = SEAM;
+                cx.lineWidth = SEAM / box.s;
                 cx.fill(q.path, 'evenodd');
                 cx.stroke(q.path);
                 cx.restore();
