@@ -16,7 +16,7 @@
 
 const PIECES = [
     { src: 'wolfmanwoof-header.webp', w: 5320, h: 2280,
-      title: 'Wolfmanwoof', meta: 'Header' },
+      title: 'WOLFMANWOOF', meta: 'Header' },
     { src: 'working-title.webp', w: 3000, h: 3000,
       title: 'Working Title', meta: '' },
     { src: 'medium.webp', w: 3000, h: 3000,
