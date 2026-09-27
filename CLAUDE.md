@@ -255,6 +255,10 @@ viewer from the array and never needs touching.
   intrinsic size the whole column reflows as each file lands.
 - `.mp4` / `.webm` / `.mov` render as muted looping video in the grid and gain
   controls in the viewer. Everything else is an `<img>`.
+- **Captions are off** (`CAPTIONS = false` in `work.html`, 2026-09-27): no
+  title or credit under the art in the grid or the viewer. The titles and
+  credits stay in `pieces.js` — they still feed each image's alt text — so
+  flipping the switch brings them all back.
 - A piece with `link` becomes an `<a>` that opens the release instead of the
   viewer. Without one it is a `<button>` that opens the viewer.
 - With the array empty the page says so and sends people to Instagram. That is
