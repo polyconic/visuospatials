@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work &mdash; Visuospatials</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -66,16 +66,16 @@
         .viewer figcaption[hidden] { display: none; }
         .viewer figcaption { display: flex; gap: 18px; align-items: baseline; flex-wrap: wrap;
                              justify-content: center; }
-        .viewer .count { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); }
+        .viewer .count { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); }
         .viewer .nav { position: fixed; top: 50%; transform: translateY(-50%);
                        appearance: none; background: none; border: 0; cursor: pointer;
                        color: var(--fg); padding: 20px 14px; opacity: 0.45;
                        transition: opacity 0.2s; }
         .viewer .nav:hover { opacity: 1; }
         .viewer .nav svg { width: 22px; height: 22px; fill: currentColor; }
-        .viewer .prev { left: max(clamp(2px, 1.5vw, 24px), env(safe-area-inset-left, 0px)); }
-        .viewer .next { right: max(clamp(2px, 1.5vw, 24px), env(safe-area-inset-right, 0px)); }
-        .viewer .shut { position: fixed; top: 13px; right: max(15px, env(safe-area-inset-right, 0px)); z-index: 410;
+        .viewer .prev { left: clamp(2px, 1.5vw, 24px); }
+        .viewer .next { right: clamp(2px, 1.5vw, 24px); }
+        .viewer .shut { position: fixed; top: 13px; right: 15px; z-index: 410;
                         appearance: none; background: none; border: 0; cursor: pointer;
                         color: var(--fg); padding: 8px; }
         .viewer .shut svg { width: 20px; height: 20px; fill: currentColor; }

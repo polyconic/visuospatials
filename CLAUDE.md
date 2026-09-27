@@ -173,20 +173,6 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   Paths in the shared tags are **root-absolute**, so they work the same from `/`
   and from any other page; they do not work over `file://`.
 
-- **The `.exit` bar sits flush on a phone.** It is solid with a hairline on
-  top (so work doesn't show through it), and on iPhone Safari it used to look
-  like it floated: while the toolbar slides in and out, a gap opens for a moment
-  between the bar and the screen's bottom edge, and the page showed through.
-  Fixed 2026-09-27, the same way as on Audiospatials: `.exit::after` lays a
-  100vh block of `--bg` below the bar, and the bar's bottom padding adds
-  `env(safe-area-inset-bottom)` to reach past the home indicator. That needs
-  **`viewport-fit=cover` in every page's viewport meta** — without it the
-  `env()` insets are always 0 — so a new page must carry it too. Because pages
-  now run edge to edge, anything fixed to a side keeps clear of a landscape
-  notch with `max(15px, env(safe-area-inset-left/right))`: the back and home
-  marks, the mail corner, and the work viewer's close, arrows and counter. The
-  emulator can't reproduce the toolbar slide; check it on a real phone.
-
 - **The back arrow is history, not a link home.** `nav.js` calls `history.back()`
   only when `document.referrer` is same-origin; otherwise the `href="/"` takes
   over. Testing `history.length` alone is not enough — it counts entries from
