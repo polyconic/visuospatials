@@ -90,8 +90,11 @@ a { color: inherit; }
   flex-wrap: wrap;
   gap: 5px 22px;
   align-items: center;
+  /* Solid, with a hairline on top: the old fade let work scroll visibly
+     behind the bar, which on a phone (two lines tall) read as floating. */
   padding: 12px 20px;
-  background: linear-gradient(to top, var(--bg) 55%, transparent);
+  background: var(--bg);
+  border-top: 1px solid var(--rule);
   font-family: var(--sans);
   font-size: 10px;
   letter-spacing: 0.18em;
