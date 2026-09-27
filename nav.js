@@ -12,7 +12,7 @@
         document.head.append(rules);
     }
 
-    /* Phones hide the .exit bar (base.css) and get its links as a drop from a
+    /* Phones hide the .exit bar's links (base.css) and get them as a drop from a
        two-bar mark in the top right. It is copied from the bar, so the bar
        stays the one place the sections are listed. */
     const bar = document.querySelector('.exit');
@@ -23,7 +23,7 @@
         drop.id = 'drop';
         drop.setAttribute('aria-label', 'Menu');
         for (const item of bar.children) {
-            if (!item.classList.contains('spacer')) drop.append(item.cloneNode(true));
+            if (!item.matches('.spacer, .copy')) drop.append(item.cloneNode(true));
         }
 
         const mark = document.createElement('button');

@@ -174,9 +174,11 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   and from any other page; they do not work over `file://`.
 
 - **Phones get a menu instead of the bar.** At 620px and under the `.exit`
-  bar is hidden and a two-bar mark (`.menumark`) sits in `.corner`, right of
-  the mail mark. It drops a small solid panel (`.drop`) with the bar's links
-  and the copyright; the bars cross into a red X while it's open, and it
+  bar's links are hidden and a two-bar mark (`.menumark`) sits in `.corner`,
+  right of the mail mark. It drops a small solid panel (`.drop`) with just
+  those links — the copyright stays out of it (Greg, 2026-09-27) and the bar
+  drops into the page flow so only its copyright shows, at the very end of
+  the page. The bars cross into a red X while it's open, and it
   closes on a tap outside or Escape. `nav.js` builds both by **copying the
   page's `.exit`**, so the bar is still the one place the sections are listed
   and the rule above holds. This is not the removed sandwich: that was a
@@ -245,7 +247,9 @@ the mail mark only; anything a page puts in its top right has to clear it.
 ## Footer
 
 Every page except the landing page carries `&copy; 2026 Visuospatials`. On pages
-with the `.exit` bar it is the last item in that bar; the 404 has no bar, so it
+with the `.exit` bar it is the last item in that bar (on phones the bar's
+links move to the corner menu and the copyright is left alone at the end of
+the page); the 404 has no bar, so it
 sits in flow at the end of the content.
 
 ## Search

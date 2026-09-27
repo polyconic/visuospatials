@@ -106,12 +106,14 @@ a { color: inherit; }
 .exit .copy { color: var(--dim); }
 .exit .spacer { flex: 1; }
 
-/* Phones: the bar gives way to a two-bar menu in the top right. nav.js
+/* Phones: the bar's links move to a two-bar menu in the top right. nav.js
    builds the button and the drop from the page's own .exit, so the
    section list still lives in the bar and nowhere else. */
 .corner .menumark, .drop { display: none; }
 @media (max-width: 620px) {
-  .exit { display: none; }
+  /* What's left of the bar is the copyright, in flow at the end of the page. */
+  .exit { position: static; padding: 48px 0 0; background: none; border: 0; }
+  .exit > :not(.copy) { display: none; }
   .corner .menumark { display: grid; }
   .menumark rect {
     transform-box: fill-box;
@@ -143,8 +145,6 @@ a { color: inherit; }
   .drop a { color: var(--fg); text-decoration: none; }
   .drop a:hover { color: var(--sig); }
   .drop .here { color: var(--sig); }
-  .drop .copy { color: var(--dim); margin-top: 6px; padding-top: 14px;
-                border-top: 1px solid var(--rule); align-self: stretch; text-align: right; }
 }
 
 @media (prefers-reduced-motion: reduce) {
