@@ -262,7 +262,15 @@ viewer from the array and never needs touching.
 
 ## Images
 
-- **Max 2560px on the long edge, webp quality 85**, same rule as the portfolio:
+- **Work pieces are full resolution.** `pieces/*.webp` are converted at their
+  native size, `magick in -auto-orient -strip -quality 92 -define webp:method=6
+  out.webp` — Greg asked for them as sharp as possible, so the 2560px cap below
+  does **not** apply to them. The originals are not committed (they run to
+  18MB each); they live in `~/Desktop/visuospatials-originals/`. Noisy,
+  grainy art can come out larger as webp than as its source JPEG; that's
+  accepted rather than dropping quality.
+
+- **Other site images: max 2560px on the long edge, webp quality 85**, same rule as the portfolio site:
   `magick in.webp -resize 2560x2560\> -quality 85 -define webp:method=6 out.webp`
   Commit the original first so the full-resolution file stays in history, then
   resize in a second commit.

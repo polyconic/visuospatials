@@ -15,5 +15,22 @@
 */
 
 const PIECES = [
-
+    { src: 'wolfmanwoof-header.webp', w: 5320, h: 2280,
+      title: 'Wolfmanwoof', meta: 'Header' },
+    { src: 'working-title.webp', w: 3000, h: 3000,
+      title: 'Working Title', meta: '' },
+    { src: 'medium.webp', w: 3000, h: 3000,
+      title: 'Medium', meta: '' },
+    { src: 'shifter.webp', w: 3000, h: 3000,
+      title: 'Shifter', meta: 'Gregor Egan — cover' },
+    { src: 'latency.webp', w: 3000, h: 3000,
+      title: 'Latency', meta: '' },
+    { src: 'highwater.webp', w: 3000, h: 3000,
+      title: 'Highwater', meta: 'Album art, test' },
+    { src: 'triangles-3.webp', w: 3000, h: 3000,
+      title: 'Triangles 3', meta: '' },
+    { src: 'triangles.webp', w: 3000, h: 3000,
+      title: 'Triangles', meta: '' },
+    { src: 'love-you.webp', w: 4000, h: 4000,
+      title: 'Love You', meta: 'Wolfmanwoof — cover' },
 ];
