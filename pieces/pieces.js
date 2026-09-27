@@ -22,7 +22,7 @@ const PIECES = [
     { src: 'medium.webp', w: 3000, h: 3000,
       title: 'Medium', meta: '' },
     { src: 'shifter.webp', w: 3000, h: 3000,
-      title: 'Shifter', meta: 'Gregor Egan — cover' },
+      title: 'Shifter', meta: 'Gregor Egan' },
     { src: 'latency.webp', w: 3000, h: 3000,
       title: 'Latency', meta: '' },
     { src: 'highwater.webp', w: 3000, h: 3000,
@@ -32,5 +32,5 @@ const PIECES = [
     { src: 'moonrise.webp', w: 3000, h: 3000,
       title: 'Moonrise', meta: '' },
     { src: 'love-you.webp', w: 4000, h: 4000,
-      title: 'Love You', meta: 'Wolfmanwoof — cover' },
+      title: 'Love You', meta: 'Wolfmanwoof' },
 ];
