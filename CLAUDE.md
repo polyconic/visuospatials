@@ -261,6 +261,10 @@ sits in flow at the end of the content.
 - `404.html` is `noindex` and is **not** in the sitemap.
 - "Page with redirect" in Search Console is expected: `www` and the
   `polyconic.github.io` address both 301 to the apex domain. Nothing to fix.
+- The front page carries structured data (JSON-LD, 2026-09-27): the studio and
+  its founders, each marked as also affiliated with Audiospatials. Audiospatials'
+  front page says the same back, so search engines connect the two studios
+  without either claiming the other. Deliberately not a parent/sub relation.
 
 ## The work page
 
