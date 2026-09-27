@@ -98,9 +98,9 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
 - **No corner marks.** The back and home marks are on every page *except* this
   one. That is deliberate: the front should read as a dead end. Don't add them.
 - **The name is the way in.** The wordmark is `<a class="flicker-text"
-  href="/studio">` — its text is made transparent and sits under the
+  href="/work">` — its text is made transparent and sits under the
   canvas (which ignores pointers), so the whole word area clicks through to
-  Studio/About, even while the pieces are scattered. Being a real
+  Work (it led to Studio/About until Greg switched it on 2026-09-26), even while the pieces are scattered. Being a real
   link, it gets the page fade, the prerender and keyboard access for free.
   The front page does not load `nav.js` at all — it has no arrow to wire.
 - **Timing: hold 5s, travel 21s, hold 5s.** The word loads assembled and sits
@@ -206,7 +206,7 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   1fps when it isn't focused** — click into the page before measuring anything.
 - **Prerendering (Chromium only).** `nav.js` injects speculation rules that
   prerender a same-origin page once a pointer settles on its link; the front
-  page carries its own rules and prerenders `/studio` eagerly, since the
+  page carries its own rules and prerenders `/work` eagerly, since the
   name always leads there. Safari ignores them. The in-app browser doesn't
   prerender under automation, so `activationStart` reads 0 there.
 - **Overlays take a history entry.** The work viewer `pushState`s when it opens, so a phone's back gesture closes them instead of
