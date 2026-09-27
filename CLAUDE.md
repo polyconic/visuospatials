@@ -173,6 +173,19 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   Paths in the shared tags are **root-absolute**, so they work the same from `/`
   and from any other page; they do not work over `file://`.
 
+- **Phones get a menu instead of the bar.** At 620px and under the `.exit`
+  bar is hidden and a two-bar mark (`.menumark`) sits in `.corner`, right of
+  the mail mark. It drops a small solid panel (`.drop`) with the bar's links
+  and the copyright; the bars cross into a red X while it's open, and it
+  closes on a tap outside or Escape. `nav.js` builds both by **copying the
+  page's `.exit`**, so the bar is still the one place the sections are listed
+  and the rule above holds. This is not the removed sandwich: that was a
+  full-screen overlay on every size. Greg asked for it on 2026-09-27 instead of
+  chasing iPhone Safari, where the fixed bottom bar looked like it floated
+  while the toolbar slid in and out. A `viewport-fit=cover` + safe-area fix
+  for that was tried the same day and reverted; don't bring the bar back on
+  phones.
+
 - **The back arrow is history, not a link home.** `nav.js` calls `history.back()`
   only when `document.referrer` is same-origin; otherwise the `href="/"` takes
   over. Testing `history.length` alone is not enough — it counts entries from
