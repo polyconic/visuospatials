@@ -33,7 +33,7 @@
         .call a.big { display: inline-block; font-size: clamp(26px, 6vw, 78px); font-weight: 700;
                 letter-spacing: -0.035em; text-transform: uppercase; text-decoration: none;
                 color: var(--fg); line-height: 1; transition: color 0.2s; }
-        .call a.big:hover { color: var(--sig); }
+        @media (hover: hover) { .call a.big:hover { color: var(--sig); } }
         .call a.big em { color: var(--sig); }
         .call p { margin-top: 20px; line-height: 1.9; }
         .elsewhere { margin-top: clamp(44px, 9vh, 88px); max-width: 560px; }
@@ -52,15 +52,18 @@
         .elsewhere .u::after { content: ""; display: inline-block; width: 0.5em; height: 0.5em;
                                margin-left: 0.7em; vertical-align: 0.22em; background: currentColor;
                                clip-path: polygon(0 0, 100% 0, 100% 100%); }
-        .elsewhere a:hover, .elsewhere a:focus-visible { color: var(--sig); padding-left: 10px; }
+        .elsewhere a:focus-visible { color: var(--sig); padding-left: 10px; }
+        @media (hover: hover) { .elsewhere a:hover { color: var(--sig); padding-left: 10px; } }
         /* A row with two addresses: the name stays put and each address is its own link. */
         .elsewhere .pair { display: flex; align-items: baseline; justify-content: space-between;
                            gap: 20px; padding: 15px 0; }
         .elsewhere .pair .n { white-space: nowrap; }
         .elsewhere .pair .links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 22px; }
         .elsewhere .pair a { display: inline; padding: 0; }
-        .elsewhere .pair a:hover, .elsewhere .pair a:focus-visible { padding-left: 0; }
-        .elsewhere a:hover .u, .elsewhere a:focus-visible .u { color: var(--sig); }
+        .elsewhere .pair a:focus-visible { padding-left: 0; }
+        @media (hover: hover) { .elsewhere .pair a:hover { padding-left: 0; } }
+        .elsewhere a:focus-visible .u { color: var(--sig); }
+        @media (hover: hover) { .elsewhere a:hover .u { color: var(--sig); } }
     </style>
 </head>
 <body>

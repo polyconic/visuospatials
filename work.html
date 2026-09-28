@@ -40,8 +40,8 @@
         .piece .shot { position: relative; overflow: hidden; background: var(--rule); }
         .piece img, .piece video { display: block; width: 100%; height: auto;
                                    transition: opacity 0.4s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .piece:hover img, .piece:hover video,
         .piece:focus-visible img, .piece:focus-visible video { transform: scale(1.02); }
+        @media (hover: hover) { .piece:hover img, .piece:hover video { transform: scale(1.02); } }
 
         .cap { display: flex; gap: 12px; align-items: baseline;
                padding: 9px 1px 0; line-height: 1.5; }
@@ -52,7 +52,7 @@
         .empty { max-width: 46ch; line-height: 2; }
         .empty a { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--faint);
                    transition: border-color 0.2s; }
-        .empty a:hover { border-color: var(--sig); }
+        @media (hover: hover) { .empty a:hover { border-color: var(--sig); } }
 
         /* Viewer */
         .viewer { position: fixed; inset: 0; z-index: 400; background: var(--veil);
@@ -71,7 +71,7 @@
                        appearance: none; background: none; border: 0; cursor: pointer;
                        color: var(--fg); padding: 20px 14px; opacity: 0.45;
                        transition: opacity 0.2s; }
-        .viewer .nav:hover { opacity: 1; }
+        @media (hover: hover) { .viewer .nav:hover { opacity: 1; } }
         .viewer .nav svg { width: 22px; height: 22px; fill: currentColor; }
         .viewer .prev { left: clamp(2px, 1.5vw, 24px); }
         .viewer .next { right: clamp(2px, 1.5vw, 24px); }
