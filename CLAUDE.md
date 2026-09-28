@@ -234,6 +234,9 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   uppercase — the `.label` class. Widths set in `ch`
   were tuned for Helvetica's narrower advance, so re-check them if the face
   ever changes.
+- **Hover styles go inside `@media (hover: hover)`** (2026-09-27). On iOS a tap
+  on anything with a :hover style is spent showing the hover, so the menu
+  took two taps. Keep `:focus-visible` outside it, for keyboards.
 - Arrows used as ornaments need `\FE0E` after them (`" \2197\FE0E"`), or iOS
   draws a blue emoji tile.
 ## Theme
