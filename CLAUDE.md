@@ -138,9 +138,13 @@ type, poster and the directory), `stow.js`, the 7%-opacity dot that linked to
 it and the `lab` typed shortcut were removed on 2026-09-25; Greg called it
 gimmicky. It's all in history. Don't bring it back as a secret either.
 
-Secrets are shortcuts, never the only route. There is no on-screen hint for the name link; a
-"click the name" whisper was removed on 2026-09-24 at Greg's request. Don't add
-one back. The console log still says it, for anyone who looks there.
+Secrets are shortcuts, never the only route. The front page has an **Enter →**
+link bottom center, to `/work` like the name — added 2026-09-29 to match
+audiospatials.com, whose `.enter` it copies exactly (bold 12px tracked caps, a
+filled arrow, no box, difference blend, `bottom: max(clamp(40px, 8vh, 90px),
+safe-area)`; hover goes red and nudges the arrow, on hover devices only). Keep
+the two in step. It replaced nothing: an earlier faded "click the name" whisper
+was removed on 2026-09-24 and should stay gone — Enter is a link, not a hint.
 
 The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on a phone.
 

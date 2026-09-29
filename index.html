@@ -91,6 +91,27 @@
             pointer-events: none;
         }
 
+        /* The way in, bottom center, as on audiospatials.com: the name links too,
+           but nothing says so, and a phone can't hover to find out. No box; the
+           same difference blend as the wordmark, and bold so it holds up on
+           the mid-grey of the photo. */
+        .enter {
+            position: absolute; z-index: 20;
+            left: 50%; transform: translateX(-50%);
+            bottom: max(clamp(40px, 8vh, 90px), env(safe-area-inset-bottom, 0px));
+            display: inline-flex; align-items: center; gap: 14px;
+            padding: 10px 6px;
+            color: #fff; mix-blend-mode: difference; text-decoration: none; font-weight: 700;
+            font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase;
+            transition: color 0.2s;
+        }
+        .enter svg { width: 17px; height: 17px; fill: currentColor; transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+        .enter:focus-visible { mix-blend-mode: normal; color: var(--sig); }
+        @media (hover: hover) {
+            .enter:hover { mix-blend-mode: normal; color: var(--sig); }
+            .enter:hover svg { transform: translateX(4px); }
+        }
+
         body { user-select: none; -webkit-touch-callout: none; }
 
 
@@ -106,6 +127,7 @@
     <img class="hero" src="blur.webp" alt="">
     <a class="flicker-text" href="/work" aria-label="Visuospatials">VISUOSPATIALS</a>
     <canvas class="geo" id="geo" aria-hidden="true"></canvas>
+    <a class="enter" href="/work">Enter<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12 12 19.5V14H3V10H12V4.5Z"/></svg></a>
 
 
 
