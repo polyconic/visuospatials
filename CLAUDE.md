@@ -253,7 +253,7 @@ the mail mark only; anything a page puts in its top right has to clear it.
 
 ## Footer
 
-Every page except the landing page carries `&copy; 2026 Visuospatials`. On pages
+Every page except the landing page carries `&copy; <span data-yr>2026</span> Visuospatials` (a tiny inline script at the end of each page swaps in the current year, so it never needs hand-editing; the 2026 is the no-JS fallback). On pages
 with the `.exit` bar it is the last item in that bar (on phones the bar's
 links move to the corner menu and the copyright is left alone at the end of
 the page); the 404 has no bar, so it

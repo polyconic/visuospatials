@@ -113,7 +113,7 @@
     <a href="/">Visuospatials</a><a href="/studio">Studio/About</a>
     <span class="here">Work</span>
     <span class="spacer"></span>
-    <span class="copy">&copy; 2026 Visuospatials &middot; <a href="https://audiospatials.com/" rel="noopener">Audiospatials</a></span>
+    <span class="copy">&copy; <span data-yr>2026</span> Visuospatials &middot; <a href="https://audiospatials.com/" rel="noopener">Audiospatials</a></span>
 </nav>
 <script src="/pieces/pieces.js"></script>
 <script src="/geo.js"></script>
@@ -230,5 +230,6 @@ document.addEventListener('keydown', e => {
 
 build();
 </script>
+<script>document.querySelectorAll("[data-yr]").forEach(function(e){e.textContent=new Date().getFullYear()})</script>
 </body>
 </html>
