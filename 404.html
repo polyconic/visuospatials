@@ -33,14 +33,14 @@
 <canvas id="c"></canvas>
 <div class="mid">
     <p class="label">There is no page at this address.<br>The pieces know it too.</p>
-    <p class="label"><a href="/">Front</a><a href="/work">Work</a><a href="/studio">Studio/About</a></p>
+    <p class="label"><a href="/">Work</a><a href="/studio">Studio/About</a></p>
     <p class="copy label">&copy; <span data-yr>2026</span> Visuospatials</p>
 </div>
 
 <script src="/geo.js"></script>
 <script>
-// The work page used to live at /work/; send old links to its new address.
-if (/^\/work\/(index\.html)?$/.test(location.pathname)) location.replace('/work');
+// The work page used to live at /work/; it's the front page now.
+if (/^\/work\/(index\.html)?$/.test(location.pathname)) location.replace('/');
 // The 404 in the same pieces as the wordmark, coming together every 16s.
 Geo.converge(document.getElementById('c'), '404', width => {
     const s = Math.min(innerWidth * 0.62 / width, innerHeight * 0.4);

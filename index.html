@@ -34,93 +34,209 @@
     <link rel="stylesheet" href="/base.css">
     <link rel="stylesheet" href="/theme.css">
     <script src="/theme.js"></script>
-    <script type="speculationrules">
-    {"prerender": [{"urls": ["/work"], "eagerness": "eager"},
-                   {"where": {"href_matches": "/*"}, "eagerness": "moderate"}]}
-    </script>
+    <link rel="stylesheet" href="/pages.css">
     <style>
-        html, body { height: 100%; width: 100%; overflow: hidden; }
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: var(--bg);
-            position: relative;
-        }
-        .hero {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0;
-            animation: drift 90s ease-in-out infinite alternate;
-            /* iOS shrinks an image under a long press to preview it. */
-            pointer-events: none;
-            -webkit-user-drag: none;
-        }
-        @keyframes drift {
-            from { transform: scale(1.04) translate(0.4%, -0.4%); }
-            to   { transform: scale(1.11) translate(-0.8%, 0.6%); }
-        }
-        /* the name, for readers and search. the photo and Enter are all that show */
-        h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+        /* no back and home marks here, so the bar's links start in line with the work */
+        @media (min-width: 761px) { .home .exit { padding-left: max(clamp(20px, 7vw, 110px), (100% - 1180px) / 2); } }
+        .grid { margin-top: clamp(24px, 5vh, 54px); }
 
-        /* The way in, bottom center, as on audiospatials.com. No box; difference
-           blended and bold so it holds up on the mid-grey of the photo. */
-        .enter {
-            position: absolute; z-index: 20;
-            left: 50%; transform: translateX(-50%);
-            bottom: max(clamp(40px, 8vh, 90px), env(safe-area-inset-bottom, 0px));
-            display: inline-flex; align-items: center; gap: 14px;
-            padding: 10px 6px;
-            color: #fff; mix-blend-mode: difference; text-decoration: none; font-weight: 700;
-            font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase;
-            transition: color 0.2s;
-        }
-        .enter svg { width: 17px; height: 17px; fill: currentColor; transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-        .enter:focus-visible { mix-blend-mode: normal; color: var(--sig); }
-        @media (hover: hover) {
-            .enter:hover { mix-blend-mode: normal; color: var(--sig); }
-            .enter:hover svg { transform: translateX(4px); }
-        }
+        .tag { margin-top: clamp(22px, 4vh, 44px); }
 
-        body { user-select: none; -webkit-touch-callout: none; }
+        .grid { columns: 3; column-gap: clamp(14px, 2vw, 28px); }
+        @media (max-width: 1000px) { .grid { columns: 2; } }
+        @media (max-width: 620px)  { .grid { columns: 1; } }
 
+        .piece { break-inside: avoid; margin: 0 0 clamp(14px, 2vw, 28px);
+                 display: block; text-decoration: none; color: inherit;
+                 background: none; border: 0; padding: 0; width: 100%;
+                 text-align: left; font: inherit; cursor: pointer; }
+        .piece .shot { position: relative; overflow: hidden; background: var(--rule); }
+        .piece img, .piece video { display: block; width: 100%; height: auto;
+                                   transition: opacity 0.4s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .piece:focus-visible img, .piece:focus-visible video { transform: scale(1.02); }
+        @media (hover: hover) { .piece:hover img, .piece:hover video { transform: scale(1.02); } }
 
-        /* the photo fills the page in either theme, so the mail mark keeps its difference blend
-           over it, and the light/dark toggle waits for the inside pages */
-        :root[data-theme="light"] .corner a { color: #fff; mix-blend-mode: difference; }
-        @media (hover: hover) { :root[data-theme="light"] .corner a:hover { color: var(--sig); mix-blend-mode: normal; } }
-        .corner .thememark { display: none; }
+        .cap { display: flex; gap: 12px; align-items: baseline;
+               padding: 9px 1px 0; line-height: 1.5; }
+        .cap .t { font-size: 12px; letter-spacing: 0.04em; color: var(--fg); }
+        .cap .m { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+                  color: var(--dim); margin-left: auto; text-align: right; }
 
-        html.inverted { filter: invert(1) hue-rotate(180deg); }
+        .empty { max-width: 46ch; line-height: 2; }
+        .empty a { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--faint);
+                   transition: border-color 0.2s; }
+        @media (hover: hover) { .empty a:hover { border-color: var(--sig); } }
+
+        /* Viewer */
+        .viewer { position: fixed; inset: 0; z-index: 400; background: var(--veil);
+                  display: none; align-items: center; justify-content: center;
+                  padding: clamp(40px, 7vh, 80px) clamp(16px, 5vw, 80px); }
+        .viewer.on { display: flex; }
+        .viewer figure { max-width: 100%; max-height: 100%; display: flex;
+                         flex-direction: column; align-items: center; gap: 14px; }
+        .viewer img, .viewer video { max-width: 100%; max-height: 78vh;
+                                     width: auto; height: auto; display: block; }
+        .viewer figcaption[hidden] { display: none; }
+        .viewer figcaption { display: flex; gap: 18px; align-items: baseline; flex-wrap: wrap;
+                             justify-content: center; }
+        .viewer .count { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); }
+        .viewer .nav { position: fixed; top: 50%; transform: translateY(-50%);
+                       appearance: none; background: none; border: 0; cursor: pointer;
+                       color: var(--fg); padding: 20px 14px; opacity: 0.45;
+                       transition: opacity 0.2s; }
+        @media (hover: hover) { .viewer .nav:hover { opacity: 1; } }
+        .viewer .nav svg { width: 22px; height: 22px; fill: currentColor; }
+        .viewer .prev { left: clamp(2px, 1.5vw, 24px); }
+        .viewer .next { right: clamp(2px, 1.5vw, 24px); }
+        .viewer .shut { position: fixed; top: 13px; right: max(15px, env(safe-area-inset-right, 0px)); z-index: 410;
+                        appearance: none; background: none; border: 0; cursor: pointer;
+                        color: var(--fg); padding: 8px; }
+        .viewer .shut svg { width: 20px; height: 20px; fill: currentColor; }
+        @media (max-width: 620px) { .viewer .nav { display: none; } }
     </style>
 </head>
-<body>
+<body class="home">
 <div class="corner">
 <a class="mailmark" href="mailto:gregor.art@pm.me?subject=Visuospatials" aria-label="Email">
 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5H4L12 11.6 20 5H22V19H2Z"/></svg>
 </a>
 </div>
-    <img class="hero" src="blur.webp" alt="">
-    <h1>Visuospatials</h1>
-    <a class="enter" href="/work">Enter<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12 12 19.5V14H3V10H12V4.5Z"/></svg></a>
+<div class="wrap">
+    <h1 data-arrive>Work<em>.</em></h1>
 
-    <script>
-        const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-        let konamiAt = 0;
+    <div class="grid" id="grid"></div>
 
-        document.addEventListener('keydown', e => {
-            konamiAt = (e.key === konami[konamiAt] || e.key.toLowerCase() === konami[konamiAt]) ? konamiAt + 1 : 0;
-            if (konamiAt === konami.length) {
-                konamiAt = 0;
-                document.documentElement.classList.toggle('inverted');
-            }
-        });
+    <p class="tag label">Motion &amp; stills</p>
+</div>
 
-        console.log('%cVISUOSPATIALS', 'font: 700 42px/1 Helvetica Neue, Arial; color:#ff2d00');
-        console.log('%cup up down down left right left right b a', 'font: 12px/1.6 monospace; color:#787874');
-    </script>
+    <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Viewer">
+        <button class="shut" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.6 6 6 4.6 19.4 18 18 19.4ZM18 4.6 19.4 6 6 19.4 4.6 18Z"/></svg></button>
+        <button class="nav prev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 4 6 12 16 20Z"/></svg></button>
+        <figure><div class="slot"></div><figcaption><span class="t"></span><span class="m label"></span></figcaption></figure>
+        <button class="nav next" type="button" aria-label="Next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4 18 12 8 20Z"/></svg></button>
+        <p class="count label"></p>
+    </div>
+
+<nav class="exit">
+    <span class="here">Visuospatials</span><a href="/studio">Studio/About</a>
+    <span class="spacer"></span>
+    <span class="copy">&copy; <span data-yr>2026</span> Visuospatials</span>
+</nav>
+<script src="/pieces/pieces.js"></script>
+<script src="/geo.js"></script>
+<script src="/nav.js"></script>
+<script src="/menu.js"></script>
+<script>
+if (location.pathname.endsWith('.html')) history.replaceState(history.state, '', '/' + location.search + location.hash);
+</script>
+<script>
+const grid = document.getElementById('grid');
+const viewer = document.getElementById('viewer');
+const slot = viewer.querySelector('.slot');
+const capT = viewer.querySelector('figcaption .t');
+const capM = viewer.querySelector('figcaption .m');
+const count = viewer.querySelector('.count');
+// Titles and credits under the art. Off for now; the text in pieces.js is kept.
+const CAPTIONS = false;
+viewer.querySelector('figcaption').hidden = !CAPTIONS;
+const isVideo = p => /\.(mp4|webm|mov)$/i.test(p.src);
+// Files named in pieces.js live beside it in /pieces/.
+const inPieces = f => /^(\/|https?:)/.test(f) ? f : '/pieces/' + f;
+let at = 0;
+let opener = null;
+
+function media(p, big) {
+    if (isVideo(p)) {
+        const v = document.createElement('video');
+        v.src = inPieces(p.src);
+        v.muted = true;
+        v.loop = true;
+        v.playsInline = true;
+        v.autoplay = !big;
+        v.controls = !!big;
+        if (p.poster) v.poster = inPieces(p.poster);
+        if (p.w && p.h) { v.width = p.w; v.height = p.h; }
+        return v;
+    }
+    const i = document.createElement('img');
+    i.src = inPieces(p.src);
+    i.alt = p.title || '';
+    i.loading = 'lazy';
+    i.decoding = 'async';
+    if (p.w && p.h) { i.width = p.w; i.height = p.h; }
+    return i;
+}
+
+function build() {
+    if (!PIECES.length) {
+        grid.className = 'empty label';
+        grid.innerHTML = 'Nothing is up here yet. Everything so far lives on ' +
+            '<a href="https://instagram.com/visuospatials" rel="me noopener" target="_blank">instagram</a>, ' +
+            'and it moves over here as it is finished.';
+        return;
+    }
+    PIECES.forEach((p, n) => {
+        const el = document.createElement(p.link ? 'a' : 'button');
+        el.className = 'piece';
+        if (p.link) { el.href = p.link; el.rel = 'noopener'; el.target = '_blank'; }
+        else { el.type = 'button'; el.addEventListener('click', () => open(n)); }
+
+        const shot = document.createElement('div');
+        shot.className = 'shot';
+        shot.appendChild(media(p, false));
+
+        const cap = document.createElement('div');
+        cap.className = 'cap';
+        cap.innerHTML = '<span class="t"></span><span class="m"></span>';
+        cap.querySelector('.t').textContent = p.title || '';
+        cap.querySelector('.m').textContent = p.meta || '';
+
+        el.append(shot);
+        if (CAPTIONS) el.append(cap);
+        grid.appendChild(el);
+    });
+}
+
+function open(n) {
+    if (!viewer.classList.contains('on')) opener = document.activeElement;
+    at = (n + PIECES.length) % PIECES.length;
+    const p = PIECES[at];
+    slot.replaceChildren(media(p, true));
+    capT.textContent = p.title || '';
+    capM.textContent = p.meta || '';
+    count.textContent = String(at + 1).padStart(2, '0') + ' / ' + String(PIECES.length).padStart(2, '0');
+    viewer.classList.add('on');
+    viewer.querySelector('.shut').focus();
+    // One entry per visit to the viewer, so a phone's back gesture closes it.
+    if (!(history.state && history.state.viewer)) history.pushState({ viewer: true }, '');
+}
+function closeViewer() {
+    viewer.classList.remove('on');
+    slot.replaceChildren();
+    if (opener && opener.focus) opener.focus();
+}
+function shut() {
+    if (!viewer.classList.contains('on')) return;
+    closeViewer();
+    if (history.state && history.state.viewer) history.back();
+}
+addEventListener('popstate', () => { if (viewer.classList.contains('on')) closeViewer(); });
+if (history.state && history.state.viewer) history.replaceState(null, '');
+
+viewer.querySelector('.shut').addEventListener('click', shut);
+viewer.querySelector('.prev').addEventListener('click', () => open(at - 1));
+viewer.querySelector('.next').addEventListener('click', () => open(at + 1));
+viewer.addEventListener('click', e => { if (e.target === viewer) shut(); });
+
+document.addEventListener('keydown', e => {
+    if (!viewer.classList.contains('on')) return;
+    if (e.key === 'Escape') shut();
+    if (e.key === 'ArrowLeft') open(at - 1);
+    if (e.key === 'ArrowRight') open(at + 1);
+});
+
+build();
+</script>
+<script>document.querySelectorAll("[data-yr]").forEach(function(e){e.textContent=new Date().getFullYear()})</script>
 </body>
 </html>

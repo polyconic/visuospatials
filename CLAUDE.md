@@ -32,30 +32,28 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 
 | File | What it is |
 |---|---|
-| `index.html` | The front. The blurred photo and Enter →; the name is a visually hidden h1. |
-| `work.html` | The portfolio grid, at `/work`. Reads `pieces/pieces.js`; empty state points at Instagram. |
+| `index.html` | **The front page is the work** (2026-11-16): the portfolio grid, at `/`. Reads `pieces/pieces.js`; empty state points at Instagram. Carries the structured data. |
+| `work.html` | Only forwards to `/` now (meta refresh + `location.replace`, canonical `/`, noindex) so old `/work` links hold. |
 | `pieces/pieces.js` | The manifest — the one file to edit when a piece is added. Files sit beside it in `pieces/`. |
 | `studio.html` | The collaboration idea and the contact, at `/studio`. |
 | `404.html` | A 404 in the geometric alphabet, converging every 16s. GitHub Pages serves this. |
-| `nav.js` | Wires the back arrow and prerendering. Loaded by every page except the front. |
+| `nav.js` | Wires the back arrow and prerendering. Loaded by every page with a nav bar. |
 | `menu.js` | The phone menu (≤760px): a button beside the mail mark drops the `.exit` bar's own links. Also writes the © line at the end of the page (`.footcopy`). |
 | `theme.js` / `theme.css` | Light 9am–5pm on the visitor's clock, dark otherwise, plus the toggle and the loading screen. Loaded in every page's head. |
-| `pages.css` | Inside-page styles shared with audiospatials: the top nav, titles, footer, scroll effects. Studio and Work load it. |
+| `pages.css` | Inside-page styles shared with audiospatials: the top nav, titles, footer, scroll effects. The front page and Studio load it. |
 | `geo.js` | The geometric alphabet, heading renderer and converge engine. Loaded by every page. |
 
 ## Clean addresses
 
-The site links to `/studio` and `/work`, never `studio.html` or `work/`.
-GitHub Pages serves `studio.html` at `/studio` and `work.html` at `/work` on
-its own. The Work page moved from `work/index.html` to `work.html` on
-2026-09-26 so its address loses the trailing slash, and its manifest and files
-moved to `pieces/` — **a `work/` folder must not come back**, or Pages sees the
-folder first and redirects `/work` to `/work/`. Old links are caught: both
-pages `replaceState` a `.html` address to the clean one, and the 404 sends
-`/work/` and `/work/index.html` on to `/work`. Canonicals, `og:url` and the
-sitemap use the clean addresses. The local `python3 -m http.server` preview
-does **not** do this mapping, so test locally at `/studio.html` and
-`/work.html`.
+The site links to `/` and `/studio`, never `studio.html`. GitHub Pages serves
+`studio.html` at `/studio` on its own. The Work page lived at `/work/`
+(until 2026-09-26), then `/work` (until 2026-11-16), and is now the front page
+at `/`. Old links are caught: `work.html` forwards `/work` to `/`, the 404
+sends `/work/` and `/work/index.html` to `/`, and pages `replaceState` a
+`.html` address to the clean one. **A `work/` folder must not come back**, or
+Pages sees the folder first. Canonicals, `og:url` and the sitemap use the
+clean addresses. The local `python3 -m http.server` preview does **not** do
+this mapping, so test locally at `/studio.html`.
 
 ## The geometric alphabet
 
@@ -100,41 +98,27 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
 
 ## The front page
 
-- **The photo is back.** `blur.webp`, the blurred black-and-white portrait,
-  sits full bleed with its slow 90s drift (`.hero`). It was
-  off the page for a day while the cube belt and then a bare #0a0a0a ground
-  were tried; Greg asked for it back on 2026-09-26. It is also the `og:image`.
-- **No wordmark** (2026-11-16, Gregor: "remove the moving wordmark"). The
-  converging `Geo.converge` wordmark over the photo, its link and the `spatial`
-  explode egg are gone; the page is the photo and the Enter → link. The name
-  stays in a visually hidden `<h1>` for readers and search. The front no longer
-  loads `geo.js`. It's all in git history if wanted back.
-- **No corner marks.** The back and home marks are on every page *except* this
-  one. That is deliberate: the front should read as a dead end. Don't add them.
-  The front page does not load `nav.js` at all — it has no arrow to wire.
+**The front page is the work** (2026-11-16, Gregor: "remove the landing photo
+actually we can just auto go into WORK"), as audiospatials.com's front page is
+its artists list. Visiting visuospatials.com lands straight on the grid,
+titled WORK. Like Audiospatials' home it has no back or home marks, and the
+nav bar shows **Visuospatials** as the current page, its links starting in
+line with the grid (`.home .exit`). The bar no longer has a Work item —
+Visuospatials *is* the work.
+
+Gone the same day, all in git history: the landing page's blurred photo
+(`blur.webp`, deleted), the converging `Geo.converge` wordmark over it with
+its `spatial` explode egg, the Enter → link (copied from Audiospatials' old
+front), the Konami invert and the console log.
 
 ## The secrets
 
 There is no index of the doors any more. `void.html` used to list them and was
 removed on 2026-09-23 — Greg called it gimmicky. **Don't rebuild it**, and don't
-add a page whose only way in is a secret.
-
-The full set: the Konami code, the 404, and the console log on the front
-page (which now hints the Konami code). Typing `spatial` went with the wordmark
-on 2026-11-16. **The Lab is gone** — its five tool rooms (halftone, moiré,
-type, poster and the directory), `stow.js`, the 7%-opacity dot that linked to
-it and the `lab` typed shortcut were removed on 2026-09-25; Greg called it
-gimmicky. It's all in history. Don't bring it back as a secret either.
-
-Secrets are shortcuts, never the only route. The front page has an **Enter →**
-link bottom center, to `/work` — the only way in since the wordmark went. Added 2026-09-29 to match
-audiospatials.com, whose `.enter` it copies exactly (bold 12px tracked caps, a
-filled arrow, no box, difference blend, `bottom: max(clamp(40px, 8vh, 90px),
-safe-area)`; hover goes red and nudges the arrow, on hover devices only). Keep
-the two in step. It replaced nothing: an earlier faded "click the name" whisper
-was removed on 2026-09-24 and should stay gone — Enter is a link, not a hint.
-
-The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on a phone.
+add a page whose only way in is a secret. **The Lab is gone** too — its five
+tool rooms, `stow.js` and the `lab` shortcut were removed on 2026-09-25 (Greg:
+gimmicky). The typed `spatial`, the Konami code and the console log went with
+the landing page on 2026-11-16. What's left is the 404 in the alphabet.
 
 ## Conventions
 
@@ -209,8 +193,7 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   1fps when it isn't focused** — click into the page before measuring anything.
 - **Prerendering (Chromium only).** `nav.js` injects speculation rules that
   prerender a same-origin page once a pointer settles on its link; the front
-  page carries its own rules and prerenders `/work` eagerly, since Enter
-  leads there. Safari ignores them. The in-app browser doesn't
+  page has no special rules now. Safari ignores them. The in-app browser doesn't
   prerender under automation, so `activationStart` reads 0 there.
 - **Overlays take a history entry.** The work viewer `pushState`s when it opens, so a phone's back gesture closes them instead of
   leaving the page; closing any other way calls `history.back()` to spend it,
@@ -235,11 +218,9 @@ light (`--bg` #fbfbfb) from 9am to 5pm on the visitor's own clock, dark
 draws, checks every minute, and updates `theme-color`; `theme.css` holds the
 light colors. The half-filled circle in the corner flips it by hand and keeps
 that choice in localStorage (`vs-theme`). The site was dark only from
-2026-09-25 until then. **The front page ignores the theme**: the photo fills
-it either way, so its mail mark keeps the difference blend and it hides the
-toggle. The 404 passes `--fg` to `Geo.converge` as its ink.
+2026-09-25 until then. The 404 passes `--fg` to `Geo.converge` as its ink.
 
-**No grey text** on Studio and Work: `pages.css` sets `--dim` to the text
+**No grey text** on the front page and Studio: `pages.css` sets `--dim` to the text
 color, as audiospatials does.
 
 **The loading screen**: once per visit (sessionStorage `vs-loaded`), the word
@@ -298,7 +279,7 @@ viewer from the array and never needs touching.
   `magick in.webp -resize 2560x2560\> -quality 85 -define webp:method=6 out.webp`
   Commit the original first so the full-resolution file stays in history, then
   resize in a second commit.
-- `blur.webp` is the front page hero and the `og:image`.
+- `og.jpg` (1200×630) is every page's `og:image`. `blur.webp`, the old landing photo, was deleted 2026-11-16.
 - Superseded heroes are removed from the tree but stay in history, originals
   included: `git log --oneline --diff-filter=D -- '*.webp' '*.jpg'` finds them.
 - The favicon is `favicon.png` (512px) plus `apple-touch-icon.png` (180px), both
