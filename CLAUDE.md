@@ -3,7 +3,17 @@
 A design and artwork studio site. Static HTML, no build step, no dependencies,
 no analytics, no fonts fetched from anyone. Every page is a plain `.html` file
 with inline `<style>` and `<script>`. The shared files are `base.css`,
-`nav.js` and `geo.js`.
+`theme.css`, `pages.css`, `theme.js`, `nav.js`, `menu.js` and `geo.js`.
+
+**Visually the same as audiospatials.com** (2026-11-16, Gregor: "make this site
+visually the same as Audiospatials, including loading screen"). `base.css`,
+`geo.js`, `nav.js`, `menu.js`, `theme.css` and `theme.js` are copies of
+audiospatials' `css/` and `js/` files, changed only where the name is in them
+(the loading screen's word, the `vs-theme` / `vs-loaded` storage keys).
+`pages.css` is the part of audiospatials' `css/pages.css` this site uses (top
+nav, phone menu, titles, footer, scroll effects). Read
+`~/Local Desktop/GitHub/audiospatials/CLAUDE.md` for how each works; when one
+changes there, copy it here.
 
 **`README.md` is the public face of the repo — short, no secrets.** This file is
 the working document. Keep them separate: anything that spoils a secret or
@@ -14,7 +24,7 @@ reads as an internal note belongs here, not there.
 GitHub Pages from `main`. `CNAME` points at `visuospatials.com`.
 **Pushing to `main` publishes the live site** — there is no staging.
 
-Repo: `github.com/polyconic/visuospatials`, cloned at `~/Documents/GitHub/visuospatials`.
+Repo: `github.com/polyconic/visuospatials`, cloned at `~/Local Desktop/GitHub/visuospatials`.
 Some history was made through the GitHub web UI ("Add files via upload"), so run
 `git status` and `git fetch` before assuming the local clone is current.
 
@@ -22,12 +32,15 @@ Some history was made through the GitHub web UI ("Add files via upload"), so run
 
 | File | What it is |
 |---|---|
-| `index.html` | The front. Converging geometric wordmark, hidden index. |
+| `index.html` | The front. The blurred photo and Enter →; the name is a visually hidden h1. |
 | `work.html` | The portfolio grid, at `/work`. Reads `pieces/pieces.js`; empty state points at Instagram. |
 | `pieces/pieces.js` | The manifest — the one file to edit when a piece is added. Files sit beside it in `pieces/`. |
 | `studio.html` | The collaboration idea and the contact, at `/studio`. |
 | `404.html` | A 404 in the geometric alphabet, converging every 16s. GitHub Pages serves this. |
-| `nav.js` | Wires the back arrow. Loaded by every page except the front. |
+| `nav.js` | Wires the back arrow and prerendering. Loaded by every page except the front. |
+| `menu.js` | The phone menu (≤760px): a button beside the mail mark drops the `.exit` bar's own links. Also writes the © line at the end of the page (`.footcopy`). |
+| `theme.js` / `theme.css` | Light 9am–5pm on the visitor's clock, dark otherwise, plus the toggle and the loading screen. Loaded in every page's head. |
+| `pages.css` | Inside-page styles shared with audiospatials: the top nav, titles, footer, scroll effects. Studio and Work load it. |
 | `geo.js` | The geometric alphabet, heading renderer and converge engine. Loaded by every page. |
 
 ## Clean addresses
@@ -64,7 +77,7 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
   colour keeps its own. `body` clips horizontal overflow so incoming letters
   and pieces don't add a scrollbar.
 - **Canvas**: `Geo.converge(canvas, text, place, {cycle, hold})` runs the looping
-  version for the front page and the 404, with `explode()` for the easter egg.
+  version for the 404 (the front page used it until 2026-11-16).
 - A missing character renders as a space — add a glyph to `G` before using a
   new letter or digit in a heading. The A is always generated as the V flipped,
   and both use the heavy V: a short, narrow notch (Greg preferred it to the
@@ -88,43 +101,17 @@ one unit tall at stroke weight `T = 0.2`. It is the single source of letters:
 ## The front page
 
 - **The photo is back.** `blur.webp`, the blurred black-and-white portrait,
-  sits full bleed behind the wordmark with its slow 90s drift (`.hero`). It was
+  sits full bleed with its slow 90s drift (`.hero`). It was
   off the page for a day while the cube belt and then a bare #0a0a0a ground
   were tried; Greg asked for it back on 2026-09-26. It is also the `og:image`.
-- **The wordmark is difference-blended** (`mix-blend-mode: difference` on the
-  canvas), so its pieces invert whatever is under them — white over the dark
-  side of the photo, black over the bright side. Greg loves that it reads as
-  see-through; keep it. Without it the white pieces vanish into the highlight.
+- **No wordmark** (2026-11-16, Gregor: "remove the moving wordmark"). The
+  converging `Geo.converge` wordmark over the photo, its link and the `spatial`
+  explode egg are gone; the page is the photo and the Enter → link. The name
+  stays in a visually hidden `<h1>` for readers and search. The front no longer
+  loads `geo.js`. It's all in git history if wanted back.
 - **No corner marks.** The back and home marks are on every page *except* this
   one. That is deliberate: the front should read as a dead end. Don't add them.
-- **The name is the way in.** The wordmark is `<a class="flicker-text"
-  href="/work">` — its text is made transparent and sits under the
-  canvas (which ignores pointers), so the whole word area clicks through to
-  Work (it led to Studio/About until Greg switched it on 2026-09-26), even while the pieces are scattered. Being a real
-  link, it gets the page fade, the prerender and keyboard access for free.
   The front page does not load `nav.js` at all — it has no arrow to wire.
-- **Timing: hold 5s, travel 21s, hold 5s.** The word loads assembled and sits
-  still for 5s, comes apart and back together over 21s, then sits another 5s
-  (`{ hold: 5, cycle: 21 }`; Greg asked for the holds on 2026-09-25). The 404
-  uses no hold.
-- **The wordmark is `Geo.converge` over the link's text.** The A is generated
-  as the V flipped, so the two always carry the same weight — a hand-drawn A
-  once had a smaller notch and read visibly heavier. A thin hairline cut was tried the same day and
-  Greg went back to this heavier one. Every piece slides left at 1, 2 or 3 laps per 26s
-  cycle and wraps, so they line up into the word once a cycle; time is warped
-  to slow around that moment so the word holds, then comes apart. Greg asked
-  for this motion on 2026-09-25, replacing the still dot-field wordmark (which
-  was also on the 404 until it moved to the alphabet the same day). The word's size is read off the link's text width, so
-  the CSS clamp still sets it and the hit area matches the drawing. About one
-  piece in five is grey (`DIM`); that and the speeds come from a fixed seed,
-  so every load looks and moves the same way. Reduced motion draws the word once, assembled.
-  - CSS `width: 100%; height: 100%` on the canvas is **required**. A canvas is a
-    replaced element, so `inset: 0` alone does not stretch it — it falls back to
-    its intrinsic size and the drawing lands at device-pixel scale.
-- **Typing `spatial` still explodes it**: every piece flies out and fades over
-  6s, then settles back over 2.5s. The blast clock starts at `-1e9`, not `0` —
-  `performance.now()` begins near zero, so a zero start puts a freshly loaded
-  page inside the explode window.
 
 ## The secrets
 
@@ -132,14 +119,15 @@ There is no index of the doors any more. `void.html` used to list them and was
 removed on 2026-09-23 — Greg called it gimmicky. **Don't rebuild it**, and don't
 add a page whose only way in is a secret.
 
-The full set: typing `spatial`, the Konami code, the 404, and the console log
-on the front page. **The Lab is gone** — its five tool rooms (halftone, moiré,
+The full set: the Konami code, the 404, and the console log on the front
+page (which now hints the Konami code). Typing `spatial` went with the wordmark
+on 2026-11-16. **The Lab is gone** — its five tool rooms (halftone, moiré,
 type, poster and the directory), `stow.js`, the 7%-opacity dot that linked to
 it and the `lab` typed shortcut were removed on 2026-09-25; Greg called it
 gimmicky. It's all in history. Don't bring it back as a secret either.
 
 Secrets are shortcuts, never the only route. The front page has an **Enter →**
-link bottom center, to `/work` like the name — added 2026-09-29 to match
+link bottom center, to `/work` — the only way in since the wordmark went. Added 2026-09-29 to match
 audiospatials.com, whose `.enter` it copies exactly (bold 12px tracked caps, a
 filled arrow, no box, difference blend, `bottom: max(clamp(40px, 8vh, 90px),
 safe-area)`; hover goes red and nudges the arrow, on hover devices only). Keep
@@ -177,20 +165,16 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   Paths in the shared tags are **root-absolute**, so they work the same from `/`
   and from any other page; they do not work over `file://`.
 
-- **Phones get a menu instead of the bar.** At 620px and under the `.exit`
-  bar's links are hidden and a two-bar mark (`.menumark`) sits in `.corner`,
-  right of the mail mark. It drops a small solid panel (`.drop`) with just
-  those links — the copyright stays out of it (Greg, 2026-09-27) and the bar
-  drops into the page flow so only its copyright shows, at the very end of
-  the page. The bars cross into a red X while it's open, and it
-  closes on a tap outside or Escape. `nav.js` builds both by **copying the
-  page's `.exit`**, so the bar is still the one place the sections are listed
-  and the rule above holds. This is not the removed sandwich: that was a
-  full-screen overlay on every size. Greg asked for it on 2026-09-27 instead of
-  chasing iPhone Safari, where the fixed bottom bar looked like it floated
-  while the toolbar slid in and out. A `viewport-fit=cover` + safe-area fix
-  for that was tried the same day and reverted; don't bring the bar back on
-  phones.
+- **The nav bar is at the top** (2026-11-16, as on audiospatials.com): fixed,
+  links on the left after the back and home marks, a hairline under it,
+  Helvetica Medium; the current page in red. The © line closes the page,
+  centered (`.footcopy`, written by `menu.js`). **Every bar lists the sections
+  in the same order** — Visuospatials, Work, Studio/About — with `.here` in
+  place of the current one. On phones (≤760px) the bar is hidden and
+  `menu.js` adds a two-bar button beside the mail mark that drops the same
+  links down; it closes on an outside tap, Esc, a link, or coming back via
+  back. `viewport-fit=cover` is on every page, and the marks keep clear of the
+  notch with `env(safe-area-inset-*)`.
 
 - **The back arrow is history, not a link home.** `nav.js` calls `history.back()`
   only when `document.referrer` is same-origin; otherwise the `href="/"` takes
@@ -212,21 +196,21 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   breaking. Worth remembering when a change "doesn't work" right after a push —
   a stale `base.css` without the `.geo` rules shows the Helvetica heading text
   under the drawn one until it refreshes.
-  Anything placed in the top-left corner of a page has to clear them — that is why
-  the editorial pages bump `padding-top` under 620px.
+  Anything placed in the top-left corner of a page has to clear them.
 - **Page changes fade through** via a cross-document view transition —
   `@view-transition { navigation: auto; }` in `base.css`, skipped under reduced
-  motion. The old page fades out (0.2s) before the new one fades in (0.34s from
-  0.12s), so two layouts never sit on top of each other; a plain crossfade
-  ghosted headings over each other mid-fade. Both pages must opt in, which is
+  motion. The old page fades out (0.22s) before the new one fades in over 0.5s
+  from 0.16s, rising 10px, so two layouts never sit on top of each other; a
+  plain crossfade ghosted headings over each other mid-fade. The bar and corner
+  marks carry `view-transition-name`s so they hold still across pages. Both pages must opt in, which is
   why it lives in `base.css`. Browsers without support (Firefox) just navigate.
   To check it runs, record `!!e.viewTransition` from a `pageswap` listener on
   the outgoing page. **The in-app browser pane skips transitions and runs at
   1fps when it isn't focused** — click into the page before measuring anything.
 - **Prerendering (Chromium only).** `nav.js` injects speculation rules that
   prerender a same-origin page once a pointer settles on its link; the front
-  page carries its own rules and prerenders `/work` eagerly, since the
-  name always leads there. Safari ignores them. The in-app browser doesn't
+  page carries its own rules and prerenders `/work` eagerly, since Enter
+  leads there. Safari ignores them. The in-app browser doesn't
   prerender under automation, so `activationStart` reads 0 there.
 - **Overlays take a history entry.** The work viewer `pushState`s when it opens, so a phone's back gesture closes them instead of
   leaving the page; closing any other way calls `history.back()` to spend it,
@@ -245,19 +229,27 @@ The link pads its box vertically (`padding: 0.4em 0`) so it's an easy target on 
   draws a blue emoji tile.
 ## Theme
 
-**Dark only**, on `--bg` #0a0a0a (RGB 10 10 10). The light theme, its toggle,
-`theme.js` and the `vs-theme` localStorage key were removed on 2026-09-25 when
-the site moved to the geometric alphabet — Greg: build it for black for now.
-All in history if a light version is wanted later. The top-right corner holds
-the mail mark only; anything a page puts in its top right has to clear it.
+**Light by day, dark by night** (2026-11-16, matching audiospatials.com):
+light (`--bg` #fbfbfb) from 9am to 5pm on the visitor's own clock, dark
+(#0a0a0a) otherwise. `theme.js` sets `data-theme` on `<html>` before anything
+draws, checks every minute, and updates `theme-color`; `theme.css` holds the
+light colors. The half-filled circle in the corner flips it by hand and keeps
+that choice in localStorage (`vs-theme`). The site was dark only from
+2026-09-25 until then. **The front page ignores the theme**: the photo fills
+it either way, so its mail mark keeps the difference blend and it hides the
+toggle. The 404 passes `--fg` to `Geo.converge` as its ink.
+
+**No grey text** on Studio and Work: `pages.css` sets `--dim` to the text
+color, as audiospatials does.
+
+**The loading screen**: once per visit (sessionStorage `vs-loaded`), the word
+"visuospatials" in the middle with a 6px bar under it that fills, then fades.
+Drawn as `html.loading::before/::after` in `theme.css` so it's there from the
+first frame; skipped for prerendered pages and without JS.
 
 ## Footer
 
-Every page except the landing page carries `&copy; <span data-yr>2026</span> Visuospatials` (a tiny inline script at the end of each page swaps in the current year, so it never needs hand-editing; the 2026 is the no-JS fallback). On pages
-with the `.exit` bar it is the last item in that bar (on phones the bar's
-links move to the corner menu and the copyright is left alone at the end of
-the page); the 404 has no bar, so it
-sits in flow at the end of the content.
+Every page except the landing page carries `&copy; <span data-yr>2026</span> Visuospatials` (a tiny inline script at the end of each page swaps in the current year; the 2026 is the no-JS fallback). On pages with the `.exit` bar it sits in the bar's markup and `menu.js` shows it as `.footcopy` at the end of the page; the 404 has no bar, so it sits in flow at the end of the content.
 
 ## Search
 

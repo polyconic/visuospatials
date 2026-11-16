@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Work &mdash; Visuospatials</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -19,16 +19,11 @@
     <meta property="og:url" content="https://visuospatials.com/work">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="/base.css">
+    <link rel="stylesheet" href="/theme.css">
+    <script src="/theme.js"></script>
+    <link rel="stylesheet" href="/pages.css">
     <style>
-        body { padding: clamp(28px, 6vh, 70px) clamp(20px, 6vw, 90px) 90px; }
-        @media (max-width: 620px) { body { padding-top: 58px; padding-bottom: 60px; } }
-
-        header { display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap;
-                 padding-bottom: clamp(24px, 5vh, 54px); }
-        h1 { font-size: clamp(40px, 12vw, 168px); line-height: 0.82; letter-spacing: -0.045em;
-             font-weight: 700; text-transform: uppercase; }
-        h1 em { font-style: normal; color: var(--sig);
-                margin-left: calc(0.045em + 2px); }
+        .grid { margin-top: clamp(24px, 5vh, 54px); }
 
         .tag { margin-top: clamp(22px, 4vh, 44px); }
 
@@ -78,7 +73,7 @@
         .viewer .nav svg { width: 22px; height: 22px; fill: currentColor; }
         .viewer .prev { left: clamp(2px, 1.5vw, 24px); }
         .viewer .next { right: clamp(2px, 1.5vw, 24px); }
-        .viewer .shut { position: fixed; top: 13px; right: 15px; z-index: 410;
+        .viewer .shut { position: fixed; top: 13px; right: max(15px, env(safe-area-inset-right, 0px)); z-index: 410;
                         appearance: none; background: none; border: 0; cursor: pointer;
                         color: var(--fg); padding: 8px; }
         .viewer .shut svg { width: 20px; height: 20px; fill: currentColor; }
@@ -93,13 +88,13 @@
 </div>
 <a class="backmark" href="/" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12 12 4.5V10H21V14H12V19.5Z"/></svg></a>
 <a class="homemark" href="/" aria-label="Front page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 22 11.5H19V21H13.8V15H10.2V21H5V11.5H2Z"/></svg></a>
-    <header>
-        <h1 data-arrive>Work<em>.</em></h1>
-    </header>
+<div class="wrap">
+    <h1 data-arrive>Work<em>.</em></h1>
 
     <div class="grid" id="grid"></div>
 
     <p class="tag label">Motion &amp; stills</p>
+</div>
 
     <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Viewer">
         <button class="shut" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.6 6 6 4.6 19.4 18 18 19.4ZM18 4.6 19.4 6 6 19.4 4.6 18Z"/></svg></button>
@@ -110,14 +105,14 @@
     </div>
 
 <nav class="exit">
-    <a href="/">Visuospatials</a><a href="/studio">Studio/About</a>
-    <span class="here">Work</span>
+    <a href="/">Visuospatials</a><span class="here">Work</span><a href="/studio">Studio/About</a>
     <span class="spacer"></span>
-    <span class="copy">&copy; <span data-yr>2026</span> Visuospatials &middot; <a href="https://audiospatials.com/" rel="noopener">Audiospatials</a></span>
+    <span class="copy">&copy; <span data-yr>2026</span> Visuospatials</span>
 </nav>
 <script src="/pieces/pieces.js"></script>
 <script src="/geo.js"></script>
 <script src="/nav.js"></script>
+<script src="/menu.js"></script>
 <script>
 // Someone arriving at /work.html sees the clean address instead.
 if (location.pathname.endsWith('.html')) history.replaceState(history.state, '', '/work' + location.search + location.hash);

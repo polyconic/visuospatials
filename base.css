@@ -13,26 +13,30 @@
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Pages fade through each other: the old one leaves first, then the new one
-   arrives, so two layouts never sit on top of each other mid-fade. Browsers
-   without cross-document view transitions just navigate as before. */
+/* page transitions. old page fades out fast, new one fades up from a little
+   lower. bar and corner marks stay put. browsers that can't do this just load normally */
 @media (prefers-reduced-motion: no-preference) {
   @view-transition { navigation: auto; }
+  ::view-transition-group(*) { animation-duration: 0.45s; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
   ::view-transition-old(root) {
-    animation: vs-out 0.2s cubic-bezier(0.4, 0, 1, 1) both;
+    animation: vs-out 0.22s cubic-bezier(0.4, 0, 1, 1) both;
   }
   ::view-transition-new(root) {
-    animation: vs-in 0.34s cubic-bezier(0, 0, 0.2, 1) 0.12s both;
+    animation: vs-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
   }
+  .exit { view-transition-name: vs-bar; }
+  .backmark { view-transition-name: vs-back; }
+  .homemark { view-transition-name: vs-home; }
+  .corner { view-transition-name: vs-corner; }
 }
 @keyframes vs-out { to { opacity: 0; } }
-@keyframes vs-in { from { opacity: 0; } }
+@keyframes vs-in { from { opacity: 0; transform: translateY(10px); } }
 
 html { -webkit-text-size-adjust: 100%; }
 
 body {
   min-height: 100%;
-  /* Headings assemble from pieces that start off to the right. */
+  /* headings fly in from the right, don't let them make a sideways scroll */
   overflow-x: clip;
   background: var(--bg);
   color: var(--fg);
@@ -66,20 +70,20 @@ a { color: inherit; }
 
 .rule { border: 0; border-top: 1px solid var(--rule); }
 
-/* Headings drawn in the geometric alphabet (geo.js). The SVG is one cap
-   height tall; the real text stays alongside for readers and search. */
+/* drawn headings (geo.js). real text is still there, hidden, for screen readers and google */
 .geo { display: block; height: 0.72em; width: auto; overflow: visible; }
-/* The seam stroke is in screen pixels whatever the drawing's scale. */
+/* thin stroke to hide seams between pieces, same width at any size */
 .geo path { fill: currentColor; stroke: currentColor; stroke-width: 0.7px; vector-effect: non-scaling-stroke; }
 .arrive { display: inline-block; white-space: pre; }
-/* The alphabet's arrow set inline with ordinary type: cap height, on the baseline. */
+.word { white-space: nowrap; }
+/* the drawn arrow sitting inline with normal text */
 .geo.arrow { display: inline-block; height: 0.72em; width: 0.36em; margin-left: 0.1em; vertical-align: baseline; }
 .geo-text {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
   clip-path: inset(50%); white-space: nowrap;
 }
 
-/* Site-wide back-of-house bar. Every room has one so no room is a dead end. */
+/* the nav bar, on every page */
 .exit {
   position: fixed;
   left: 0;
@@ -90,9 +94,10 @@ a { color: inherit; }
   flex-wrap: wrap;
   gap: 5px 22px;
   align-items: center;
-  /* Solid, with a hairline on top: the old fade let work scroll visibly
-     behind the bar, which on a phone (two lines tall) read as floating. */
+  /* solid, not a fade. the fade looked like it was floating on phones */
   padding: 12px 20px;
+  /* clear the iphone home bar (needs viewport-fit=cover) */
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   background: var(--bg);
   border-top: 1px solid var(--rule);
   font-family: var(--sans);
@@ -100,52 +105,22 @@ a { color: inherit; }
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
+/* fills the gap under the bar when safari's toolbar slides around */
+.exit::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 100vh;
+  background: var(--bg);
+}
 .exit a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
 @media (hover: hover) { .exit a:hover { color: var(--fg); } }
 .exit .here { color: var(--sig); }
 .exit .copy { color: var(--dim); }
 .exit .spacer { flex: 1; }
-
-/* Phones: the bar's links move to a two-bar menu in the top right. nav.js
-   builds the button and the drop from the page's own .exit, so the
-   section list still lives in the bar and nowhere else. */
-.corner .menumark, .drop { display: none; }
-@media (max-width: 620px) {
-  /* What's left of the bar is the copyright, in flow at the end of the page. */
-  .exit { position: static; padding: 48px 0 0; background: none; border: 0; }
-  .exit > :not(.copy) { display: none; }
-  .corner .menumark { display: grid; }
-  .menumark rect {
-    transform-box: fill-box;
-    transform-origin: center;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  /* Open, the bars meet in a cross. */
-  .menumark[aria-expanded="true"] { mix-blend-mode: normal; color: var(--sig); }
-  .menumark[aria-expanded="true"] rect:first-child { transform: translateY(3px) rotate(45deg); }
-  .menumark[aria-expanded="true"] rect:last-child { transform: translateY(-3px) rotate(-45deg); }
-  .drop.on {
-    position: fixed;
-    top: 50px;
-    right: 15px;
-    z-index: 205;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 16px;
-    min-width: 170px;
-    padding: 18px 20px;
-    background: var(--bg);
-    border: 1px solid var(--rule);
-    font-family: var(--sans);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-  .drop a { color: var(--fg); text-decoration: none; }
-  @media (hover: hover) { .drop a:hover { color: var(--sig); } }
-  .drop .here { color: var(--sig); }
-}
+@media (max-width: 560px) { .exit .spacer { display: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -155,7 +130,7 @@ a { color: inherit; }
   }
 }
 
-/* Corner marks: back and home. Both are flat shapes like the alphabet. */
+/* back and home marks, top left */
 .backmark, .homemark {
   position: fixed;
   top: 13px;
@@ -168,8 +143,8 @@ a { color: inherit; }
   mix-blend-mode: difference;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.backmark { left: 15px; }
-.homemark { left: 53px; }
+.backmark { left: max(15px, env(safe-area-inset-left, 0px)); }
+.homemark { left: calc(max(15px, env(safe-area-inset-left, 0px)) + 38px); }
 
 .backmark svg, .homemark svg {
   display: block;
@@ -191,11 +166,11 @@ a { color: inherit; }
 .homemark, .backmark, .exit { transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
 
 
-/* Top right: mail. */
+/* mail, top right */
 .corner {
   position: fixed;
   top: 13px;
-  right: 15px;
+  right: max(15px, env(safe-area-inset-right, 0px));
   z-index: 210;
   display: flex;
   align-items: center;

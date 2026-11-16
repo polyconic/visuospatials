@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Visuospatials</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -31,7 +31,9 @@
      ]
     }
     </script>
-    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="/base.css">
+    <link rel="stylesheet" href="/theme.css">
+    <script src="/theme.js"></script>
     <script type="speculationrules">
     {"prerender": [{"urls": ["/work"], "eagerness": "eager"},
                    {"where": {"href_matches": "/*"}, "eagerness": "moderate"}]}
@@ -61,43 +63,11 @@
             from { transform: scale(1.04) translate(0.4%, -0.4%); }
             to   { transform: scale(1.11) translate(-0.8%, 0.6%); }
         }
-        .flicker-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: var(--sans);
-            font-size: clamp(16px, 7vw, 160px);
-            letter-spacing: 0.25em;
-            color: #5c5c58;
-            font-weight: 700;
-            text-transform: uppercase;
-            user-select: none;
-            z-index: 10;
-            white-space: nowrap;
-            text-decoration: none;
-            cursor: pointer;
-            /* A taller hit area than the letters, so it's an easy tap on a phone. */
-            padding: 0.4em 0;
-        }
-        /* The shapes draw the wordmark; the text stays as the link's hit area and for readers. */
-        .flicker-text.drawn { color: transparent; }
+        /* the name, for readers and search. the photo and Enter are all that show */
+        h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-        /* Difference keeps the white pieces readable over the bright side of the photo. */
-        .geo {
-            mix-blend-mode: difference;
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        /* The way in, bottom center, as on audiospatials.com: the name links too,
-           but nothing says so, and a phone can't hover to find out. No box; the
-           same difference blend as the wordmark, and bold so it holds up on
-           the mid-grey of the photo. */
+        /* The way in, bottom center, as on audiospatials.com. No box; difference
+           blended and bold so it holds up on the mid-grey of the photo. */
         .enter {
             position: absolute; z-index: 20;
             left: 50%; transform: translateX(-50%);
@@ -118,6 +88,12 @@
         body { user-select: none; -webkit-touch-callout: none; }
 
 
+        /* the photo fills the page in either theme, so the mail mark keeps its difference blend
+           over it, and the light/dark toggle waits for the inside pages */
+        :root[data-theme="light"] .corner a { color: #fff; mix-blend-mode: difference; }
+        @media (hover: hover) { :root[data-theme="light"] .corner a:hover { color: var(--sig); mix-blend-mode: normal; } }
+        .corner .thememark { display: none; }
+
         html.inverted { filter: invert(1) hue-rotate(180deg); }
     </style>
 </head>
@@ -128,32 +104,12 @@
 </a>
 </div>
     <img class="hero" src="blur.webp" alt="">
-    <a class="flicker-text" href="/work" aria-label="Visuospatials">VISUOSPATIALS</a>
-    <canvas class="geo" id="geo" aria-hidden="true"></canvas>
+    <h1>Visuospatials</h1>
     <a class="enter" href="/work">Enter<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12 12 19.5V14H3V10H12V4.5Z"/></svg></a>
 
-
-
-
-    <script src="/geo.js"></script>
     <script>
-        const container = document.querySelector('.flicker-text');
-        const WORD = container.textContent;
-
-        /* The wordmark, from the shared alphabet in geo.js: it holds assembled for
-           5s, comes apart and back together over 21s, then holds another 5s.
-           It is sized to the link's own text, so the CSS clamp sets the size
-           and the clickable box matches the drawing. */
-        container.classList.add('drawn');
-        const mark = Geo.converge(document.getElementById('geo'), WORD, width => {
-            const s = Math.min(container.getBoundingClientRect().width / width, innerHeight * 0.16);
-            return { x: (innerWidth - width * s) / 2, y: (innerHeight - s) / 2, s };
-        }, { hold: 5, cycle: 21 });
-        const explode = () => mark.explode();
-
         const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
         let konamiAt = 0;
-        let typed = '';
 
         document.addEventListener('keydown', e => {
             konamiAt = (e.key === konami[konamiAt] || e.key.toLowerCase() === konami[konamiAt]) ? konamiAt + 1 : 0;
@@ -161,15 +117,10 @@
                 konamiAt = 0;
                 document.documentElement.classList.toggle('inverted');
             }
-
-            if (e.key.length === 1) {
-                typed = (typed + e.key.toLowerCase()).slice(-9);
-                if (typed.endsWith('spatial')) explode();
-            }
         });
 
         console.log('%cVISUOSPATIALS', 'font: 700 42px/1 Helvetica Neue, Arial; color:#ff2d00');
-        console.log('%cclick the name. or type: spatial', 'font: 12px/1.6 monospace; color:#787874');
+        console.log('%cup up down down left right left right b a', 'font: 12px/1.6 monospace; color:#787874');
     </script>
 </body>
 </html>

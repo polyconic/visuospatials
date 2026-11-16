@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Nothing here &mdash; Visuospatials</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <meta name="robots" content="noindex">
     <meta name="theme-color" content="#0a0a0a">
     <link rel="stylesheet" href="/base.css">
+    <link rel="stylesheet" href="/theme.css">
+    <script src="/theme.js"></script>
     <style>
         html, body { height: 100%; overflow: hidden; }
         body { display: grid; align-items: end; justify-items: center; }
@@ -43,7 +45,7 @@ if (/^\/work\/(index\.html)?$/.test(location.pathname)) location.replace('/work'
 Geo.converge(document.getElementById('c'), '404', width => {
     const s = Math.min(innerWidth * 0.62 / width, innerHeight * 0.4);
     return { x: (innerWidth - width * s) / 2, y: innerHeight * 0.41 - s / 2, s };
-}, { cycle: 16 });
+}, { cycle: 16, ink: getComputedStyle(document.documentElement).getPropertyValue('--fg').trim() });
 </script>
 <script src="/nav.js"></script>
 <script>document.querySelectorAll("[data-yr]").forEach(function(e){e.textContent=new Date().getFullYear()})</script>

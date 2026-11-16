@@ -1,0 +1,98 @@
+/* styles for the inside pages, matched to audiospatials.com's css/pages.css (2026-11-16).
+   base.css has the sitewide stuff */
+
+/* no grey text: labels, the nav and the © line are white. the nav goes red on hover */
+:root { --dim: var(--fg); }
+@media (hover: hover) { .exit a:hover { color: var(--sig); } }
+
+body { padding: clamp(30px, 8vh, 90px) clamp(20px, 7vw, 110px) 110px; }
+@media (max-width: 620px) { body { padding-top: 62px; padding-bottom: 150px; } }
+.wrap { max-width: 1180px; margin: 0 auto; }
+
+/* page titles all share one size, sized so a 12-letter title fits the column at full spread */
+h1 { font-size: min(150px, calc(min(1180px, 100vw - 2 * clamp(20px, 7vw, 110px)) / 8.4)); line-height: 0.82; letter-spacing: -0.045em;
+     font-weight: 700; text-transform: uppercase; overflow-wrap: anywhere; }
+h1 em { font-style: normal; color: var(--sig); margin-left: calc(0.045em + 2px); }
+
+.lede { font-size: clamp(19px, 2.4vw, 30px); line-height: 1.45; letter-spacing: -0.01em; text-wrap: pretty;
+        max-width: 26ch; margin: clamp(26px, 5vh, 54px) 0 0; }
+.byline { margin: clamp(20px, 3.4vh, 34px) 0 0; line-height: 2.1; }
+
+/* nav bar at the top, copyright at the bottom of the page (.footcopy, from menu.js) */
+.exit, .footcopy { font-weight: 500; }
+.exit { top: 0; bottom: auto; justify-content: center; text-align: center;
+        padding: calc(18px + env(safe-area-inset-top, 0px)) 20px 18px;
+        border-top: 0; border-bottom: 1px solid var(--rule); }
+.exit::after { display: none; }
+.exit .spacer, .exit .copy { display: none; }
+@media (min-width: 761px) {
+    body { padding-top: clamp(80px, 9vh, 100px); padding-bottom: 50px; }
+    /* line up with the bar links */
+    .backmark, .homemark, .corner { top: 11px; }
+    /* links on the left, after the back and home marks */
+    .exit { justify-content: flex-start; text-align: left;
+            padding-left: calc(max(15px, env(safe-area-inset-left, 0px)) + 66px + 22px);
+            padding-right: calc(max(15px, env(safe-area-inset-right, 0px)) + 62px + 22px); }
+}
+.footcopy { display: block; max-width: 1180px; margin: clamp(70px, 13vh, 120px) auto 0;
+            font-size: 10px; text-align: center; }
+
+/* phones: no bar, the links drop down from the menu button top right (menu.js) */
+.menumark { display: none !important; }
+@media (max-width: 760px) {
+    .menumark { display: grid !important; }
+    body { padding-bottom: 70px; }
+    .exit { display: none; }
+    html.menu-open .exit {
+        display: flex;
+        position: fixed;
+        top: 50px;
+        right: max(15px, env(safe-area-inset-right, 0px));
+        left: auto;
+        bottom: auto;
+        z-index: 220;
+        flex-direction: column;
+        align-items: flex-end;
+        text-align: right;
+        gap: 18px;
+        min-width: 200px;
+        padding: 22px 22px 20px;
+        border: 1px solid var(--rule);
+        font-size: 12px;
+        animation: drop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html.menu-open .exit::after { display: none; }
+    html.menu-open .exit .copy { display: none; }
+}
+@keyframes drop { from { opacity: 0; transform: translateY(-6px); } }
+/* phones with javascript off get no menu button, so the bar sits at the end of the page instead */
+@media (max-width: 760px) and (scripting: none) {
+    .exit { display: flex; position: static; gap: 14px 22px;
+            padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+            border-bottom: 0; border-top: 1px solid var(--rule); }
+}
+
+/* titles spread out a little as you scroll down and tighten back up on the way up.
+   off for reduced motion and browsers that can't do it */
+@supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .wrap > h1 {
+            animation: title-open linear both;
+            animation-timeline: scroll(root block);
+            animation-range: 0 25vh;
+        }
+    }
+}
+@keyframes title-open { to { letter-spacing: 0.03em; } }
+
+/* the work rises into place as it scrolls on screen. anything on screen at load is simply there */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .grid > .piece {
+            animation: rise linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 90%;
+        }
+    }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(48px); } }
